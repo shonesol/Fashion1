@@ -21,6 +21,10 @@ generateOutfit
 }
 from "./outfit-generator.js";
 
+import {
+getOutfitAdvice
+}
+from "./occasion-weather-ai.js";
 
 // ==========================
 // START FASHIONAI SYSTEM
