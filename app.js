@@ -25,6 +25,11 @@ from "./voice-assistant.js";
 
 
 import {
+learnUserStyle
+}
+from "./memory-ai.js";
+
+import {
 generateOutfit
 }
 from "./outfit-generator.js";
@@ -59,6 +64,9 @@ window.addEventListener(
 "FashionAIReady",
 ()=>{
 
+  learnUserStyle(
+window.FashionAI.database
+);
 
 console.log(
 "✅ FashionAI is ready"
