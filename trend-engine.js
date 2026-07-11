@@ -9,10 +9,13 @@ from "./gemini-ai.js";
 
 
 import {
-saveMemory,
-getMemory
+savePreference,
+getPreference
 }
 from "./db.js";
+
+
+
 
 
 
@@ -24,7 +27,9 @@ from "./db.js";
 
 
 export async function updateFashionTrends(
+
 database
+
 ){
 
 
@@ -32,36 +37,52 @@ database
 try{
 
 
+
 const prompt = `
+
 
 You are a global fashion trend expert.
 
-Give current fashion trends.
+Analyze current fashion trends.
 
-Return ONLY JSON.
+Return ONLY valid JSON.
 
-Include:
+
+Format:
+
 
 {
+
 "colors":[
-""
+"Black",
+"Beige"
 ],
+
 
 "styles":[
-""
+"Elegant",
+"Streetwear"
 ],
+
 
 "materials":[
-""
+"Cotton",
+"Denim"
 ],
+
 
 "popularGarments":[
-""
+"Wide leg trousers",
+"Oversized jackets"
 ],
 
-"seasonAdvice":""
+
+"seasonAdvice":
+"Short fashion advice"
 
 }
+
+
 
 `;
 
@@ -69,18 +90,48 @@ Include:
 
 
 
+
+
 const response =
+
 await askGemini(
+
 prompt
+
 );
+
+
+
+
+
+
+// Remove possible markdown
+
+const cleanJSON =
+
+response
+.replace(
+/```json/g,
+""
+)
+.replace(
+/```/g,
+""
+)
+.trim();
+
+
 
 
 
 
 
 const trends =
+
 JSON.parse(
-response
+
+cleanJSON
+
 );
 
 
@@ -88,22 +139,41 @@ response
 
 
 
-await saveMemory(
+
+
+await savePreference(
 
 database,
 
-{
+"fashionTrends",
 
-id:"fashionTrends",
+{
 
 ...trends,
 
+
 updatedAt:
+
 Date.now()
+
 
 }
 
 );
+
+
+
+
+
+
+console.log(
+
+"🌍 Fashion trends saved",
+
+trends
+
+);
+
 
 
 
@@ -115,17 +185,24 @@ return trends;
 
 }
 
+
+
 catch(error){
 
 
+
 console.error(
+
 "Trend update error:",
+
 error
+
 );
 
 
 
 return null;
+
 
 
 }
@@ -148,13 +225,16 @@ return null;
 
 
 export async function getFashionTrends(
+
 database
+
 ){
 
 
 
 const trends =
-await getMemory(
+
+await getPreference(
 
 database,
 
@@ -164,15 +244,27 @@ database,
 
 
 
+
+
+
+
 return trends || {
+
 
 colors:[],
 
+
 styles:[],
 
-materials:[]
+
+materials:[],
+
+
+popularGarments:[]
+
 
 };
+
 
 
 }
@@ -186,58 +278,109 @@ materials:[]
 
 
 // ==========================
-// TREND MATCHING
+// MATCH CLOTHING WITH TRENDS
 // ==========================
 
 
 export async function matchTrend(
+
 database,
+
 clothing
+
 ){
 
 
 
 const trends =
+
 await getFashionTrends(
+
 database
+
 );
 
 
 
 
 
-if(
-trends.colors?.includes(
+
+
+const colorMatch =
+
+trends.colors?.some(
+
+color =>
+
+color.toLowerCase()
+
+===
+
 clothing.color
-)
-){
+?.toLowerCase()
 
-
-return true;
-
-
-}
+);
 
 
 
 
 
-if(
-trends.styles?.includes(
+
+
+const styleMatch =
+
+trends.styles?.some(
+
+style =>
+
+style.toLowerCase()
+
+===
+
 clothing.style
-)
-){
+?.toLowerCase()
 
-
-return true;
-
-
-}
+);
 
 
 
 
-return false;
+
+
+
+return {
+
+
+isTrending:
+
+colorMatch || styleMatch,
+
+
+
+reason:
+
+colorMatch
+
+?
+
+"Popular color"
+
+:
+
+styleMatch
+
+?
+
+"Popular style"
+
+:
+
+"Classic wardrobe item"
+
+
+
+};
+
 
 
 }
