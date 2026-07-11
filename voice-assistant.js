@@ -3,22 +3,34 @@
 
 
 import {
-getMemory,
-saveMemory
+getPreference,
+savePreference
 }
 from "./db.js";
 
+
 import {
-fashionBrain
+generateOutfit
 }
-from "./fashion-brain.js";
+from "./outfit-generator.js";
+
+
 
 let database = null;
 
 
 
+
+
+// ==========================
+// GET DATABASE
+// ==========================
+
+
 window.addEventListener(
+
 "FashionAIConnected",
+
 (event)=>{
 
 
@@ -26,13 +38,26 @@ database =
 event.detail.database;
 
 
-});
+
+console.log(
+"🎙️ Voice database connected"
+);
+
+
+
+}
+
+);
+
+
+
+
 
 
 
 
 // ==========================
-// VOICE INPUT
+// START VOICE
 // ==========================
 
 
@@ -41,8 +66,12 @@ export function startListening(){
 
 
 const SpeechRecognition =
+
 window.SpeechRecognition ||
+
 window.webkitSpeechRecognition;
+
+
 
 
 
@@ -50,7 +79,7 @@ if(!SpeechRecognition){
 
 
 speak(
-"Sorry, voice recognition is not supported on this device."
+"Voice recognition is not supported on this device."
 );
 
 
@@ -61,8 +90,14 @@ return;
 
 
 
+
+
+
+
 const recognition =
+
 new SpeechRecognition();
+
 
 
 
@@ -70,72 +105,72 @@ recognition.lang =
 "en-US";
 
 
+
+recognition.continuous=false;
+
+
+
+recognition.interimResults=false;
+
+
+
+
+
+
 recognition.start();
 
 
 
 
-recognition.onresult =
-async(event)=>{
 
 
-const text =
+
+recognition.onresult = async(event)=>{
+
+
+
+const message =
+
 event.results[0][0].transcript;
 
 
 
-console.log(
-"User:",
-text
-);
+
+document.getElementById(
+"userText"
+).innerHTML = message;
+
+
 
 
 
 const answer =
+
 await fashionBrain(
-text
+message
 );
+
+
+
+
+
+
+document.getElementById(
+"voiceAnswer"
+).innerHTML = answer;
+
+
 
 
 
 speak(answer);
 
 
+
 };
 
 
 
-}
-
-
-
-
-
-// ==========================
-// VOICE OUTPUT
-// ==========================
-
-
-export function speak(message){
-
-
-const speech =
-new SpeechSynthesisUtterance(
-message
-);
-
-
-
-speech.rate = 1;
-
-
-speech.pitch = 1;
-
-
-speechSynthesis.speak(
-speech
-);
-
 
 }
 
@@ -145,8 +180,10 @@ speech
 
 
 
+
+
 // ==========================
-// FASHION BRAIN
+// FASHION AI THINKING
 // ==========================
 
 
@@ -161,33 +198,19 @@ message.toLowerCase();
 
 
 
-if(message.includes("wear")){
 
-
-return await outfitAdvice();
-
-
-}
-
-
-
-if(message.includes("color")){
-
-
-return "I can help you match colors. Tell me the occasion and I will suggest an outfit.";
-
-
-}
-
-
-
-if(message.includes("hello")
+if(
+message.includes("hello")
 ||
 message.includes("hi")
 ){
 
 
-return "Hello. I am FashionAI, your personal wardrobe assistant. How can I help you today?";
+return (
+
+"Hello. I am FashionAI, your personal fashion assistant. How can I help you?"
+
+);
 
 
 }
@@ -195,7 +218,31 @@ return "Hello. I am FashionAI, your personal wardrobe assistant. How can I help 
 
 
 
-return "I am learning your fashion style. Please tell me more about your preferences.";
+
+
+
+
+if(
+message.includes("wear")
+||
+message.includes("outfit")
+){
+
+
+
+const outfit =
+
+await generateOutfit(
+
+database,
+
+"Casual"
+
+);
+
+
+
+return outfit.message;
 
 
 
@@ -207,38 +254,72 @@ return "I am learning your fashion style. Please tell me more about your prefere
 
 
 
-// ==========================
-// OUTFIT ADVICE
-// ==========================
+
+if(
+message.includes("color")
+){
 
 
-async function outfitAdvice(){
+return (
 
+"I can help you match colors. Tell me the clothes you want to combine."
 
-
-if(!database){
-
-return "Your wardrobe is not connected yet.";
+);
 
 
 }
+
+
+
+
+
+
+
+
+if(
+message.includes("style")
+){
 
 
 
 const memory =
-await getMemory(
+
+await getPreference(
+
 database,
+
 "userStyle"
+
 );
 
 
 
 
+return (
 
-if(memory){
+"Your saved style is "
+
++
+(memory?.style || "not learned yet")
+
+);
 
 
-return `Based on your style preference, I recommend choosing a ${memory.style} outfit today.`;
+
+}
+
+
+
+
+
+
+
+
+return (
+
+"I am learning your fashion preferences. Ask me about outfits, colors, clothes or style."
+
+);
 
 
 
@@ -246,18 +327,101 @@ return `Based on your style preference, I recommend choosing a ${memory.style} o
 
 
 
-return "I need to learn your style first. Tell me your favourite colors and fashion style.";
+
+
+
+
+
+
+// ==========================
+// VOICE RESPONSE
+// ==========================
+
+
+export function speak(message){
+
+
+
+const speech =
+
+new SpeechSynthesisUtterance(
+message
+);
+
+
+
+speech.rate = 1;
+
+
+
+speech.pitch = 1;
+
+
+
+window.speechSynthesis.speak(
+speech
+);
+
 
 
 }
-await saveMemory(
+
+
+
+
+
+
+
+
+
+// ==========================
+// SAVE USER STYLE MEMORY
+// CALL THIS AFTER LOGIN
+// ==========================
+
+
+export async function saveUserStyle(){
+
+
+
+if(!database){
+
+console.log(
+"No database yet"
+);
+
+
+return;
+
+
+}
+
+
+
+
+
+await savePreference(
+
 database,
+
+"userStyle",
+
 {
-id:"userStyle",
 
 style:"Elegant",
 
 favoriteColor:"Black"
 
 }
+
 );
+
+
+
+console.log(
+"🧠 Fashion memory saved"
+);
+
+
+
+}
