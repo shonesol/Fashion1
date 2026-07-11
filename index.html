@@ -7,6 +7,7 @@
 FashionAI Assistant
 </title>
 
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 
@@ -16,10 +17,12 @@ FashionAI Assistant
 </head>
 
 
+
 <body>
 
 
 <div class="container">
+
 
 
 <!-- HEADER -->
@@ -30,9 +33,11 @@ FashionAI Assistant
 🤖 FashionAI
 </h1>
 
+
 <p>
 Your personal AI fashion stylist
 </p>
+
 
 </div>
 
@@ -40,8 +45,9 @@ Your personal AI fashion stylist
 
 
 
-<!-- UPLOAD CLOTHING -->
 
+
+<!-- UPLOAD CLOTHING -->
 
 <div class="card">
 
@@ -58,11 +64,13 @@ accept="image/*"
 >
 
 
+
 <button id="uploadBtn">
 
 ✨ Analyze Clothing
 
 </button>
+
 
 
 <div id="result">
@@ -74,12 +82,42 @@ accept="image/*"
 
 
 
+
+
+
+
+
+<!-- OUTFIT GENERATOR -->
+
+
+<div class="card">
+
+
+<h2>
+👗 AI Outfit Generator
+</h2>
+
+
 <button id="outfitBtn">
+
 ✨ Create My Outfit
+
 </button>
 
 
-<div id="outfitResult"></div>
+
+<div id="outfitResult">
+
+</div>
+
+
+</div>
+
+
+
+
+
+
 
 
 
@@ -92,6 +130,7 @@ accept="image/*"
 <h2>
 🎙️ Talk With FashionAI
 </h2>
+
 
 
 <p>
@@ -109,9 +148,11 @@ Ask about outfits, clothes, colors and style.
 
 
 
+
 <h3>
 You said:
 </h3>
+
 
 
 <div id="userText">
@@ -127,26 +168,41 @@ FashionAI:
 </h3>
 
 
+
 <div id="voiceAnswer">
 
 </div>
 
 
-
 </div>
 
+
+
+
+
+
+
+
+
+<!-- SMART OUTFIT -->
+
+
 <div class="card">
+
 
 <h2>
 🌤️ Smart Outfit Advice
 </h2>
 
 
+
 <select id="occasion">
+
 
 <option value="casual">
 Casual
 </option>
+
 
 
 <option value="work">
@@ -154,24 +210,31 @@ Work
 </option>
 
 
+
 <option value="party">
 Party
 </option>
+
 
 
 <option value="travel">
 Travel
 </option>
 
+
 </select>
+
+
 
 
 
 <select id="weather">
 
+
 <option value="hot">
 Hot
 </option>
+
 
 
 <option value="cold">
@@ -179,11 +242,15 @@ Cold
 </option>
 
 
+
 <option value="normal">
 Normal
 </option>
 
+
 </select>
+
+
 
 
 
@@ -196,19 +263,33 @@ Normal
 
 
 
+
 <div id="smartOutfitResult">
 
 </div>
 
 
+
 </div>
+
+
+
+
+
+
+
+
+
+<!-- WARDROBE AI ANALYSIS -->
 
 
 <div class="card">
 
+
 <h2>
 🧠 Analyze My Wardrobe
 </h2>
+
 
 
 <button id="analyzeWardrobeBtn">
@@ -219,15 +300,24 @@ Normal
 
 
 
+
 <div id="wardrobeAdvice">
 
 </div>
 
 
+
 </div>
 
 
-<!-- WARDROBE -->
+
+
+
+
+
+
+
+<!-- WARDROBE DISPLAY -->
 
 
 <div class="card">
@@ -236,6 +326,7 @@ Normal
 <h2>
 👕 My Wardrobe
 </h2>
+
 
 
 
@@ -248,38 +339,55 @@ placeholder="Search clothes..."
 
 
 
+
+
 <select id="categoryFilter">
 
-<option>
+
+<option value="All">
 All
 </option>
 
-<option>
+
+
+<option value="Top">
 Top
 </option>
 
-<option>
+
+
+<option value="Bottom">
 Bottom
 </option>
 
-<option>
+
+
+<option value="Shoes">
 Shoes
 </option>
 
-<option>
+
+
+<option value="Dress">
 Dress
 </option>
 
-<option>
+
+
+<option value="Jacket">
 Jacket
 </option>
 
-<option>
+
+
+<option value="Accessories">
 Accessories
 </option>
 
 
+
 </select>
+
 
 
 
@@ -291,8 +399,9 @@ Accessories
 
 
 
-
 </div>
+
+
 
 
 
@@ -319,7 +428,6 @@ Accessories
 
 
 
-
 </div>
 
 
@@ -328,7 +436,8 @@ Accessories
 
 
 
-<!-- MAIN APP -->
+<!-- ONLY MAIN CONTROLLER -->
+
 
 <script 
 type="module"
@@ -336,24 +445,7 @@ src="app.js">
 </script>
 
 
-<!-- UPLOAD -->
-
-<script
-type="module"
-src="upload.js">
-</script>
-
-
-<!-- WARDROBE -->
-
-<script
-type="module"
-src="wardrobe.js">
-</script>
-
-
 
 </body>
-
 
 </html>
