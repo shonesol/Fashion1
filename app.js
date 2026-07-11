@@ -31,7 +31,10 @@ getOutfitAdvice
 }
 from "./occasion-weather-ai.js";
 
-
+import {
+analyzeWardrobe
+}
+from "./wardrobe-intelligence.js";
 
 
 // ==========================
@@ -297,3 +300,64 @@ ${result.message}
 
 
 });
+const wardrobeAI =
+document.getElementById(
+"analyzeWardrobeBtn"
+);
+
+
+
+if(wardrobeAI){
+
+
+wardrobeAI.onclick=async()=>{
+
+
+const result =
+
+await analyzeWardrobe(
+
+window.FashionAI.database
+
+);
+
+
+
+
+
+document.getElementById(
+"wardrobeAdvice"
+).innerHTML =
+
+
+`
+
+<h3>
+🧠 FashionAI Wardrobe Analysis
+</h3>
+
+
+<p>
+${result.advice}
+</p>
+
+
+<p>
+Style:
+${result.style}
+</p>
+
+
+<p>
+Favorite Color:
+${result.favoriteColor}
+</p>
+
+`;
+
+
+
+};
+
+
+}
