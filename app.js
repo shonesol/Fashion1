@@ -6,7 +6,10 @@ import {
 startFashionAI
 }
 from "./auth-manager.js";
-
+import {
+startTrendUpdater
+}
+from "./trend-updater.js";
 
 import {
 startListening
