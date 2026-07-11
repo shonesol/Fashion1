@@ -55,7 +55,13 @@ analyzeWardrobe
 }
 from "./wardrobe-intelligence.js";
 
+import {
 
+showAILoading
+
+}
+
+from "./ai-loader.js";
 
 
 // ==========================
@@ -299,7 +305,19 @@ document.getElementById(
 
 ).innerHTML =
 
+const resultBox =
+document.getElementById(
+"outfitResult"
+);
 
+
+showAILoading(
+
+resultBox,
+
+"Creating your perfect outfit..."
+
+);
 `
 
 <h3>
@@ -398,7 +416,19 @@ document.getElementById(
 
 ).innerHTML =
 
+const resultBox =
+document.getElementById(
+"outfitResult"
+);
 
+
+showAILoading(
+
+resultBox,
+
+"Creating your perfect outfit..."
+
+);
 `
 
 <h3>
