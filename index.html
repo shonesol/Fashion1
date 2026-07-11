@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>
+FashionAI Assistant
+</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<link rel="stylesheet" href="style.css">
+
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+<!-- HEADER -->
+
+<div class="card">
+
+<h1>
+🤖 FashionAI
+</h1>
+
+<p>
+Your personal AI fashion stylist
+</p>
+
+</div>
+
+
+
+
+
+<!-- UPLOAD CLOTHING -->
+
+
+<div class="card">
+
+
+<h2>
+📸 Add Clothing
+</h2>
+
+
+<input 
+type="file"
+id="clothingImage"
+accept="image/*"
+>
+
+
+<button id="uploadBtn">
+
+✨ Analyze Clothing
+
+</button>
+
+
+<div id="result">
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+
+<!-- VOICE ASSISTANT -->
+
+
+<div class="card voice-box">
+
+
+<h2>
+🎙️ Talk With FashionAI
+</h2>
+
+
+<p>
+Ask about outfits, clothes, colors and style.
+</p>
+
+
+
+<button id="voiceBtn">
+
+🎙️ Talk to FashionAI
+
+</button>
+
+
+
+
+<h3>
+You said:
+</h3>
+
+
+<div id="userText">
+
+</div>
+
+
+
+
+
+<h3>
+FashionAI:
+</h3>
+
+
+<div id="voiceAnswer">
+
+</div>
+
+
+
+</div>
+
+
+
+
+
+
+
+
+<!-- WARDROBE -->
+
+
+<div class="card">
+
+
+<h2>
+👕 My Wardrobe
+</h2>
+
+
+
+<input 
+type="search"
+id="searchClothes"
+placeholder="Search clothes..."
+>
+
+
+
+
+<select id="categoryFilter">
+
+<option>
+All
+</option>
+
+<option>
+Top
+</option>
+
+<option>
+Bottom
+</option>
+
+<option>
+Shoes
+</option>
+
+<option>
+Dress
+</option>
+
+<option>
+Jacket
+</option>
+
+<option>
+Accessories
+</option>
+
+
+</select>
+
+
+
+
+
+<div id="wardrobe">
+
+</div>
+
+
+
+
+</div>
+
+
+
+
+
+
+
+<!-- STATISTICS -->
+
+
+<div class="card">
+
+
+<div id="wardrobeStats">
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+<!-- MAIN APP -->
+
+<script 
+type="module"
+src="app.js">
+</script>
+
+
+<!-- UPLOAD -->
+
+<script
+type="module"
+src="upload.js">
+</script>
+
+
+<!-- WARDROBE -->
+
+<script
+type="module"
+src="wardrobe.js">
+</script>
+
+
+
+</body>
+
+
+</html>
