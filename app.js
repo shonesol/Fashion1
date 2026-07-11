@@ -6,46 +6,42 @@ import {
 startFashionAI
 }
 from "./auth-manager.js";
+
+
 import {
 startTrendUpdater
 }
 from "./trend-updater.js";
+
 
 import {
 startListening
 }
 from "./voice-assistant.js";
 
+
 import {
 generateOutfit
 }
 from "./outfit-generator.js";
+
 
 import {
 getOutfitAdvice
 }
 from "./occasion-weather-ai.js";
 
+
+
+
 // ==========================
-// START FASHIONAI SYSTEM
+// START FASHIONAI
 // ==========================
 
 startFashionAI();
 
 
-window.addEventListener(
-"FashionAIReady",
-()=>{
 
-
-startTrendUpdater(
-
-window.FashionAI.database
-
-);
-
-
-});
 
 // ==========================
 // DATABASE READY
@@ -78,6 +74,16 @@ window.FashionAI.database.name
 
 
 
+// Start trends
+
+startTrendUpdater(
+
+window.FashionAI.database
+
+);
+
+
+
 window.dispatchEvent(
 
 new CustomEvent(
@@ -103,7 +109,6 @@ window.FashionAI.database
 );
 
 
-
 });
 
 
@@ -114,14 +119,19 @@ window.FashionAI.database
 
 
 // ==========================
-// VOICE BUTTON CONNECTION
+// BUTTON CONNECTIONS
 // ==========================
 
 
 document.addEventListener(
+
 "DOMContentLoaded",
+
 ()=>{
 
+
+
+// VOICE BUTTON
 
 const voiceBtn =
 document.getElementById(
@@ -133,36 +143,40 @@ document.getElementById(
 if(voiceBtn){
 
 
-voiceBtn.addEventListener(
-"click",
-()=>{
+voiceBtn.onclick=()=>{
 
 
 startListening();
 
 
-}
-
-);
-
-
-console.log(
-"🎙️ Voice button connected"
-);
+};
 
 
 }
 
 
-});
-document
-.getElementById("outfitBtn")
-?.addEventListener(
-"click",
-async()=>{
+
+
+
+
+// OUTFIT BUTTON
+
+
+const outfitBtn =
+document.getElementById(
+"outfitBtn"
+);
+
+
+
+if(outfitBtn){
+
+
+outfitBtn.onclick=async()=>{
 
 
 const outfit =
+
 await generateOutfit(
 
 window.FashionAI.database,
@@ -173,16 +187,18 @@ window.FashionAI.database,
 
 
 
+
 document.getElementById(
 "outfitResult"
-).innerHTML=
+).innerHTML =
 
 
 `
 
 <h3>
-Your FashionAI Outfit
+✨ Your FashionAI Outfit
 </h3>
+
 
 <p>
 ${outfit.message}
@@ -192,12 +208,33 @@ ${outfit.message}
 
 
 
-});
-document
-.getElementById("smartOutfitBtn")
-?.addEventListener(
-"click",
-async()=>{
+};
+
+
+}
+
+
+
+
+
+
+
+
+// SMART WEATHER OUTFIT
+
+
+const smartBtn =
+document.getElementById(
+"smartOutfitBtn"
+);
+
+
+
+if(smartBtn){
+
+
+smartBtn.onclick=async()=>{
+
 
 
 const weather =
@@ -214,7 +251,9 @@ document.getElementById(
 
 
 
+
 const result =
+
 await getOutfitAdvice(
 
 window.FashionAI.database,
@@ -228,9 +267,11 @@ occasion
 
 
 
+
 document.getElementById(
 "smartOutfitResult"
 ).innerHTML =
+
 
 `
 
@@ -238,11 +279,20 @@ document.getElementById(
 🌟 FashionAI Suggestion
 </h3>
 
+
 <p>
 ${result.message}
 </p>
 
+
 `;
+
+
+
+};
+
+
+}
 
 
 
