@@ -8,7 +8,10 @@ saveMemory
 }
 from "./db.js";
 
-
+import {
+fashionBrain
+}
+from "./fashion-brain.js";
 
 let database = null;
 
