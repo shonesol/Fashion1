@@ -13,21 +13,24 @@ startTrendUpdater
 }
 from "./trend-updater.js";
 
+
 import {
 learnFromWardrobe
 }
 from "./fashion-memory.js";
-
-import {
-startListening
-}
-from "./voice-assistant.js";
 
 
 import {
 learnUserStyle
 }
 from "./memory-ai.js";
+
+
+import {
+startListening
+}
+from "./voice-assistant.js";
+
 
 import {
 generateOutfit
@@ -40,17 +43,26 @@ getOutfitAdvice
 }
 from "./occasion-weather-ai.js";
 
+
 import {
 analyzeWardrobe
 }
 from "./wardrobe-intelligence.js";
 
 
+
+
 // ==========================
-// START FASHIONAI
+// START SYSTEM
 // ==========================
 
+
 startFashionAI();
+
+
+
+
+
 
 
 
@@ -61,15 +73,20 @@ startFashionAI();
 
 
 window.addEventListener(
-"FashionAIReady",
-()=>{
 
-  learnUserStyle(
-window.FashionAI.database
-);
+"FashionAIReady",
+
+async()=>{
+
+
+const database =
+
+window.FashionAI.database;
+
+
 
 console.log(
-"✅ FashionAI is ready"
+"✅ FashionAI Ready"
 );
 
 
@@ -83,39 +100,69 @@ window.FashionAI.user.email
 
 console.log(
 "Database:",
-window.FashionAI.database.name
+database.name
 );
 
 
 
 
-// Start trends
+
+// Learn user style
+
+await learnUserStyle(
+
+database
+
+);
+
+
+
+
+// Learn wardrobe
+
+await learnFromWardrobe(
+
+database
+
+);
+
+
+
+
+// Update fashion trends
 
 startTrendUpdater(
 
-window.FashionAI.database
+database
 
 );
+
+
+
+
 
 
 
 window.dispatchEvent(
 
 new CustomEvent(
+
 "FashionAIConnected",
+
 {
 
 detail:{
+
 
 user:
 window.FashionAI.user,
 
 
-database:
-window.FashionAI.database
+database:database
 
 
 }
+
 
 }
 
@@ -124,7 +171,11 @@ window.FashionAI.database
 );
 
 
-});
+
+}
+
+);
+
 
 
 
@@ -134,7 +185,7 @@ window.FashionAI.database
 
 
 // ==========================
-// BUTTON CONNECTIONS
+// BUTTONS
 // ==========================
 
 
@@ -146,16 +197,24 @@ document.addEventListener(
 
 
 
-// VOICE BUTTON
+
+
+
+
+// VOICE
 
 const voiceBtn =
+
 document.getElementById(
+
 "voiceBtn"
+
 );
 
 
 
 if(voiceBtn){
+
 
 
 voiceBtn.onclick=()=>{
@@ -167,6 +226,7 @@ startListening();
 };
 
 
+
 }
 
 
@@ -174,12 +234,18 @@ startListening();
 
 
 
-// OUTFIT BUTTON
+
+
+
+// CREATE OUTFIT
 
 
 const outfitBtn =
+
 document.getElementById(
+
 "outfitBtn"
+
 );
 
 
@@ -187,7 +253,17 @@ document.getElementById(
 if(outfitBtn){
 
 
+
 outfitBtn.onclick=async()=>{
+
+
+
+if(!window.FashionAI){
+
+return;
+
+}
+
 
 
 const outfit =
@@ -203,15 +279,19 @@ window.FashionAI.database,
 
 
 
+
+
 document.getElementById(
+
 "outfitResult"
+
 ).innerHTML =
 
 
 `
 
 <h3>
-✨ Your FashionAI Outfit
+✨ FashionAI Outfit
 </h3>
 
 
@@ -226,6 +306,7 @@ ${outfit.message}
 };
 
 
+
 }
 
 
@@ -235,12 +316,16 @@ ${outfit.message}
 
 
 
-// SMART WEATHER OUTFIT
+
+// SMART OUTFIT
 
 
 const smartBtn =
+
 document.getElementById(
+
 "smartOutfitBtn"
+
 );
 
 
@@ -248,21 +333,31 @@ document.getElementById(
 if(smartBtn){
 
 
+
 smartBtn.onclick=async()=>{
 
 
 
 const weather =
+
 document.getElementById(
+
 "weather"
+
 ).value;
+
 
 
 
 const occasion =
+
 document.getElementById(
+
 "occasion"
+
 ).value;
+
+
 
 
 
@@ -283,8 +378,12 @@ occasion
 
 
 
+
+
 document.getElementById(
+
 "smartOutfitResult"
+
 ).innerHTML =
 
 
@@ -307,14 +406,26 @@ ${result.message}
 };
 
 
+
 }
 
 
 
-});
+
+
+
+
+
+
+// WARDROBE ANALYSIS
+
+
 const wardrobeAI =
+
 document.getElementById(
+
 "analyzeWardrobeBtn"
+
 );
 
 
@@ -322,7 +433,9 @@ document.getElementById(
 if(wardrobeAI){
 
 
+
 wardrobeAI.onclick=async()=>{
+
 
 
 const result =
@@ -336,16 +449,22 @@ window.FashionAI.database
 
 
 
+
+
+
 document.getElementById(
+
 "wardrobeAdvice"
+
 ).innerHTML =
 
 
 `
 
 <h3>
-🧠 FashionAI Wardrobe Analysis
+🧠 Wardrobe Intelligence
 </h3>
+
 
 
 <p>
@@ -353,15 +472,19 @@ ${result.advice}
 </p>
 
 
+
 <p>
 Style:
-${result.style}
+${result.style || "Learning..."}
+
 </p>
+
 
 
 <p>
 Favorite Color:
-${result.favoriteColor}
+${result.favoriteColor || "Learning..."}
+
 </p>
 
 `;
@@ -371,15 +494,11 @@ ${result.favoriteColor}
 };
 
 
+
 }
-window.addEventListener(
-"FashionAIReady",
-()=>{
 
-learnFromWardrobe(
 
-window.FashionAI.database
 
-);
+
 
 });
