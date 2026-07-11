@@ -1,10 +1,19 @@
 // app.js
-// FashionAI Main Application Controller
+// FashionAI Main Application
 
 
 import {
-    startFashionAI
-} from "./auth-manager.js";
+startFashionAI
+}
+from "./auth-manager.js";
+
+
+import {
+startListening
+}
+from "./voice-assistant.js";
+
+
 
 
 // ==========================
@@ -15,82 +24,112 @@ startFashionAI();
 
 
 
+
 // ==========================
-// WHEN DATABASE IS READY
+// DATABASE READY
 // ==========================
+
 
 window.addEventListener(
-    "FashionAIReady",
-    ()=>{
+"FashionAIReady",
+()=>{
 
 
-        console.log(
-            "✅ FashionAI App Ready"
-        );
-
-
-        const user =
-        window.FashionAI.user;
-
-
-
-        const database =
-        window.FashionAI.database;
-
-
-
-        console.log(
-            "Logged in user:",
-            user.email
-        );
-
-
-        console.log(
-            "Local database connected:",
-            database.name
-        );
-
-
-
-        // Notify other modules
-
-        window.dispatchEvent(
-
-            new CustomEvent(
-                "FashionAIConnected",
-                {
-
-                    detail:{
-                        user:user,
-                        database:database
-                    }
-
-                }
-            )
-
-        );
-
-
-
-    }
+console.log(
+"✅ FashionAI is ready"
 );
 
 
 
+console.log(
+"User:",
+window.FashionAI.user.email
+);
+
+
+
+console.log(
+"Database:",
+window.FashionAI.database.name
+);
+
+
+
+
+window.dispatchEvent(
+
+new CustomEvent(
+"FashionAIConnected",
+{
+
+detail:{
+
+user:
+window.FashionAI.user,
+
+
+database:
+window.FashionAI.database
+
+
+}
+
+}
+
+)
+
+);
+
+
+
+});
+
+
+
+
+
+
+
+
 // ==========================
-// APP ERROR HANDLER
+// VOICE BUTTON CONNECTION
 // ==========================
 
-window.addEventListener(
-"error",
-(event)=>{
+
+document.addEventListener(
+"DOMContentLoaded",
+()=>{
 
 
-console.error(
-"FashionAI Error:",
-event.error
+const voiceBtn =
+document.getElementById(
+"voiceBtn"
+);
+
+
+
+if(voiceBtn){
+
+
+voiceBtn.addEventListener(
+"click",
+()=>{
+
+
+startListening();
+
+
+}
+
+);
+
+
+console.log(
+"🎙️ Voice button connected"
 );
 
 
 }
-);
+
+
+});
