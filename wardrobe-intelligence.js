@@ -1,5 +1,5 @@
 // wardrobe-intelligence.js
-// FashionAI Wardrobe Analysis
+// FashionAI Advanced Wardrobe Analysis
 
 
 import {
@@ -17,34 +17,162 @@ from "./db.js";
 
 
 export async function analyzeWardrobe(
+
 database
+
 ){
 
 
 
 const clothes =
+
 await getClothes(
+
 database
+
 );
+
+
 
 
 
 const memory =
+
 await getMemory(
+
 database,
+
 "userStyle"
+
 );
 
 
 
 
 
-const categories =
-clothes.map(item=>
+
+
+if(clothes.length===0){
+
+
+return {
+
+
+totalClothes:0,
+
+
+style:"Unknown",
+
+
+favoriteColor:"Unknown",
+
+
+advice:
+
+"Your wardrobe is empty. Upload clothes so FashionAI can learn your style."
+
+};
+
+
+}
+
+
+
+
+
+
+
+
+
+let categories=[];
+
+let colors={};
+
+let clean=0;
+
+let dirty=0;
+
+
+
+
+
+
+
+clothes.forEach(item=>{
+
+
+
+// Categories
+
+if(item.category){
+
+categories.push(
 
 item.category
 
 );
+
+}
+
+
+
+
+
+// Colors
+
+if(item.color){
+
+
+colors[item.color]=
+
+(colors[item.color] || 0)+1;
+
+
+}
+
+
+
+
+
+
+
+
+// Laundry
+
+if(item.laundryStatus==="Clean"){
+
+
+clean++;
+
+
+}
+
+else{
+
+
+dirty++;
+
+
+}
+
+
+
+});
+
+
+
+
+
+
+
+
+
+const favoriteColor =
+
+getMostUsed(colors);
+
+
+
 
 
 
@@ -56,52 +184,41 @@ let missing=[];
 
 
 
-// Check essential garments
+if(!categories.includes("Top")){
 
 
-if(
-!categories.includes("Top")
-){
+missing.push("Tops/Shirts");
 
-missing.push(
-"Basic tops or shirts"
-);
 
 }
 
 
 
-if(
-!categories.includes("Bottom")
-){
+if(!categories.includes("Bottom")){
 
-missing.push(
-"Trousers or skirts"
-);
+
+missing.push("Trousers/Skirts");
+
 
 }
 
 
 
-if(
-!categories.includes("Shoes")
-){
+if(!categories.includes("Shoes")){
 
-missing.push(
-"Shoes"
-);
+
+missing.push("Shoes");
+
 
 }
 
 
 
-if(
-!categories.includes("Jacket")
-){
+if(!categories.includes("Jacket")){
 
-missing.push(
-"A jacket or outerwear"
-);
+
+missing.push("Jacket or Outerwear");
+
 
 }
 
@@ -112,22 +229,39 @@ missing.push(
 
 
 
-let advice="";
+
+let advice = "";
 
 
 
 
 
-if(missing.length>0){
+if(missing.length > 0){
+
 
 
 advice =
 
-`Your wardrobe needs:
+`
+
+🧠 FashionAI Wardrobe Report
+
+
+
+You have ${clothes.length} clothing items.
+
+
+
+Your wardrobe is missing:
 
 ${missing.join(", ")}
 
-These items will help you create more outfits.`;
+
+
+Adding these pieces will help you create more outfit combinations.
+
+`;
+
 
 
 }
@@ -135,11 +269,41 @@ These items will help you create more outfits.`;
 else{
 
 
+
 advice =
 
-"Your wardrobe has a good balance of clothing categories.";
+`
+
+🧠 FashionAI Wardrobe Report
+
+
+
+Your wardrobe is well balanced.
+
+
+
+You have:
+
+${clothes.length} items
+
+${clean} clean clothes
+
+${dirty} clothes needing washing
+
+
+
+Your strongest color is ${favoriteColor}.
+
+
+
+`;
+
+
 
 }
+
+
+
 
 
 
@@ -149,25 +313,103 @@ return {
 
 
 totalClothes:
+
 clothes.length,
 
 
+
+cleanClothes:
+
+clean,
+
+
+
+dirtyClothes:
+
+dirty,
+
+
+
 missingItems:
+
 missing,
 
 
+
 style:
-memory?.style || "Unknown",
+
+memory?.style || "Learning...",
+
 
 
 favoriteColor:
-memory?.favoriteColor || "Unknown",
+
+memory?.favoriteColor || favoriteColor,
+
 
 
 advice:advice
 
 
+
 };
+
+
+
+}
+
+
+
+
+
+
+
+
+
+// ==========================
+// FIND MOST USED COLOR
+// ==========================
+
+
+function getMostUsed(data){
+
+
+
+let result="Unknown";
+
+
+let highest=0;
+
+
+
+
+
+Object.entries(data)
+
+.forEach(([key,value])=>{
+
+
+
+if(value>highest){
+
+
+highest=value;
+
+
+result=key;
+
+
+}
+
+
+
+});
+
+
+
+
+
+return result;
 
 
 
