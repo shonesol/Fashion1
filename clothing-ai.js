@@ -1,122 +1,114 @@
 // clothing-ai.js
-// FashionAI Clothing Recognition Engine
+// FashionAI Clothing Vision
 
 
-export async function analyzeClothing(image){
+import {
+askGemini
+}
+from "./gemini-ai.js";
 
 
-/*
-This function prepares the image
-for AI analysis.
 
-Connect your Gemini API here.
-*/
+
+
+export async function analyzeClothing(
+image
+){
+
+
+
+const prompt = `
+
+You are a professional fashion expert.
+
+Analyze this clothing image.
+
+Return ONLY JSON.
+
+Include:
+
+type,
+category,
+primaryColor,
+secondaryColor,
+material,
+texture,
+pattern,
+style,
+occasion,
+season
+
+Example:
+
+{
+"type":"Denim Jacket",
+"category":"Jacket",
+"primaryColor":"Blue",
+"secondaryColor":"Black",
+"material":"Denim",
+"texture":"Rough",
+"pattern":"Plain",
+"style":"Streetwear",
+"occasion":"Casual",
+"season":"All"
+}
+
+`;
+
+
+
+
+
+const result =
+await askGemini(
+prompt,
+image
+);
+
+
+
 
 
 try{
 
 
-// Temporary AI structure.
-// Replace the API call with Gemini Vision.
+return JSON.parse(
+result
+);
 
 
-const result = {
+}
+
+catch{
 
 
-type:
-"Unknown",
+console.log(
+"AI response:",
+result
+);
 
 
-category:
-"Other",
+
+return {
 
 
-primaryColor:
-"Unknown",
+type:"Unknown",
 
+category:"Other",
 
-secondaryColor:
-"",
+primaryColor:"Unknown",
 
+material:"Unknown",
 
-pattern:
-"Plain",
+texture:"Unknown",
 
-
-material:
-"Unknown",
-
-
-texture:
-"Unknown",
-
-
-style:
-"Casual",
-
-
-occasion:
-"Everyday",
-
-
-season:
-"All"
+style:"Casual"
 
 
 };
 
 
-
-/*
-Example expected AI response:
-
-
-{
-type:"Denim Jacket",
-
-category:"Jacket",
-
-primaryColor:"Blue",
-
-secondaryColor:"Black",
-
-pattern:"Plain",
-
-material:"Denim",
-
-texture:"Rough",
-
-style:"Streetwear",
-
-occasion:"Casual",
-
-season:"All"
 }
-
-
-*/
-
-
-return result;
-
-
-
-}
-
-catch(error){
-
-
-console.error(
-"Clothing AI Error:",
-error
-);
-
-
-throw error;
-
-
-}
-
 
 
 }
