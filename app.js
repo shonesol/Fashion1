@@ -16,7 +16,10 @@ startListening
 }
 from "./voice-assistant.js";
 
-
+import {
+generateOutfit
+}
+from "./outfit-generator.js";
 
 
 // ==========================
@@ -145,6 +148,44 @@ console.log(
 
 
 }
+
+
+});
+document
+.getElementById("outfitBtn")
+?.addEventListener(
+"click",
+async()=>{
+
+
+const outfit =
+await generateOutfit(
+
+window.FashionAI.database,
+
+"Casual"
+
+);
+
+
+
+document.getElementById(
+"outfitResult"
+).innerHTML=
+
+
+`
+
+<h3>
+Your FashionAI Outfit
+</h3>
+
+<p>
+${outfit.message}
+</p>
+
+`;
+
 
 
 });
