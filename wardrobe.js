@@ -3,17 +3,17 @@
 
 
 import {
-getDatabase
-}
-from "./database-manager.js";
 
-
-import {
 getClothes,
+
 deleteClothing,
+
 updateLaundryStatus,
+
 updateClothing
+
 }
+
 from "./db.js";
 
 
@@ -25,31 +25,32 @@ let database = null;
 
 
 
+
+
+
 // ==========================
 // CONNECT DATABASE
 // ==========================
 
 
-async function startWardrobe(){
+window.addEventListener(
 
+"FashionAIReady",
 
-try{
-
-
-const user =
-window.FashionAI.user;
+(event)=>{
 
 
 
 database =
-await getDatabase(
-user.uid
-);
+
+event.detail.database;
 
 
 
 console.log(
-"✅ Wardrobe Connected"
+
+"✅ Wardrobe Database Connected"
+
 );
 
 
@@ -60,39 +61,7 @@ loadWardrobe();
 
 }
 
-
-catch(error){
-
-
-console.error(
-"Wardrobe Error:",
-error
 );
-
-
-}
-
-
-}
-
-
-
-
-
-window.addEventListener(
-
-"FashionAIReady",
-
-()=>{
-
-
-startWardrobe();
-
-
-}
-
-);
-
 
 
 
@@ -108,23 +77,33 @@ startWardrobe();
 
 
 const wardrobe =
+
 document.getElementById(
+
 "wardrobe"
+
 );
 
 
 
 const search =
+
 document.getElementById(
+
 "searchClothes"
+
 );
 
 
 
 const filter =
+
 document.getElementById(
+
 "categoryFilter"
+
 );
+
 
 
 
@@ -134,7 +113,7 @@ document.getElementById(
 
 
 // ==========================
-// SEARCH
+// EVENTS
 // ==========================
 
 
@@ -142,13 +121,7 @@ search?.addEventListener(
 
 "input",
 
-()=>{
-
-
-loadWardrobe();
-
-
-}
+loadWardrobe
 
 );
 
@@ -160,13 +133,7 @@ filter?.addEventListener(
 
 "change",
 
-()=>{
-
-
-loadWardrobe();
-
-
-}
+loadWardrobe
 
 );
 
@@ -179,7 +146,7 @@ loadWardrobe();
 
 
 // ==========================
-// LOAD CLOTHES
+// LOAD WARDROBE
 // ==========================
 
 
@@ -187,23 +154,45 @@ async function loadWardrobe(){
 
 
 
-if(!database)
+if(!database){
+
+console.log(
+
+"No wardrobe database"
+
+);
+
 return;
 
+}
 
+
+
+
+
+try{
 
 
 
 const clothes =
+
 await getClothes(
+
 database
+
 );
 
 
 
 
+
+
+
 let items =
+
 [...clothes];
+
+
 
 
 
@@ -213,36 +202,72 @@ let items =
 // SEARCH
 
 
-if(search.value){
-
-
 const word =
-search.value
-.toLowerCase();
 
+search?.value
+
+?.toLowerCase()
+
+.trim();
+
+
+
+
+
+
+
+if(word){
 
 
 
 items =
+
 items.filter(item=>
 
+
+
 (item.name || "")
+
 .toLowerCase()
+
 .includes(word)
 
 
+
 ||
+
+
 
 (item.color || "")
+
 .toLowerCase()
+
 .includes(word)
+
 
 
 ||
 
+
+
 (item.style || "")
+
 .toLowerCase()
+
 .includes(word)
+
+
+
+||
+
+
+
+(item.category || "")
+
+.toLowerCase()
+
+.includes(word)
+
 
 
 );
@@ -259,27 +284,34 @@ items.filter(item=>
 
 
 
-// CATEGORY FILTER
+// FILTER
 
 
 if(
+
+filter &&
 
 filter.value !== "All"
 
 ){
 
 
+
 items =
+
 items.filter(item=>
 
+
+
 item.category === filter.value
+
+
 
 );
 
 
 
 }
-
 
 
 
@@ -293,54 +325,22 @@ displayWardrobe(items);
 
 }
 
+catch(error){
 
 
 
+console.error(
+
+"Wardrobe loading error:",
+
+error
+
+);
 
 
 
+}
 
-
-// ==========================
-// DISPLAY
-// ==========================
-
-
-function displayWardrobe(items){
-
-
-
-wardrobe.innerHTML="";
-
-
-
-
-
-if(items.length===0){
-
-
-
-wardrobe.innerHTML=
-
-`
-
-<div>
-
-<h2>
-👕 No clothes found
-</h2>
-
-
-<p>
-Upload clothes to train FashionAI
-</p>
-
-
-</div>
-
-`;
-
-return;
 
 
 }
@@ -351,19 +351,87 @@ return;
 
 
 
+
+
+// ==========================
+// DISPLAY CLOTHES
+// ==========================
+
+
+function displayWardrobe(items){
+
+
+
+if(!wardrobe)
+
+return;
+
+
+
+
+
+
+
+wardrobe.innerHTML="";
+
+
+
+
+
+
+
+
+if(items.length===0){
+
+
+
+wardrobe.innerHTML =
+
+`
+
+<div class="empty-wardrobe">
+
+<h2>
+👕 No clothes found
+</h2>
+
+<p>
+Upload clothing to start FashionAI
+</p>
+
+</div>
+
+`;
+
+
+
+return;
+
+}
+
+
+
+
+
 items.forEach(item=>{
 
 
 
 const card =
+
 document.createElement(
+
 "div"
+
 );
 
 
 
-card.className =
+card.className=
+
 "wardrobe-card";
+
+
 
 
 
@@ -371,83 +439,66 @@ card.className =
 
 card.innerHTML =
 
-
 `
 
-<img 
+<img
 
-src="${item.image}"
+src="${item.image || ""}"
 
 class="wardrobe-image"
+
+onerror="this.style.display='none'"
 
 >
 
 
-
-
 <h3>
 
-${item.name}
+${item.name || item.type}
 
 </h3>
 
 
-
 <p>
-Category:
-${item.category}
-
+👕 Category:
+${item.category || "Unknown"}
 </p>
-
 
 
 <p>
 🎨 Color:
-${item.color}
-
+${item.color || "Unknown"}
 </p>
-
 
 
 <p>
 🧵 Material:
 ${item.material || "Unknown"}
-
 </p>
 
 
-
 <p>
-Texture:
+〰️ Texture:
 ${item.texture || "Unknown"}
-
 </p>
 
 
-
 <p>
-Style:
-${item.style}
-
+✨ Style:
+${item.style || "Unknown"}
 </p>
 
 
-
 <p>
-Laundry:
-${item.laundryStatus}
-
+🧺 Laundry:
+${item.laundryStatus || "Clean"}
 </p>
 
 
-
 <p>
-Times worn:
+👟 Times worn:
 ${item.timesWorn || 0}
-
 </p>
-
-
 
 
 <button class="clean">
@@ -464,15 +515,14 @@ ${item.timesWorn || 0}
 </button>
 
 
-
 <button class="delete">
 
 🗑 Delete
 
 </button>
 
-
 `;
+
 
 
 
@@ -493,9 +543,13 @@ wardrobe.appendChild(card);
 // CLEAN
 
 
-card
-.querySelector(".clean")
-.onclick=async()=>{
+card.querySelector(
+
+".clean"
+
+)
+
+.onclick = async()=>{
 
 
 await updateLaundryStatus(
@@ -521,12 +575,17 @@ loadWardrobe();
 
 
 
+
 // DIRTY
 
 
-card
-.querySelector(".dirty")
-.onclick=async()=>{
+card.querySelector(
+
+".dirty"
+
+)
+
+.onclick = async()=>{
 
 
 await updateLaundryStatus(
@@ -552,17 +611,26 @@ loadWardrobe();
 
 
 
+
+
 // DELETE
 
 
-card
-.querySelector(".delete")
-.onclick=async()=>{
+card.querySelector(
+
+".delete"
+
+)
+
+.onclick = async()=>{
 
 
 if(confirm(
+
 "Delete this clothing?"
+
 )){
+
 
 
 await deleteClothing(
@@ -581,7 +649,10 @@ loadWardrobe();
 }
 
 
+
 };
+
+
 
 
 
@@ -598,7 +669,8 @@ loadWardrobe();
 
 
 
-// AUTO UPDATE AFTER UPLOAD
+
+// AUTO REFRESH AFTER UPLOAD
 
 
 window.addEventListener(
