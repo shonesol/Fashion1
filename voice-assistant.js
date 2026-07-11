@@ -247,3 +247,14 @@ return "I need to learn your style first. Tell me your favourite colors and fash
 
 
 }
+await saveMemory(
+database,
+{
+id:"userStyle",
+
+style:"Elegant",
+
+favoriteColor:"Black"
+
+}
+);
