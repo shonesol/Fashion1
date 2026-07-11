@@ -13,6 +13,10 @@ startTrendUpdater
 }
 from "./trend-updater.js";
 
+import {
+learnFromWardrobe
+}
+from "./fashion-memory.js";
 
 import {
 startListening
@@ -360,3 +364,14 @@ ${result.favoriteColor}
 
 
 }
+window.addEventListener(
+"FashionAIReady",
+()=>{
+
+learnFromWardrobe(
+
+window.FashionAI.database
+
+);
+
+});
