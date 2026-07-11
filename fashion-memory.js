@@ -1,12 +1,13 @@
-// fashion-memory.js
+ // fashion-memory.js
 // FashionAI Personal Learning System
+
 
 
 import {
 
-getPreference,
+getMemory,
 
-savePreference,
+saveMemory,
 
 getClothes
 
@@ -19,8 +20,11 @@ from "./db.js";
 
 
 
+
+
+
 // ==========================
-// SAVE USER STYLE
+// SAVE USER STYLE MEMORY
 // ==========================
 
 
@@ -34,15 +38,17 @@ data
 
 
 
-await savePreference(
+await saveMemory(
 
 database,
 
-"userStyle",
-
 {
 
+id:"userStyle",
+
+
 ...data,
+
 
 updatedAt:Date.now()
 
@@ -53,7 +59,9 @@ updatedAt:Date.now()
 
 
 console.log(
+
 "🧠 FashionAI memory updated"
+
 );
 
 
@@ -81,7 +89,7 @@ database
 
 
 
-return await getPreference(
+return await getMemory(
 
 database,
 
@@ -126,10 +134,28 @@ database
 
 
 
+if(!clothes.length){
+
+
+return null;
+
+
+}
+
+
+
+
+
+
 
 let colors={};
 
 let styles={};
+
+let categories={};
+
+
+
 
 
 
@@ -140,15 +166,25 @@ clothes.forEach(item=>{
 
 
 
+
+
 if(item.color){
 
 
-colors[item.color]=
+const color =
 
-(colors[item.color] || 0)+1;
+item.color.toLowerCase();
+
+
+colors[color]=
+
+(colors[color] || 0)+1;
 
 
 }
+
+
+
 
 
 
@@ -166,7 +202,26 @@ styles[item.style]=
 
 
 
+
+
+
+
+
+if(item.category){
+
+
+categories[item.category]=
+
+(categories[item.category] || 0)+1;
+
+
+}
+
+
+
 });
+
+
 
 
 
@@ -176,32 +231,20 @@ styles[item.style]=
 
 const favoriteColor =
 
-Object.keys(colors)
-
-.sort(
-
-(a,b)=>
-
-colors[b]-colors[a]
-
-)[0];
-
-
-
+getMostUsed(colors);
 
 
 
 const favoriteStyle =
 
-Object.keys(styles)
+getMostUsed(styles);
 
-.sort(
 
-(a,b)=>
 
-styles[b]-styles[a]
+const favoriteCategory =
 
-)[0];
+getMostUsed(categories);
+
 
 
 
@@ -215,15 +258,24 @@ database,
 
 {
 
-favoriteColor:
 
-favoriteColor || "Unknown",
-
+favoriteColor,
 
 
 style:
 
-favoriteStyle || "Unknown"
+favoriteStyle,
+
+
+favoriteCategory,
+
+
+
+totalClothes:
+
+clothes.length
+
+
 
 }
 
@@ -235,13 +287,21 @@ favoriteStyle || "Unknown"
 
 
 
+
 return {
+
 
 favoriteColor,
 
-favoriteStyle
+
+favoriteStyle,
+
+
+favoriteCategory
+
 
 };
+
 
 
 }
@@ -281,6 +341,7 @@ database
 
 
 
+
 let history =
 
 memory?.outfits || [];
@@ -292,11 +353,15 @@ memory?.outfits || [];
 
 history.push({
 
-outfit:outfit,
+
+outfit,
+
 
 date:Date.now()
 
+
 });
+
 
 
 
@@ -309,13 +374,72 @@ database,
 
 {
 
+
 ...memory,
 
+
 outfits:history
+
 
 }
 
 );
+
+
+
+}
+
+
+
+
+
+
+
+
+
+// ==========================
+// FIND MOST USED
+// ==========================
+
+
+function getMostUsed(data){
+
+
+
+let result="Unknown";
+
+
+let highest=0;
+
+
+
+
+
+Object.entries(data)
+
+.forEach(([key,value])=>{
+
+
+if(value>highest){
+
+
+highest=value;
+
+
+result=key;
+
+
+}
+
+
+
+});
+
+
+
+
+
+return result;
 
 
 
