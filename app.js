@@ -26,7 +26,19 @@ from "./voice-assistant.js";
 startFashionAI();
 
 
+window.addEventListener(
+"FashionAIReady",
+()=>{
 
+
+startTrendUpdater(
+
+window.FashionAI.database
+
+);
+
+
+});
 
 // ==========================
 // DATABASE READY
