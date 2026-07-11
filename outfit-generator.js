@@ -9,7 +9,10 @@ getMemory
 from "./db.js";
 
 
-
+import {
+checkOutfitCompatibility
+}
+from "./color-matching-ai.js";
 
 
 // ==========================
