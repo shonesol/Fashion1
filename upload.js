@@ -36,7 +36,6 @@ from "./db.js";
 
 
 
-
 let database = null;
 
 
@@ -70,7 +69,7 @@ document.getElementById(
 
 
 // ==========================
-// LOGIN + DATABASE
+// CONNECT USER DATABASE
 // ==========================
 
 
@@ -81,32 +80,52 @@ auth,
 async(user)=>{
 
 
+
 if(!user){
 
-
 console.log(
-"No user logged in"
+"❌ No user logged in"
 );
 
-
 return;
-
 
 }
 
 
 
+try{
+
 
 database =
+
 await getDatabase(
+
 user.uid
+
 );
 
 
 
 console.log(
-"✅ Upload Database Connected"
+"✅ FashionAI Upload Database Connected"
 );
+
+
+
+}
+
+catch(error){
+
+
+
+console.error(
+"Database connection error:",
+error
+);
+
+
+
+}
 
 
 
@@ -132,7 +151,6 @@ uploadBtn?.addEventListener(
 async()=>{
 
 
-
 try{
 
 
@@ -141,7 +159,7 @@ if(!database){
 
 
 result.innerHTML =
-"Please login first";
+"❌ Login required";
 
 
 return;
@@ -153,8 +171,13 @@ return;
 
 
 
+
 const file =
+
 imageInput.files[0];
+
+
+
 
 
 
@@ -163,7 +186,7 @@ if(!file){
 
 
 result.innerHTML =
-"Select a clothing image";
+"❌ Select clothing image";
 
 
 return;
@@ -176,8 +199,11 @@ return;
 
 
 
+
 result.innerHTML =
-"🤖 AI is analyzing...";
+
+"🤖 FashionAI is analyzing clothing...";
+
 
 
 
@@ -185,7 +211,9 @@ result.innerHTML =
 
 
 const reader =
+
 new FileReader();
+
 
 
 
@@ -196,20 +224,27 @@ reader.onload = async()=>{
 
 
 
+try{
+
+
+
 const image =
+
 reader.result;
 
 
 
 
 
-// AI ANALYSIS
-
 
 const ai =
+
 await analyzeClothing(
+
 image
+
 );
+
 
 
 
@@ -220,71 +255,117 @@ image
 const clothing = {
 
 
+
 image:image,
 
 
+
 name:
+
+ai.type || "Unknown Clothing",
+
+
+
+type:
+
 ai.type || "Unknown",
 
 
 
+
 category:
+
 ai.category || "Other",
 
 
 
+
 color:
+
 ai.primaryColor || "Unknown",
 
 
 
+
 secondaryColor:
+
 ai.secondaryColor || "",
 
 
 
+
 material:
+
 ai.material || "Unknown",
 
 
 
+
 texture:
+
 ai.texture || "Unknown",
 
 
 
+
 pattern:
+
 ai.pattern || "Plain",
 
 
 
+
 style:
+
 ai.style || "Casual",
 
 
 
+
 occasion:
+
 ai.occasion || "Casual",
 
 
 
+
 season:
+
 ai.season || "All",
 
 
 
 
 laundryStatus:
+
 "Clean",
 
 
 
+
 timesWorn:
+
 0,
 
 
 
+
+favorite:
+
+false,
+
+
+
+
+lastWashed:
+
+new Date().toISOString(),
+
+
+
+
 createdAt:
+
 Date.now()
 
 
@@ -316,7 +397,6 @@ clothing
 
 result.innerHTML =
 
-
 `
 
 <h3>
@@ -325,25 +405,27 @@ result.innerHTML =
 
 
 <p>
-${clothing.name}
+👕 ${clothing.name}
 </p>
 
 
 <p>
-Color:
-${clothing.color}
+🎨 Color: ${clothing.color}
 </p>
 
 
 <p>
-Material:
-${clothing.material}
+🧵 Material: ${clothing.material}
 </p>
 
 
 <p>
-Style:
-${clothing.style}
+✨ Style: ${clothing.style}
+</p>
+
+
+<p>
+🧺 Status: Clean
 </p>
 
 `;
@@ -354,20 +436,75 @@ ${clothing.style}
 
 
 
-// Refresh wardrobe
+
+imageInput.value = "";
+
+
+
+
+
+
 
 
 window.dispatchEvent(
 
 new Event(
+
 "clothingAdded"
+
 )
 
 );
 
 
 
+}
+
+catch(error){
+
+
+
+console.error(
+
+"AI upload error:",
+
+error
+
+);
+
+
+
+result.innerHTML =
+
+"❌ AI analysis failed";
+
+
+
+}
+
+
+
 };
+
+
+
+
+
+
+
+reader.onerror = ()=>{
+
+
+result.innerHTML =
+
+"❌ Image reading failed";
+
+
+};
+
+
+
+
 
 
 
@@ -382,13 +519,20 @@ reader.readAsDataURL(file);
 catch(error){
 
 
+
 console.error(
+
+"Upload error:",
 error
+
 );
 
 
+
 result.innerHTML =
+
 "❌ Upload failed";
+
 
 
 }
