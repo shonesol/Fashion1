@@ -2,21 +2,35 @@
 // FashionAI Gemini Connection
 
 
+
 const GEMINI_KEY =
+
 "YOUR_GEMINI_API_KEY";
 
 
 
 const MODEL =
+
 "gemini-1.5-flash";
 
 
 
 
 
+
+
+
+// ==========================
+// GEMINI AI REQUEST
+// ==========================
+
+
 export async function askGemini(
+
 prompt,
+
 image=null
+
 ){
 
 
@@ -24,22 +38,60 @@ image=null
 try{
 
 
-let parts=[
+
+let parts = [
+
 {
+
 text:prompt
+
 }
+
 ];
 
 
 
 
-// Add image if available
+
+
+
+// IMAGE SUPPORT
+
 
 if(image){
 
 
-const base64 =
-image.split(",")[1];
+
+let base64 =
+
+image.includes(",")
+
+?
+
+image.split(",")[1]
+
+:
+
+image;
+
+
+
+
+
+let mimeType =
+
+image.startsWith("data:image/png")
+
+?
+
+"image/png"
+
+:
+
+"image/jpeg";
+
+
+
 
 
 
@@ -47,7 +99,7 @@ parts.push({
 
 inlineData:{
 
-mimeType:"image/jpeg",
+mimeType:mimeType,
 
 data:base64
 
@@ -56,12 +108,19 @@ data:base64
 });
 
 
+
 }
 
 
 
 
+
+
+
+
+
 const response =
+
 await fetch(
 
 `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${GEMINI_KEY}`,
@@ -72,17 +131,22 @@ await fetch(
 method:"POST",
 
 
+
 headers:{
 
 
 "Content-Type":
+
 "application/json"
 
 
 },
 
 
+
+
 body:JSON.stringify({
+
 
 contents:[
 
@@ -93,6 +157,7 @@ parts:parts
 }
 
 ]
+
 
 })
 
@@ -105,52 +170,88 @@ parts:parts
 
 
 
+
+
+
 const data =
+
 await response.json();
 
 
 
 
 
-return (
+
+
+if(data.error){
+
+
+console.error(
+
+"Gemini API Error:",
+
+data.error
+
+);
+
+
+
+return "AI error";
+
+
+
+}
+
+
+
+
+
+
+
+
+
+const answer =
 
 data
 .candidates?.[0]
 ?.content
 ?.parts?.[0]
-?.text
+?.text;
 
-||
-"AI could not respond"
 
-);
+
+
+
+
+
+return answer ||
+
+"AI could not respond";
+
+
 
 
 
 }
+
+
 
 catch(error){
 
 
+
 console.error(
-"Gemini Error:",
+
+"Gemini Connection Error:",
+
 error
+
 );
 
 
-return null;
 
+return "AI connection failed";
 
-}
-
-
-
-}
-error
-);
-
-
-return null;
 
 
 }
