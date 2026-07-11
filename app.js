@@ -283,7 +283,13 @@ window.FashionAI.database,
 );
 
 
+await saveOutfitHistory(
 
+window.FashionAI.database,
+
+outfit
+
+);
 
 
 
