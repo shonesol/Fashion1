@@ -18,7 +18,13 @@ getDatabase
 }
 from "./database-manager.js";
 
+import {
 
+showAILoading
+
+}
+
+from "./ai-loader.js";
 
 import {
 analyzeClothing
@@ -200,11 +206,13 @@ return;
 
 
 
-result.innerHTML =
+showAILoading(
 
-"🤖 FashionAI is analyzing clothing...";
+result,
 
+"Analyzing your clothing..."
 
+);
 
 
 
