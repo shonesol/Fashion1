@@ -6,7 +6,13 @@ import {
 startFashionAI
 }
 from "./auth-manager.js";
+import {
 
+saveOutfitHistory
+
+}
+
+from "./outfit-history.js";
 
 import {
 startTrendUpdater
