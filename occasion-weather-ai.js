@@ -11,42 +11,59 @@ from "./db.js";
 
 
 
+
 // ==========================
-// GET WEATHER ADVICE
+// GET SMART OUTFIT ADVICE
 // ==========================
 
 
 export async function getOutfitAdvice(
+
 database,
+
 weather,
+
 occasion
+
 ){
 
 
 
 const clothes =
+
 await getClothes(
+
 database
+
 );
 
 
 
 const memory =
+
 await getMemory(
+
 database,
+
 "userStyle"
+
 );
+
+
 
 
 
 
 
 const available =
-clothes.filter(item=>
+
+clothes.filter(item =>
 
 item.laundryStatus==="Clean"
 
 );
+
+
 
 
 
@@ -58,7 +75,8 @@ if(available.length===0){
 return {
 
 message:
-"No clean clothes available."
+
+"🧺 No clean clothes available. Please wash some clothes first."
 
 };
 
@@ -71,20 +89,33 @@ message:
 
 
 
-// WEATHER LOGIC
+
+let scored = [];
 
 
-let recommended = [];
 
 
 
+
+
+
+available.forEach(item=>{
+
+
+let score = 0;
+
+
+
+
+
+
+// WEATHER MATCH
 
 
 if(weather==="cold"){
 
 
-recommended =
-available.filter(item=>
+if(
 
 item.category==="Jacket" ||
 
@@ -92,18 +123,27 @@ item.category==="Hoodie" ||
 
 item.category==="Sweater"
 
-);
+){
+
+
+score +=40;
+
+
+}
 
 
 }
 
 
 
-else if(weather==="hot"){
 
 
-recommended =
-available.filter(item=>
+
+
+if(weather==="hot"){
+
+
+if(
 
 item.category==="T-Shirt" ||
 
@@ -111,18 +151,13 @@ item.category==="Dress" ||
 
 item.category==="Shorts"
 
-);
+){
+
+
+score +=40;
 
 
 }
-
-
-
-else{
-
-
-recommended =
-available;
 
 
 }
@@ -134,23 +169,34 @@ available;
 
 
 
-// OCCASION FILTER
+
+// OCCASION MATCH
 
 
 if(occasion==="work"){
 
 
-recommended =
-recommended.filter(item=>
+
+if(
 
 item.style==="Formal" ||
 
 item.style==="Elegant"
 
-);
+){
+
+
+score +=35;
 
 
 }
+
+
+
+}
+
+
+
 
 
 
@@ -159,18 +205,147 @@ item.style==="Elegant"
 if(occasion==="party"){
 
 
-recommended =
-recommended.filter(item=>
+
+if(
 
 item.style==="Elegant" ||
 
 item.style==="Fashion"
 
-);
+){
+
+
+score +=35;
 
 
 }
 
+
+
+}
+
+
+
+
+
+
+
+
+
+if(occasion==="travel"){
+
+
+
+if(
+
+item.category==="Jacket" ||
+
+item.category==="Shoes"
+
+){
+
+
+score +=25;
+
+
+}
+
+
+
+}
+
+
+
+
+
+
+
+
+
+// USER STYLE MEMORY
+
+
+if(
+
+memory?.style &&
+
+item.style===memory.style
+
+){
+
+
+score +=30;
+
+
+}
+
+
+
+
+
+
+
+
+
+// FAVORITE COLOR
+
+
+if(
+
+memory?.favoriteColor &&
+
+item.color
+
+?.toLowerCase()
+
+.includes(
+
+memory.favoriteColor.toLowerCase()
+
+)
+
+){
+
+
+score +=20;
+
+
+}
+
+
+
+
+
+
+
+scored.push({
+
+item,
+
+score
+
+
+});
+
+
+
+});
+
+
+
+
+
+
+
+
+
+scored.sort(
+
+(a,b)=>
+
+b.score-a.score
+
+);
 
 
 
@@ -180,9 +355,8 @@ item.style==="Fashion"
 
 const outfit =
 
-recommended[0]
-||
-available[0];
+scored[0]?.item || available[0];
+
 
 
 
@@ -195,15 +369,52 @@ return {
 item:outfit,
 
 
+
+score:
+
+scored[0]?.score || 0,
+
+
+
 message:
 
 `
 
-For a ${occasion} event with ${weather} weather,
+✨ FashionAI Smart Outfit
 
-I recommend your ${outfit.color} ${outfit.name}.
 
-This matches your ${memory?.style || "personal"} style.
+
+Weather:
+
+${weather}
+
+
+
+Occasion:
+
+${occasion}
+
+
+
+I recommend:
+
+👕 ${outfit.name}
+
+
+
+🎨 Color:
+
+${outfit.color}
+
+
+
+Style:
+
+${outfit.style}
+
+
+
+This outfit matches your wardrobe and your personal fashion taste.
 
 `
 
