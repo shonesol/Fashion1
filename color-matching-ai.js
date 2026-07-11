@@ -1,10 +1,10 @@
 // color-matching-ai.js
-// FashionAI Color Compatibility System
+// FashionAI Advanced Color & Outfit Intelligence
 
 
 
 // ==========================
-// COLOR RULES
+// COLOR COMPATIBILITY DATABASE
 // ==========================
 
 
@@ -17,7 +17,9 @@ black:[
 "red",
 "blue",
 "gold",
-"pink"
+"pink",
+"beige",
+"purple"
 ],
 
 
@@ -27,7 +29,9 @@ white:[
 "blue",
 "brown",
 "green",
-"grey"
+"grey",
+"gold",
+"purple"
 ],
 
 
@@ -36,7 +40,9 @@ blue:[
 "white",
 "black",
 "grey",
-"brown"
+"brown",
+"beige",
+"gold"
 ],
 
 
@@ -44,7 +50,8 @@ blue:[
 red:[
 "black",
 "white",
-"blue"
+"blue",
+"gold"
 ],
 
 
@@ -52,7 +59,8 @@ red:[
 green:[
 "white",
 "brown",
-"black"
+"black",
+"beige"
 ],
 
 
@@ -61,7 +69,8 @@ brown:[
 "white",
 "black",
 "beige",
-"green"
+"green",
+"gold"
 ],
 
 
@@ -69,8 +78,46 @@ brown:[
 pink:[
 "white",
 "black",
-"grey"
+"grey",
+"purple"
+],
+
+
+
+purple:[
+"gold",
+"white",
+"black",
+"pink"
+],
+
+
+
+orange:[
+"blue",
+"white",
+"black",
+"gold"
+],
+
+
+
+gold:[
+"black",
+"white",
+"purple",
+"blue"
+],
+
+
+
+beige:[
+"brown",
+"black",
+"white",
+"gold"
 ]
+
 
 };
 
@@ -83,13 +130,16 @@ pink:[
 
 
 // ==========================
-// CHECK COLOR MATCH
+// COLOR MATCH FUNCTION
 // ==========================
 
 
 export function colorMatch(
+
 color1,
+
 color2
+
 ){
 
 
@@ -102,23 +152,28 @@ return false;
 
 
 
-color1 =
-color1.toLowerCase();
+color1 = color1
+.toLowerCase()
+.trim();
 
 
 
-color2 =
-color2.toLowerCase();
+color2 = color2
+.toLowerCase()
+.trim();
 
 
 
 
+
+// Same color
 
 if(color1===color2){
 
 return true;
 
 }
+
 
 
 
@@ -149,14 +204,18 @@ colorRules[color2]
 
 
 // ==========================
-// OUTFIT COMPATIBILITY
+// FULL OUTFIT ANALYSIS
 // ==========================
 
 
 export function checkOutfitCompatibility(
+
 top,
+
 bottom,
+
 shoe
+
 ){
 
 
@@ -170,23 +229,75 @@ let reasons=[];
 
 
 
-// COLORS
+if(!top || !bottom || !shoe){
+
+
+return {
+
+
+score:0,
+
+
+reasons:[
+
+"Not enough clothing items"
+
+],
+
+
+good:false
+
+
+};
+
+
+}
+
+
+
+
+
+
+
+
+
+// ==========================
+// TOP + BOTTOM COLORS
+// ==========================
 
 
 if(
+
 colorMatch(
+
 top.color,
+
 bottom.color
+
 )
 
 ){
 
 
-score += 40;
+score +=40;
 
 
 reasons.push(
-"Top and bottom colors match"
+
+"Top and bottom colors create harmony"
+
+);
+
+
+}
+
+else{
+
+
+reasons.push(
+
+"Colors may need adjustment"
+
 );
 
 
@@ -197,20 +308,34 @@ reasons.push(
 
 
 
+
+
+
+// ==========================
+// SHOES MATCH
+// ==========================
+
+
 if(
+
 colorMatch(
+
 bottom.color,
+
 shoe.color
+
 )
 
 ){
 
 
-score += 30;
+score +=30;
 
 
 reasons.push(
-"Shoes match the outfit"
+
+"Shoes complete the outfit"
+
 );
 
 
@@ -223,19 +348,35 @@ reasons.push(
 
 
 
-// STYLE
+
+// ==========================
+// STYLE MATCH
+// ==========================
 
 
 if(
-top.style === bottom.style
+
+top.style &&
+
+bottom.style &&
+
+top.style.toLowerCase()
+
+===
+
+bottom.style.toLowerCase()
+
 ){
 
 
-score +=20;
+
+score +=15;
 
 
 reasons.push(
-"Styles are compatible"
+
+"Fashion style is consistent"
+
 );
 
 
@@ -248,25 +389,92 @@ reasons.push(
 
 
 
-// MATERIAL
+
+// ==========================
+// MATERIAL MATCH
+// ==========================
 
 
 if(
+
 top.material &&
+
 bottom.material &&
-top.material===bottom.material
+
+top.material
+
+===
+
+bottom.material
+
 ){
 
 
-score+=10;
+
+score +=10;
 
 
 reasons.push(
-"Materials work together"
+
+"Materials work well together"
+
 );
 
 
 }
+
+
+
+
+
+
+
+
+
+// ==========================
+// PATTERN BONUS
+// ==========================
+
+
+if(
+
+top.pattern === "Plain"
+
+||
+
+bottom.pattern === "Plain"
+
+){
+
+
+score +=5;
+
+
+reasons.push(
+
+"Simple patterns create balance"
+
+);
+
+
+}
+
+
+
+
+
+
+
+
+
+// Maximum score
+
+if(score>100){
+
+score=100;
+
+}
+
 
 
 
@@ -283,6 +491,7 @@ reasons:reasons,
 
 
 good:
+
 score>=60
 
 
