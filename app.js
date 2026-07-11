@@ -324,7 +324,6 @@ window.FashionAI.database
 
 
 
-
 document.getElementById(
 "wardrobeAdvice"
 ).innerHTML =
