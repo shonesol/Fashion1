@@ -4,7 +4,7 @@
 
 import {
 getClothes,
-getMemory
+getPreference
 }
 from "./db.js";
 
@@ -15,41 +15,60 @@ checkOutfitCompatibility
 from "./color-matching-ai.js";
 
 
+
+
 // ==========================
 // GENERATE OUTFIT
 // ==========================
 
 
 export async function generateOutfit(
+
 database,
+
 occasion="Casual"
+
 ){
 
 
 
 const clothes =
+
 await getClothes(
+
 database
+
 );
+
+
 
 
 
 const memory =
-await getMemory(
+
+await getPreference(
+
 database,
+
 "userStyle"
+
 );
 
 
 
 
 
-// Only available clothes
+
+
+
+// Only clean clothes
+
 
 const cleanClothes =
+
 clothes.filter(item=>
 
-item.laundryStatus==="Clean"
+item.laundryStatus === "Clean"
 
 );
 
@@ -57,13 +76,18 @@ item.laundryStatus==="Clean"
 
 
 
-if(cleanClothes.length===0){
+
+
+if(cleanClothes.length === 0){
 
 
 return {
 
+
 message:
-"No clean clothes available."
+
+"🧺 You don't have clean clothes available. Please wash some clothes first."
+
 
 };
 
@@ -75,40 +99,47 @@ message:
 
 
 
+
+
+
 // Categories
 
 
 const tops =
+
 cleanClothes.filter(item=>
 
-item.category==="Top"
+item.category === "Top"
 
 );
 
 
 
 const bottoms =
+
 cleanClothes.filter(item=>
 
-item.category==="Bottom"
+item.category === "Bottom"
 
 );
 
 
 
 const shoes =
+
 cleanClothes.filter(item=>
 
-item.category==="Shoes"
+item.category === "Shoes"
 
 );
 
 
 
 const accessories =
+
 cleanClothes.filter(item=>
 
-item.category==="Accessories"
+item.category === "Accessories"
 
 );
 
@@ -119,41 +150,97 @@ item.category==="Accessories"
 
 
 
-
-// Select best matches
+// Choose items
 
 
 const top =
-chooseByStyle(
+
+chooseBest(
+
 tops,
+
 memory
+
 );
 
 
 
 const bottom =
-chooseByStyle(
+
+chooseBest(
+
 bottoms,
+
 memory
+
 );
 
 
 
 const shoe =
-chooseByStyle(
+
+chooseBest(
+
 shoes,
+
 memory
+
 );
-
-
 
 
 
 const accessory =
-chooseByStyle(
+
+chooseBest(
+
 accessories,
+
 memory
+
 );
+
+
+
+
+
+
+
+
+
+// Check compatibility
+
+
+let compatibility = {
+
+score:0,
+
+reasons:[]
+
+};
+
+
+
+
+
+if(top && bottom && shoe){
+
+
+compatibility =
+
+checkOutfitCompatibility(
+
+top,
+
+bottom,
+
+shoe
+
+);
+
+
+}
+
+
 
 
 
@@ -166,9 +253,13 @@ return {
 occasion:occasion,
 
 
+
 style:
+
 memory?.style ||
-"Personal style",
+
+"Personal Style",
+
 
 
 top:top,
@@ -183,14 +274,29 @@ shoe:shoe,
 accessory:accessory,
 
 
+
+compatibility:compatibility,
+
+
+
 message:
 
 createAdvice(
+
 top,
+
 bottom,
+
 shoe,
-occasion
+
+accessory,
+
+occasion,
+
+compatibility
+
 )
+
 
 
 };
@@ -208,18 +314,21 @@ occasion
 
 
 // ==========================
-// STYLE MATCHING
+// SELECT BEST CLOTHING
 // ==========================
 
 
-function chooseByStyle(
+function chooseBest(
+
 items,
+
 memory
+
 ){
 
 
 
-if(items.length===0){
+if(!items || items.length===0){
 
 return null;
 
@@ -229,15 +338,23 @@ return null;
 
 
 
+
+
+// Match favorite color
+
+
 if(memory?.favoriteColor){
 
 
 
-const match =
+const preferred =
+
 items.find(item=>
 
+item.color &&
+
 item.color
-?.toLowerCase()
+.toLowerCase()
 .includes(
 
 memory.favoriteColor
@@ -249,16 +366,56 @@ memory.favoriteColor
 
 
 
-if(match){
+if(preferred){
 
-return match;
-
-}
-
+return preferred;
 
 }
 
 
+}
+
+
+
+
+
+
+
+// Match preferred style
+
+
+if(memory?.style){
+
+
+
+const styleMatch =
+
+items.find(item=>
+
+item.style === memory.style
+
+);
+
+
+
+if(styleMatch){
+
+return styleMatch;
+
+}
+
+
+
+}
+
+
+
+
+
+
+
+
+// Random choice
 
 
 return items[
@@ -272,6 +429,7 @@ Math.random()*items.length
 ];
 
 
+
 }
 
 
@@ -283,36 +441,79 @@ Math.random()*items.length
 
 
 // ==========================
-// AI STYLE MESSAGE
+// AI MESSAGE
 // ==========================
 
 
 function createAdvice(
+
 top,
+
 bottom,
+
 shoe,
-occasion
+
+accessory,
+
+occasion,
+
+compatibility
+
 ){
 
 
 
 return `
 
-For your ${occasion} occasion,
 
-I recommend:
+✨ FashionAI Outfit Recommendation
 
-${top?.name || "a top"}
 
-with
 
-${bottom?.name || "matching trousers"}
+Occasion:
 
-and
+${occasion}
 
-${shoe?.name || "suitable shoes"}.
 
-This combination matches your wardrobe.
+
+👕 Top:
+
+${top?.name || "No top available"}
+
+
+
+👖 Bottom:
+
+${bottom?.name || "No trousers/skirt available"}
+
+
+
+👟 Shoes:
+
+${shoe?.name || "No shoes available"}
+
+
+
+👜 Accessory:
+
+${accessory?.name || "No accessory needed"}
+
+
+
+
+AI Match Score:
+
+${compatibility.score}%
+
+
+
+Why:
+
+${compatibility.reasons.length
+
+? compatibility.reasons.join(", ")
+
+: "Basic wardrobe match"}
 
 `;
 
