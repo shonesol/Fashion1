@@ -1,9 +1,20 @@
 // database-manager.js
-// FashionAI Local Storage System
+// FashionAI Permanent User Storage (IndexedDB)
 
 
-const DATABASE_VERSION = 1;
+let database = null;
 
+
+
+const DATABASE_VERSION = 7;
+
+
+
+
+
+// ==========================
+// CREATE / OPEN USER DATABASE
+// ==========================
 
 
 export function getDatabase(userId){
@@ -12,32 +23,41 @@ export function getDatabase(userId){
 return new Promise((resolve,reject)=>{
 
 
+
 if(!userId){
 
+
 reject(
-new Error("Missing user ID")
+"Missing User ID"
 );
 
+
 return;
+
 
 }
 
 
 
-const databaseName =
-"FashionAI_" + userId;
-
 
 
 const request =
+
 indexedDB.open(
-databaseName,
+
+"FashionAI_" + userId,
+
 DATABASE_VERSION
+
 );
 
 
 
-request.onupgradeneeded=(event)=>{
+
+
+
+
+request.onupgradeneeded = (event)=>{
 
 
 const db =
@@ -45,19 +65,35 @@ event.target.result;
 
 
 
-// CLOTHING
 
-if(!db.objectStoreNames.contains("wardrobe")){
+
+// WARDROBE
+
+
+if(
+!db.objectStoreNames.contains(
+"wardrobe"
+)
+){
+
 
 
 const wardrobe =
+
 db.createObjectStore(
+
 "wardrobe",
+
 {
+
 keyPath:"id",
+
 autoIncrement:true
+
 }
+
 );
+
 
 
 
@@ -76,6 +112,13 @@ wardrobe.createIndex(
 
 
 wardrobe.createIndex(
+"style",
+"style"
+);
+
+
+
+wardrobe.createIndex(
 "laundryStatus",
 "laundryStatus"
 );
@@ -86,17 +129,33 @@ wardrobe.createIndex(
 
 
 
+
+
+
+
+
 // HISTORY
 
-if(!db.objectStoreNames.contains("history")){
+
+if(
+!db.objectStoreNames.contains(
+"history"
+)
+){
 
 
 db.createObjectStore(
+
 "history",
+
 {
+
 keyPath:"id",
+
 autoIncrement:true
+
 }
+
 );
 
 
@@ -104,55 +163,71 @@ autoIncrement:true
 
 
 
-// OUTFITS
 
-if(!db.objectStoreNames.contains("outfits")){
+
+
+
+
+// OUTFIT PLANS
+
+
+if(
+!db.objectStoreNames.contains(
+"plans"
+)
+){
 
 
 db.createObjectStore(
-"outfits",
+
+"plans",
+
 {
+
 keyPath:"id",
+
 autoIncrement:true
+
 }
+
 );
 
 
 }
+
+
+
+
+
 
 
 
 // AI MEMORY
 
-if(!db.objectStoreNames.contains("memory")){
+
+if(
+!db.objectStoreNames.contains(
+"preferences"
+)
+){
 
 
 db.createObjectStore(
-"memory",
+
+"preferences",
+
 {
+
 keyPath:"id"
+
 }
+
 );
 
 
 }
 
 
-
-// TREND DATA
-
-if(!db.objectStoreNames.contains("trends")){
-
-
-db.createObjectStore(
-"trends",
-{
-keyPath:"id"
-}
-);
-
-
-}
 
 
 
@@ -160,21 +235,40 @@ keyPath:"id"
 
 
 
-request.onsuccess=()=>{
+
+
+
+
+
+
+request.onsuccess=(event)=>{
+
+
+database =
+event.target.result;
+
 
 
 console.log(
-"FashionAI Storage Ready:",
-databaseName
+
+"✅ User FashionAI Storage Ready:",
+
+database.name
+
 );
 
 
-resolve(
-request.result
-);
+
+resolve(database);
+
 
 
 };
+
+
+
+
+
 
 
 
@@ -191,6 +285,39 @@ request.error
 
 
 });
+
+}
+
+
+
+
+
+
+
+
+// ==========================
+// CLOSE DATABASE
+// ==========================
+
+
+export function closeDatabase(){
+
+
+
+if(database){
+
+
+
+database.close();
+
+
+
+database=null;
+
+
+
+}
+
 
 
 }
