@@ -3,20 +3,36 @@
 
 
 import {
-getPreference,
-savePreference
+
+getMemory,
+
+saveMemory
+
 }
+
 from "./db.js";
 
 
+
 import {
-generateOutfit
+
+fashionBrain
+
 }
-from "./outfit-generator.js";
+
+from "./fashion-brain.js";
+
+
+
+
 
 
 
 let database = null;
+
+
+
+
 
 
 
@@ -35,12 +51,15 @@ window.addEventListener(
 
 
 database =
+
 event.detail.database;
 
 
 
 console.log(
+
 "🎙️ Voice database connected"
+
 );
 
 
@@ -48,6 +67,7 @@ console.log(
 }
 
 );
+
 
 
 
@@ -75,12 +95,18 @@ window.webkitSpeechRecognition;
 
 
 
+
+
 if(!SpeechRecognition){
 
 
+
 speak(
+
 "Voice recognition is not supported on this device."
+
 );
+
 
 
 return;
@@ -101,8 +127,8 @@ new SpeechRecognition();
 
 
 
-recognition.lang =
-"en-US";
+
+recognition.lang="en-US";
 
 
 
@@ -117,7 +143,10 @@ recognition.interimResults=false;
 
 
 
+
 recognition.start();
+
+
 
 
 
@@ -136,18 +165,69 @@ event.results[0][0].transcript;
 
 
 
+
+
+const userText =
+
 document.getElementById(
+
 "userText"
-).innerHTML = message;
+
+);
 
 
 
+if(userText){
+
+
+userText.innerHTML = message;
+
+
+}
+
+
+
+
+
+
+
+
+if(!database){
+
+
+
+speak(
+
+"Please wait, FashionAI is connecting your wardrobe."
+
+);
+
+
+
+return;
+
+
+}
+
+
+
+
+
+
+
+
+
+// AI THINKING
 
 
 const answer =
 
 await fashionBrain(
+
+database,
+
 message
+
 );
 
 
@@ -155,9 +235,45 @@ message
 
 
 
+
+
+
+const voiceAnswer =
+
 document.getElementById(
+
 "voiceAnswer"
-).innerHTML = answer;
+
+);
+
+
+
+if(voiceAnswer){
+
+
+voiceAnswer.innerHTML = answer;
+
+
+}
+
+
+
+
+
+
+
+
+// SAVE CHAT MEMORY
+
+
+await saveConversation(
+
+message,
+
+answer
+
+);
+
 
 
 
@@ -172,154 +288,23 @@ speak(answer);
 
 
 
-}
 
 
 
+recognition.onerror=(error)=>{
 
 
+console.log(
 
+"Voice Error:",
 
-
-
-// ==========================
-// FASHION AI THINKING
-// ==========================
-
-
-async function fashionBrain(message){
-
-
-
-message =
-message.toLowerCase();
-
-
-
-
-
-
-if(
-message.includes("hello")
-||
-message.includes("hi")
-){
-
-
-return (
-
-"Hello. I am FashionAI, your personal fashion assistant. How can I help you?"
-
-);
-
-
-}
-
-
-
-
-
-
-
-
-if(
-message.includes("wear")
-||
-message.includes("outfit")
-){
-
-
-
-const outfit =
-
-await generateOutfit(
-
-database,
-
-"Casual"
+error
 
 );
 
 
 
-return outfit.message;
-
-
-
-}
-
-
-
-
-
-
-
-
-if(
-message.includes("color")
-){
-
-
-return (
-
-"I can help you match colors. Tell me the clothes you want to combine."
-
-);
-
-
-}
-
-
-
-
-
-
-
-
-if(
-message.includes("style")
-){
-
-
-
-const memory =
-
-await getPreference(
-
-database,
-
-"userStyle"
-
-);
-
-
-
-
-return (
-
-"Your saved style is "
-
-+
-(memory?.style || "not learned yet")
-
-);
-
-
-
-}
-
-
-
-
-
-
-
-
-return (
-
-"I am learning your fashion preferences. Ask me about outfits, colors, clothes or style."
-
-);
+};
 
 
 
@@ -334,7 +319,7 @@ return (
 
 
 // ==========================
-// VOICE RESPONSE
+// VOICE OUTPUT
 // ==========================
 
 
@@ -345,21 +330,33 @@ export function speak(message){
 const speech =
 
 new SpeechSynthesisUtterance(
+
 message
+
 );
 
 
 
-speech.rate = 1;
+
+
+speech.rate=1;
 
 
 
-speech.pitch = 1;
+speech.pitch=1;
+
+
+
+speech.volume=1;
+
+
 
 
 
 window.speechSynthesis.speak(
+
 speech
+
 );
 
 
@@ -375,8 +372,108 @@ speech
 
 
 // ==========================
-// SAVE USER STYLE MEMORY
-// CALL THIS AFTER LOGIN
+// SAVE CONVERSATION MEMORY
+// ==========================
+
+
+async function saveConversation(
+
+question,
+
+answer
+
+){
+
+
+
+if(!database)
+
+return;
+
+
+
+
+
+
+
+const oldMemory =
+
+await getMemory(
+
+database,
+
+"conversation"
+
+);
+
+
+
+
+
+
+
+let history =
+
+oldMemory?.history || [];
+
+
+
+
+
+
+
+history.push({
+
+
+question:question,
+
+
+answer:answer,
+
+
+date:Date.now()
+
+
+});
+
+
+
+
+
+
+
+
+await saveMemory(
+
+database,
+
+{
+
+
+id:"conversation",
+
+
+history:history
+
+
+}
+
+);
+
+
+
+}
+
+
+
+
+
+
+
+
+
+// ==========================
+// SAVE USER STYLE
 // ==========================
 
 
@@ -386,8 +483,11 @@ export async function saveUserStyle(){
 
 if(!database){
 
+
 console.log(
+
 "No database yet"
+
 );
 
 
@@ -400,17 +500,23 @@ return;
 
 
 
-await savePreference(
+
+
+await saveMemory(
 
 database,
 
-"userStyle",
-
 {
+
+
+id:"userStyle",
+
 
 style:"Elegant",
 
+
 favoriteColor:"Black"
+
 
 }
 
@@ -418,8 +524,14 @@ favoriteColor:"Black"
 
 
 
+
+
+
+
 console.log(
+
 "🧠 Fashion memory saved"
+
 );
 
 
