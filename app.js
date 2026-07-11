@@ -193,3 +193,57 @@ ${outfit.message}
 
 
 });
+document
+.getElementById("smartOutfitBtn")
+?.addEventListener(
+"click",
+async()=>{
+
+
+const weather =
+document.getElementById(
+"weather"
+).value;
+
+
+
+const occasion =
+document.getElementById(
+"occasion"
+).value;
+
+
+
+const result =
+await getOutfitAdvice(
+
+window.FashionAI.database,
+
+weather,
+
+occasion
+
+);
+
+
+
+
+document.getElementById(
+"smartOutfitResult"
+).innerHTML =
+
+`
+
+<h3>
+🌟 FashionAI Suggestion
+</h3>
+
+<p>
+${result.message}
+</p>
+
+`;
+
+
+
+});
