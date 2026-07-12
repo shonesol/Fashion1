@@ -23,15 +23,16 @@ try{
 
 const prompt = `
 
-You are FashionAI, a professional fashion recognition AI.
+You are FashionAI, an expert fashion recognition AI.
 
-Analyze this clothing image.
+Analyze the clothing image.
 
-Return ONLY JSON.
-Do not add explanations.
-Do not use markdown.
+Return ONLY valid JSON.
 
-Use this exact format:
+No markdown.
+No explanation.
+
+Format:
 
 {
 "type":"",
@@ -47,7 +48,7 @@ Use this exact format:
 }
 
 
-Categories allowed:
+Category must be one of:
 
 Top
 Bottom
@@ -58,15 +59,15 @@ Accessories
 Other
 
 
-Be accurate.
-
 `;
 
 
 
 
 
-const result = await askGemini(
+
+
+const response = await askGemini(
 
 prompt,
 
@@ -78,9 +79,10 @@ image
 
 
 
+
 console.log(
-"Gemini Vision Response:",
-result
+"Gemini Raw Response:",
+response
 );
 
 
@@ -88,9 +90,45 @@ result
 
 
 
-// Extract JSON safely
+if(!response){
 
-const jsonMatch = result.match(
+throw new Error(
+"Gemini returned empty response"
+);
+
+}
+
+
+
+
+
+
+// Remove markdown if Gemini adds it
+
+
+const clean = response
+
+.replaceAll(
+"```json",
+""
+)
+
+.replaceAll(
+"```",
+""
+)
+
+.trim();
+
+
+
+
+
+
+
+
+const match =
+clean.match(
 /\{[\s\S]*\}/
 );
 
@@ -98,11 +136,11 @@ const jsonMatch = result.match(
 
 
 
-if(!jsonMatch){
+if(!match){
 
 
 throw new Error(
-"No JSON found"
+"AI did not return JSON"
 );
 
 
@@ -112,9 +150,11 @@ throw new Error(
 
 
 
-const clothing = JSON.parse(
 
-jsonMatch[0]
+
+const data = JSON.parse(
+
+match[0]
 
 );
 
@@ -129,56 +169,47 @@ return {
 
 
 type:
-clothing.type || "Unknown",
-
+data.type || "Unknown Clothing",
 
 
 category:
-clothing.category || "Other",
-
+data.category || "Other",
 
 
 primaryColor:
-clothing.primaryColor || "Unknown",
-
+data.primaryColor || "Unknown",
 
 
 secondaryColor:
-clothing.secondaryColor || "",
-
+data.secondaryColor || "",
 
 
 material:
-clothing.material || "Unknown",
-
+data.material || "Unknown",
 
 
 texture:
-clothing.texture || "Unknown",
-
+data.texture || "Unknown",
 
 
 pattern:
-clothing.pattern || "Plain",
-
+data.pattern || "Plain",
 
 
 style:
-clothing.style || "Casual",
-
+data.style || "Casual",
 
 
 occasion:
-clothing.occasion || "Casual",
-
+data.occasion || "Casual",
 
 
 season:
-clothing.season || "All"
-
+data.season || "All"
 
 
 };
+
 
 
 
@@ -191,7 +222,7 @@ catch(error){
 
 console.error(
 
-"FashionAI Vision Error:",
+"❌ Clothing AI Error:",
 
 error
 
@@ -199,45 +230,10 @@ error
 
 
 
-
-return {
-
-
-type:"Unknown Clothing",
-
-
-category:"Other",
-
-
-primaryColor:"Unknown",
-
-
-secondaryColor:"",
-
-
-material:"Unknown",
-
-
-texture:"Unknown",
-
-
-pattern:"Plain",
-
-
-style:"Casual",
-
-
-occasion:"Casual",
-
-
-season:"All"
-
-
-};
+throw error;
 
 
 }
-
 
 
 }
