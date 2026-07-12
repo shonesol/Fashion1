@@ -1,8 +1,7 @@
 // upload.js
-// FashionAI Clothing Upload System FIX
-alert("UPLOAD FILE CONNECTED");
-alert("UPLOAD JS LOADED");
+
 import { auth } from "./firebase.js";
+
 import {
 onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -20,6 +19,10 @@ analyzeClothing
 } from "./clothing-ai.js";
 
 
+// TEST
+alert("UPLOAD JS LOADED");
+
+console.log("🔥 upload.js loaded");
 let database = null;
 
 
