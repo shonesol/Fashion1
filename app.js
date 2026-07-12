@@ -1,240 +1,77 @@
 // app.js
-// FashionAI Main Application Controller
+// FashionAI Main Controller
 
 
-import { 
-startFashionAI 
-} from "./auth-manager.js";
-
-
-import { 
-saveOutfitHistory 
-} from "./outfit-history.js";
-
-
-import { 
-startTrendUpdater 
-} from "./trend-updater.js";
-
-
-import { 
-learnFromWardrobe 
-} from "./fashion-memory.js";
-
-
-import { 
-learnUserStyle 
-} from "./memory-ai.js";
-
-
-import { 
-startListening 
-} from "./voice-assistant.js";
-
-
-import { 
-generateOutfit 
-} from "./outfit-generator.js";
-
-
-import { 
-getOutfitAdvice 
-} from "./occasion-weather-ai.js";
-
-
-import { 
-analyzeWardrobe 
-} from "./wardrobe-intelligence.js";
+import {
+startFashionAI
+}
+from "./auth-manager.js";
 
 
 import {
 showAILoading
-} from "./ai-loader.js";
+}
+from "./ai-loader.js";
 
 
+import {
+generateOutfit
+}
+from "./outfit-generator.js";
+
+
+import {
+saveOutfitHistory
+}
+from "./outfit-history.js";
+
+
+import {
+getOutfitAdvice
+}
+from "./occasion-weather-ai.js";
+
+
+import {
+analyzeWardrobe
+}
+from "./wardrobe-intelligence.js";
 
 
 
 console.log(
-"🚀 FashionAI app.js loaded"
+"🚀 FashionAI Started"
 );
 
-
-
-
-
-// ==========================
-// START FASHIONAI
-// ==========================
 
 
 startFashionAI();
 
 
-console.log(
-"🔐 Authentication started"
-);
 
-
-
-
-
-
-
-
-// ==========================
-// WHEN DATABASE IS READY
-// ==========================
 
 
 window.addEventListener(
 
 "FashionAIReady",
 
-async()=>{
-
-
-try{
-
-
-const database =
-
-window.FashionAI.database;
-
+()=>{
 
 
 console.log(
-"✅ FashionAI Database Ready"
-);
-
-
-
-console.log(
-"User:",
-window.FashionAI.user.email
-);
-
-
-
-console.log(
-"Database:",
-database.name
-);
-
-
-
-
-
-
-// Learn user preferences
-
-
-await learnUserStyle(
-
-database
-
-);
-
-
-
-
-
-// Learn wardrobe
-
-
-await learnFromWardrobe(
-
-database
-
-);
-
-
-
-
-
-// Update trends
-
-
-startTrendUpdater(
-
-database
-
-);
-
-
-
-
-
-
-
-// Send database to other modules
-
-
-window.dispatchEvent(
-
-new CustomEvent(
-
-"FashionAIConnected",
-
-{
-
-detail:{
-
-database:database,
-
-user:
-window.FashionAI.user
-
-}
-
-}
-
-)
-
-);
-
-
-
-
-
-console.log(
-"🧠 FashionAI Intelligence Activated"
+"✅ FashionAI Connected"
 );
 
 
 
 }
 
-catch(error){
-
-
-console.error(
-
-"FashionAI startup error:",
-
-error
-
 );
 
 
-}
-
-
-});
 
 
 
-
-
-
-
-
-
-
-
-// ==========================
-// PAGE BUTTONS
-// ==========================
 
 
 document.addEventListener(
@@ -245,50 +82,19 @@ document.addEventListener(
 
 
 
-
-
-// ==========================
-// VOICE BUTTON
-// ==========================
-
-
-const voiceBtn =
-
-document.getElementById(
-"voiceBtn"
+console.log(
+"📄 Page Loaded"
 );
 
 
 
-if(voiceBtn){
-
-
-voiceBtn.onclick=()=>{
-
-
-startListening();
-
-
-};
-
-
-}
 
 
 
-
-
-
-
-
-
-// ==========================
-// OUTFIT GENERATOR
-// ==========================
+// CREATE OUTFIT
 
 
 const outfitBtn =
-
 document.getElementById(
 "outfitBtn"
 );
@@ -298,52 +104,24 @@ document.getElementById(
 if(outfitBtn){
 
 
-
-outfitBtn.onclick=async()=>{
-
-
-try{
-
-
-
-if(!window.FashionAI){
-
-
-alert(
-"FashionAI is still loading..."
-);
-
-
-return;
-
-
-}
-
-
-
+outfitBtn.onclick = async()=>{
 
 
 const box =
-
 document.getElementById(
 "outfitResult"
 );
 
 
 
-
-
 showAILoading(
-
 box,
-
-"✨ Creating your AI outfit..."
-
+"Creating outfit..."
 );
 
 
 
-
+try{
 
 
 const outfit =
@@ -358,9 +136,6 @@ window.FashionAI.database,
 
 
 
-
-
-
 await saveOutfitHistory(
 
 window.FashionAI.database,
@@ -371,19 +146,13 @@ outfit
 
 
 
-
-
-
-
 box.innerHTML =
-
 
 `
 
 <h3>
-✨ FashionAI Outfit
+✨ Your Outfit
 </h3>
-
 
 <p>
 ${outfit.message}
@@ -393,19 +162,23 @@ ${outfit.message}
 
 
 
-
 }
 
 catch(error){
 
 
 console.error(
-"Outfit error:",
 error
 );
 
 
+box.innerHTML =
+"❌ Outfit generation failed";
+
+
 }
+
+
 
 };
 
@@ -420,15 +193,10 @@ error
 
 
 
-
-
-// ==========================
 // SMART OUTFIT
-// ==========================
 
 
 const smartBtn =
-
 document.getElementById(
 "smartOutfitBtn"
 );
@@ -438,55 +206,20 @@ document.getElementById(
 if(smartBtn){
 
 
-
-smartBtn.onclick=async()=>{
-
-
-
-try{
-
+smartBtn.onclick = async()=>{
 
 
 const box =
-
 document.getElementById(
 "smartOutfitResult"
 );
 
 
 
-
 showAILoading(
-
 box,
-
-"🌟 Creating smart recommendation..."
-
+"Thinking..."
 );
-
-
-
-
-
-const weather =
-
-document.getElementById(
-"weather"
-).value;
-
-
-
-
-
-const occasion =
-
-document.getElementById(
-"occasion"
-).value;
-
-
-
-
 
 
 
@@ -496,27 +229,25 @@ await getOutfitAdvice(
 
 window.FashionAI.database,
 
-weather,
+document.getElementById(
+"weather"
+).value,
 
-occasion
+document.getElementById(
+"occasion"
+).value
 
 );
 
 
 
-
-
-
-
 box.innerHTML =
-
 
 `
 
 <h3>
-🌟 FashionAI Suggestion
+🌟 Recommendation
 </h3>
-
 
 <p>
 ${result.message}
@@ -524,20 +255,6 @@ ${result.message}
 
 `;
 
-
-
-}
-
-catch(error){
-
-
-console.error(
-"Smart outfit error:",
-error
-);
-
-
-}
 
 
 };
@@ -551,17 +268,10 @@ error
 
 
 
-
-
-
-
-// ==========================
-// WARDROBE ANALYSIS
-// ==========================
+// WARDROBE AI
 
 
 const wardrobeBtn =
-
 document.getElementById(
 "analyzeWardrobeBtn"
 );
@@ -571,11 +281,7 @@ document.getElementById(
 if(wardrobeBtn){
 
 
-
-wardrobeBtn.onclick=async()=>{
-
-
-try{
+wardrobeBtn.onclick = async()=>{
 
 
 const result =
@@ -588,59 +294,25 @@ window.FashionAI.database
 
 
 
-
-
 document.getElementById(
-
 "wardrobeAdvice"
-
 ).innerHTML =
-
 
 `
 
 <h3>
-🧠 Wardrobe Intelligence
+🧠 AI Analysis
 </h3>
-
 
 <p>
 ${result.advice}
-</p>
-
-
-<p>
-Style:
-${result.style}
-</p>
-
-
-<p>
-Favorite Color:
-${result.favoriteColor}
 </p>
 
 `;
 
 
 
-}
-
-catch(error){
-
-
-console.error(
-"Wardrobe analysis error:",
-error
-);
-
-
-}
-
-
-
 };
-
 
 
 }
