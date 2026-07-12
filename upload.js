@@ -1,423 +1,54 @@
-// upload.js
-// FashionAI Local Clothing Upload (No Cloud Storage)
+// upload.js TEST
 
-import {
-analyzeClothing
-} from "./clothing-ai.js";
+document.addEventListener("DOMContentLoaded", () => {
 
-import {
-addClothing
-} from "./db.js";
+const button = document.getElementById("uploadBtn");
+const input = document.getElementById("clothingImage");
+const result = document.getElementById("result");
 
 
-let database = null;
+console.log("✅ upload.js loaded");
 
 
-// Connect to FashionAI database
+button.addEventListener("click", () => {
 
-window.addEventListener(
-"FashionAIReady",
-(event)=>{
-
-database = event.detail.database;
-
-console.log(
-"✅ Upload database connected"
-);
-
-});
+console.log("✅ button clicked");
 
 
+if(!input.files[0]){
 
-
-
-document.addEventListener(
-"DOMContentLoaded",
-()=>{
-
-
-const uploadBtn =
-document.getElementById("uploadBtn");
-
-
-const imageInput =
-document.getElementById("clothingImage");
-
-
-const result =
-document.getElementById("result");
-
-
-
-
-
-if(!uploadBtn){
-
-console.error(
-"Upload button missing"
-);
+result.innerHTML =
+"❌ No image selected";
 
 return;
 
 }
 
 
+const file = input.files[0];
 
 
+result.innerHTML = `
 
-uploadBtn.addEventListener(
-"click",
-()=>{
-
-
-const file =
-imageInput.files[0];
-
-
-
-if(!file){
-
-result.innerHTML =
-"❌ Select a clothing image first";
-
-return;
-
-}
-
-
-
-
-if(!database){
-
-result.innerHTML =
-"❌ Database not ready. Login first.";
-
-return;
-
-}
-
-
-
-
-result.innerHTML =
-"📸 Preparing image...";
-
-
-
-
-
-const reader =
-new FileReader();
-
-
-
-
-
-reader.onload = async()=>{
-
-
-try{
-
-
-// Compress image
-
-const compressedImage =
-await compressImage(
-reader.result
-);
-
-
-
-
-result.innerHTML =
-"🤖 FashionAI analyzing...";
-
-
-
-
-// Send to Gemini
-
-const analysis =
-await analyzeClothing(
-compressedImage
-);
-
-
-
-
-
-console.log(
-"AI RESULT:",
-analysis
-);
-
-
-
-
-
-// Save locally
-
-await addClothing(
-
-database,
-
-{
-
-image: compressedImage,
-
-
-type:
-analysis.type,
-
-
-category:
-analysis.category,
-
-
-color:
-analysis.primaryColor,
-
-
-primaryColor:
-analysis.primaryColor,
-
-
-secondaryColor:
-analysis.secondaryColor,
-
-
-material:
-analysis.material,
-
-
-texture:
-analysis.texture,
-
-
-pattern:
-analysis.pattern,
-
-
-style:
-analysis.style,
-
-
-occasion:
-analysis.occasion,
-
-
-season:
-analysis.season,
-
-
-name:
-analysis.category+" "+analysis.type
-
-
-}
-
-);
-
-
-
-
-
-
-result.innerHTML =
-
-`
-
-<h3>✅ Clothing Saved</h3>
+<h3>✅ Upload works</h3>
 
 <p>
-Category: ${analysis.category}
+File: ${file.name}
 </p>
 
 <p>
-Color: ${analysis.primaryColor}
-</p>
-
-<p>
-Style: ${analysis.style}
+Size: ${file.size} bytes
 </p>
 
 `;
 
-
-
-
-
-window.dispatchEvent(
-new Event("clothingAdded")
+console.log(
+"Selected file:",
+file
 );
-
-
-
-}
-
-catch(error){
-
-
-console.error(
-"Upload error:",
-error
-);
-
-
-
-result.innerHTML =
-
-`
-
-<h3>❌ AI ERROR</h3>
-
-<p>
-${error.message}
-</p>
-
-`;
-
-
-
-}
-
-
-
-};
-
-
-
-reader.readAsDataURL(file);
-
 
 
 });
 
 
 });
-
-
-
-
-
-
-
-// ==========================
-// IMAGE COMPRESSION
-// ==========================
-
-function compressImage(
-image
-){
-
-return new Promise(
-(resolve)=>{
-
-
-const img =
-new Image();
-
-
-img.onload = ()=>{
-
-
-const canvas =
-document.createElement(
-"canvas"
-);
-
-
-
-const max =
-800;
-
-
-
-let width =
-img.width;
-
-
-let height =
-img.height;
-
-
-
-if(width > height){
-
-if(width > max){
-
-height =
-height * max / width;
-
-width =
-max;
-
-}
-
-}
-else{
-
-if(height > max){
-
-width =
-width * max / height;
-
-height =
-max;
-
-}
-
-}
-
-
-
-
-canvas.width =
-width;
-
-canvas.height =
-height;
-
-
-
-
-const ctx =
-canvas.getContext("2d");
-
-
-
-ctx.drawImage(
-img,
-0,
-0,
-width,
-height
-);
-
-
-
-resolve(
-
-canvas.toDataURL(
-"image/jpeg",
-0.7
-)
-
-);
-
-
-
-};
-
-
-
-
-img.src =
-image;
-
-
-
-});
-
-
-}
