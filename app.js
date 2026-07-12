@@ -1,322 +1,33 @@
 // app.js
-// FashionAI Main Controller
+// FashionAI Main Controller Test
 
+console.log("🚀 FashionAI app.js loaded");
 
-import {
-startFashionAI
-}
-from "./auth-manager.js";
 
+document.addEventListener("DOMContentLoaded", () => {
 
-import {
-showAILoading
-}
-from "./ai-loader.js";
+    console.log("📱 Page loaded");
 
 
-import {
-generateOutfit
-}
-from "./outfit-generator.js";
+    const uploadBtn = document.getElementById("uploadBtn");
 
+    if(uploadBtn){
 
-import {
-saveOutfitHistory
-}
-from "./outfit-history.js";
+        console.log("✅ Upload button found");
 
 
-import {
-getOutfitAdvice
-}
-from "./occasion-weather-ai.js";
+        uploadBtn.addEventListener("click",()=>{
 
+            alert("Upload button is working");
 
-import {
-analyzeWardrobe
-}
-from "./wardrobe-intelligence.js";
+        });
 
 
+    }else{
 
-console.log(
-"🚀 FashionAI Started"
-);
+        alert("❌ Upload button not found");
 
-
-
-startFashionAI();
-
-
-
-
-
-window.addEventListener(
-
-"FashionAIReady",
-
-()=>{
-
-
-console.log(
-"✅ FashionAI Connected"
-);
-
-
-
-}
-
-);
-
-
-
-
-
-
-
-document.addEventListener(
-
-"DOMContentLoaded",
-
-()=>{
-
-
-
-console.log(
-"📄 Page Loaded"
-);
-
-
-
-
-
-
-// CREATE OUTFIT
-
-
-const outfitBtn =
-document.getElementById(
-"outfitBtn"
-);
-
-
-
-if(outfitBtn){
-
-
-outfitBtn.onclick = async()=>{
-
-
-const box =
-document.getElementById(
-"outfitResult"
-);
-
-
-
-showAILoading(
-box,
-"Creating outfit..."
-);
-
-
-
-try{
-
-
-const outfit =
-
-await generateOutfit(
-
-window.FashionAI.database,
-
-"Casual"
-
-);
-
-
-
-await saveOutfitHistory(
-
-window.FashionAI.database,
-
-outfit
-
-);
-
-
-
-box.innerHTML =
-
-`
-
-<h3>
-✨ Your Outfit
-</h3>
-
-<p>
-${outfit.message}
-</p>
-
-`;
-
-
-
-}
-
-catch(error){
-
-
-console.error(
-error
-);
-
-
-box.innerHTML =
-"❌ Outfit generation failed";
-
-
-}
-
-
-
-};
-
-
-}
-
-
-
-
-
-
-
-
-
-// SMART OUTFIT
-
-
-const smartBtn =
-document.getElementById(
-"smartOutfitBtn"
-);
-
-
-
-if(smartBtn){
-
-
-smartBtn.onclick = async()=>{
-
-
-const box =
-document.getElementById(
-"smartOutfitResult"
-);
-
-
-
-showAILoading(
-box,
-"Thinking..."
-);
-
-
-
-const result =
-
-await getOutfitAdvice(
-
-window.FashionAI.database,
-
-document.getElementById(
-"weather"
-).value,
-
-document.getElementById(
-"occasion"
-).value
-
-);
-
-
-
-box.innerHTML =
-
-`
-
-<h3>
-🌟 Recommendation
-</h3>
-
-<p>
-${result.message}
-</p>
-
-`;
-
-
-
-};
-
-
-}
-
-
-
-
-
-
-
-// WARDROBE AI
-
-
-const wardrobeBtn =
-document.getElementById(
-"analyzeWardrobeBtn"
-);
-
-
-
-if(wardrobeBtn){
-
-
-wardrobeBtn.onclick = async()=>{
-
-
-const result =
-
-await analyzeWardrobe(
-
-window.FashionAI.database
-
-);
-
-
-
-document.getElementById(
-"wardrobeAdvice"
-).innerHTML =
-
-`
-
-<h3>
-🧠 AI Analysis
-</h3>
-
-<p>
-${result.advice}
-</p>
-
-`;
-
-
-
-};
-
-
-}
-
+    }
 
 
 });
