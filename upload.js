@@ -1,51 +1,77 @@
-// upload.js TEST
+// upload.js TEST ONLY
 
-document.addEventListener("DOMContentLoaded", () => {
-
-const button = document.getElementById("uploadBtn");
-const input = document.getElementById("clothingImage");
-const result = document.getElementById("result");
+console.log("🔥 UPLOAD FILE STARTED");
 
 
-console.log("✅ upload.js loaded");
+document.addEventListener("DOMContentLoaded",()=>{
 
 
-button.addEventListener("click", () => {
+console.log("🔥 DOM READY");
 
-console.log("✅ button clicked");
+
+const button =
+document.getElementById("uploadBtn");
+
+
+const input =
+document.getElementById("clothingImage");
+
+
+const result =
+document.getElementById("result");
+
+
+
+console.log(
+"BUTTON:",
+button
+);
+
+console.log(
+"INPUT:",
+input
+);
+
+
+
+
+button.addEventListener(
+"click",
+()=>{
+
+
+console.log(
+"BUTTON CLICKED"
+);
+
 
 
 if(!input.files[0]){
 
+
 result.innerHTML =
 "❌ No image selected";
 
+
 return;
+
 
 }
 
 
-const file = input.files[0];
 
+result.innerHTML =
 
-result.innerHTML = `
+`
 
-<h3>✅ Upload works</h3>
-
-<p>
-File: ${file.name}
-</p>
+<h3>✅ Upload is working</h3>
 
 <p>
-Size: ${file.size} bytes
+${input.files[0].name}
 </p>
 
 `;
 
-console.log(
-"Selected file:",
-file
-);
 
 
 });
