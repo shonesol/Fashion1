@@ -5,7 +5,9 @@
 let database = null;
 
 
-const DATABASE_VERSION = 1;
+const DATABASE_VERSION = 8;
+
+
 
 
 
@@ -31,6 +33,8 @@ return;
 
 
 
+
+
 const request = indexedDB.open(
 
 "FashionAI_" + userId,
@@ -43,6 +47,8 @@ DATABASE_VERSION
 
 
 
+
+
 request.onupgradeneeded = (event)=>{
 
 
@@ -50,16 +56,20 @@ const db = event.target.result;
 
 
 
+
+
 // ==========================
-// WARDROBE
+// WARDROBE STORAGE
 // ==========================
+
 
 if(
 !db.objectStoreNames.contains("wardrobe")
 ){
 
 
-const store =
+const wardrobe =
+
 db.createObjectStore(
 
 "wardrobe",
@@ -73,30 +83,62 @@ autoIncrement:true
 
 
 
-store.createIndex(
+wardrobe.createIndex(
 "category",
-"category"
+"category",
+{
+unique:false
+}
 );
 
 
 
-store.createIndex(
+wardrobe.createIndex(
 "color",
-"color"
+"color",
+{
+unique:false
+}
 );
 
 
 
-store.createIndex(
+wardrobe.createIndex(
 "style",
-"style"
+"style",
+{
+unique:false
+}
 );
 
 
 
-store.createIndex(
+wardrobe.createIndex(
 "material",
-"material"
+"material",
+{
+unique:false
+}
+);
+
+
+
+wardrobe.createIndex(
+"texture",
+"texture",
+{
+unique:false
+}
+);
+
+
+
+wardrobe.createIndex(
+"laundryStatus",
+"laundryStatus",
+{
+unique:false
+}
 );
 
 
@@ -112,6 +154,7 @@ store.createIndex(
 // ==========================
 // OUTFIT HISTORY
 // ==========================
+
 
 if(
 !db.objectStoreNames.contains("history")
@@ -138,9 +181,43 @@ autoIncrement:true
 
 
 
+
+// ==========================
+// SAVED OUTFIT PLANS
+// ==========================
+
+
+if(
+!db.objectStoreNames.contains("plans")
+){
+
+
+db.createObjectStore(
+
+"plans",
+
+{
+keyPath:"id",
+autoIncrement:true
+}
+
+);
+
+
+}
+
+
+
+
+
+
+
+
+
 // ==========================
 // AI MEMORY
 // ==========================
+
 
 if(
 !db.objectStoreNames.contains("preferences")
@@ -166,9 +243,12 @@ keyPath:"id"
 
 
 
+
+
 // ==========================
-// PROFILE
+// USER PROFILE
 // ==========================
+
 
 if(
 !db.objectStoreNames.contains("profile")
@@ -198,11 +278,13 @@ keyPath:"id"
 
 
 
+
+
 request.onsuccess=(event)=>{
 
 
-database =
-event.target.result;
+database = event.target.result;
+
 
 
 console.log(
@@ -215,7 +297,9 @@ database.name
 resolve(database);
 
 
+
 };
+
 
 
 
@@ -226,7 +310,7 @@ request.onerror=()=>{
 
 
 console.error(
-"Database error:",
+"❌ Database error:",
 request.error
 );
 
@@ -235,12 +319,13 @@ request.error
 reject(request.error);
 
 
+
 };
 
 
 
-});
 
+});
 
 }
 
@@ -272,6 +357,7 @@ database=null;
 }
 
 
+
 }
 
 
@@ -281,8 +367,9 @@ database=null;
 
 
 
+
 // ==========================
-// DELETE USER DATABASE
+// DELETE DATABASE
 // ==========================
 
 
@@ -293,6 +380,7 @@ return new Promise((resolve,reject)=>{
 
 
 const request =
+
 indexedDB.deleteDatabase(
 
 "FashionAI_" + userId
@@ -301,18 +389,25 @@ indexedDB.deleteDatabase(
 
 
 
+
+
 request.onsuccess=()=>{
 
 
 console.log(
-"FashionAI database deleted"
+"🗑 FashionAI database deleted"
 );
+
 
 
 resolve();
 
 
+
 };
+
+
+
 
 
 
@@ -320,6 +415,7 @@ request.onerror=()=>{
 
 
 reject(request.error);
+
 
 
 };
