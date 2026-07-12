@@ -1,91 +1,160 @@
 // gemini-ai.js
 // FashionAI Gemini Connection via Cloudflare Worker
 
-const WORKER_URL = "https://fashionai-api.shonesol28.workers.dev";
+
+const WORKER_URL =
+"https://fashionai-api.shonesol28.workers.dev";
+
+
 
 
 // ==========================
-// GEMINI AI REQUEST
+// ASK GEMINI AI
 // ==========================
 
-export async function askGemini(prompt, image = null) {
 
-  try {
+export async function askGemini(
 
-    let parts = [
-      {
-        text: prompt
-      }
-    ];
+prompt,
 
-    // ==========================
-    // IMAGE SUPPORT
-    // ==========================
+image=null
 
-    if (image) {
+){
 
-      let base64 =
-        image.includes(",")
-          ? image.split(",")[1]
-          : image;
 
-      let mimeType =
-        image.startsWith("data:image/png")
-          ? "image/png"
-          : "image/jpeg";
+try{
 
-      parts.push({
-        inlineData: {
-          mimeType: mimeType,
-          data: base64
-        }
-      });
 
-    }
+let imageData = null;
 
-    const response = await fetch(WORKER_URL, {
 
-      method: "POST",
 
-      headers: {
-        "Content-Type": "application/json"
-      },
+if(image){
 
-      body: JSON.stringify({
 
-        contents: [
-          {
-            parts: parts
-          }
-        ]
+imageData =
 
-      })
+image.includes(",")
 
-    });
+?
 
-    const data = await response.json();
+image.split(",")[1]
 
-    if (data.error) {
+:
 
-      console.error("Gemini API Error:", data.error);
+image;
 
-      return "AI error";
 
-    }
+}
 
-    const answer =
-      data?.candidates?.[0]?.content?.parts?.[0]?.text;
 
-    return answer || "AI could not respond";
 
-  }
 
-  catch (error) {
 
-    console.error("Gemini Connection Error:", error);
 
-    return "AI connection failed";
+const response = await fetch(
 
-  }
+WORKER_URL,
+
+{
+
+
+method:"POST",
+
+
+headers:{
+
+
+"Content-Type":"application/json"
+
+
+},
+
+
+body:JSON.stringify({
+
+prompt:prompt,
+
+image:imageData
+
+})
+
+
+}
+
+);
+
+
+
+
+
+
+
+const data = await response.json();
+
+
+
+
+
+
+
+if(data.error){
+
+
+console.error(
+
+"Worker Error:",
+
+data.error
+
+);
+
+
+return "AI error";
+
+
+
+}
+
+
+
+
+
+
+
+
+
+return (
+
+data.result
+
+||
+
+"AI could not respond"
+
+);
+
+
+
+}
+
+catch(error){
+
+
+console.error(
+
+"Gemini Connection Failed:",
+
+error
+
+);
+
+
+return "AI connection failed";
+
+
+}
+
+
 
 }
