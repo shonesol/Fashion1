@@ -18,7 +18,7 @@ import {
 analyzeClothing
 } from "./clothing-ai.js";
 
-
+alert("UPLOAD JS LOADED");
 // TEST
 alert("UPLOAD JS LOADED");
 
