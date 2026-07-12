@@ -1,19 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
 
-<meta charset="UTF-8">
+<title>FashionAI Assistant</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>
-FashionAI Assistant
-</title>
-
-
 <link rel="stylesheet" href="style.css">
-
 
 </head>
 
@@ -24,46 +18,32 @@ FashionAI Assistant
 <div class="container">
 
 
-
-<!-- ACCOUNT -->
-
 <div class="card">
 
-<h3>
-👤 My Account
-</h3>
-
+<h3>👤 My Account</h3>
 
 <p id="userEmail">
 Loading user...
 </p>
 
-
 <button id="logoutBtn">
 🚪 Logout
 </button>
-
 
 </div>
 
 
 
 
-
-<!-- HEADER -->
-
 <div class="card">
-
 
 <h1>
 🤖 FashionAI
 </h1>
 
-
 <p>
 Your personal AI fashion stylist
 </p>
-
 
 </div>
 
@@ -71,40 +51,26 @@ Your personal AI fashion stylist
 
 
 
-
-
-
-<!-- CLOTHING UPLOAD -->
-
 <div class="card">
-
 
 <h2>
 📸 Add Clothing
 </h2>
 
 
-
-<input
+<input 
 type="file"
 id="clothingImage"
 accept="image/*"
 >
 
 
-
 <button id="uploadBtn">
-
 ✨ Analyze Clothing
-
 </button>
 
 
-
-
-<div id="result">
-
-</div>
+<div id="result"></div>
 
 
 </div>
@@ -113,34 +79,20 @@ accept="image/*"
 
 
 
-
-
-
-
-<!-- OUTFIT GENERATOR -->
 
 <div class="card">
-
 
 <h2>
 👗 AI Outfit Generator
 </h2>
 
 
-
 <button id="outfitBtn">
-
 ✨ Create My Outfit
-
 </button>
 
 
-
-
-<div id="outfitResult">
-
-</div>
-
+<div id="outfitResult"></div>
 
 
 </div>
@@ -150,149 +102,60 @@ accept="image/*"
 
 
 
-
-
-
-<!-- VOICE ASSISTANT -->
-
-<div class="card voice-box">
-
-
-<h2>
-🎙️ Talk With FashionAI
-</h2>
-
-
-<p>
-Ask about outfits, clothes, colors and style.
-</p>
-
-
-
-<button id="voiceBtn">
-
-🎙️ Talk to FashionAI
-
-</button>
-
-
-
-
-<h3>
-You said:
-</h3>
-
-
-<div id="userText">
-
-</div>
-
-
-
-
-
-<h3>
-FashionAI:
-</h3>
-
-
-<div id="voiceAnswer">
-
-</div>
-
-
-</div>
-
-
-
-
-
-
-
-
-
-<!-- SMART OUTFIT -->
 
 <div class="card">
-
 
 <h2>
 🌤️ Smart Outfit Advice
 </h2>
 
 
-
-
 <select id="occasion">
 
-<option value="Casual">
+<option value="casual">
 Casual
 </option>
 
-
-<option value="Work">
+<option value="work">
 Work
 </option>
 
-
-<option value="Party">
+<option value="party">
 Party
 </option>
 
-
-<option value="Travel">
+<option value="travel">
 Travel
 </option>
 
-
 </select>
-
-
-
-
 
 
 
 <select id="weather">
 
-
-<option value="Hot">
+<option value="hot">
 Hot
 </option>
 
-
-<option value="Cold">
+<option value="cold">
 Cold
 </option>
 
-
-<option value="Normal">
+<option value="normal">
 Normal
 </option>
-
 
 </select>
 
 
 
-
-
-
-
 <button id="smartOutfitBtn">
-
 🌟 Recommend Outfit
-
 </button>
 
 
-
-
-
-<div id="smartOutfitResult">
-
-</div>
-
+<div id="smartOutfitResult"></div>
 
 
 </div>
@@ -302,117 +165,53 @@ Normal
 
 
 
-
-
-
-<!-- WARDROBE AI -->
 
 <div class="card">
-
-
-<h2>
-🧠 Analyze My Wardrobe
-</h2>
-
-
-
-<button id="analyzeWardrobeBtn">
-
-🔍 Check Wardrobe
-
-</button>
-
-
-
-
-<div id="wardrobeAdvice">
-
-</div>
-
-
-
-</div>
-
-
-
-
-
-
-
-
-
-<!-- WARDROBE DISPLAY -->
-
-<div class="card">
-
 
 <h2>
 👕 My Wardrobe
 </h2>
 
 
-
-
-
 <input
-
 type="search"
-
 id="searchClothes"
-
 placeholder="Search clothes..."
-
 >
 
 
-
-
-
-
-
 <select id="categoryFilter">
-
 
 <option value="All">
 All
 </option>
 
-
 <option value="Top">
 Top
 </option>
-
 
 <option value="Bottom">
 Bottom
 </option>
 
-
 <option value="Shoes">
 Shoes
 </option>
-
 
 <option value="Dress">
 Dress
 </option>
 
-
 <option value="Jacket">
 Jacket
 </option>
-
 
 <option value="Accessories">
 Accessories
 </option>
 
 
-
 </select>
-
-
-
 
 
 
@@ -421,38 +220,25 @@ Accessories
 </div>
 
 
-
 </div>
 
 
 
 
-
-
-
-
-
-<!-- STATISTICS -->
 
 <div class="card">
 
-
 <h2>
-📊 Wardrobe Statistics
+🧠 Wardrobe AI Analysis
 </h2>
 
 
-<div id="wardrobeStats">
-
-</div>
-
-
-</div>
+<button id="analyzeWardrobeBtn">
+🔍 Check Wardrobe
+</button>
 
 
-
-
-
+<div id="wardrobeAdvice"></div>
 
 
 </div>
@@ -460,23 +246,15 @@ Accessories
 
 
 
+</div>
 
 
 
 
-<!-- MAIN CONTROLLERS -->
 
 <script type="module" src="app.js"></script>
 
-<script type="module" src="upload.js"></script>
-
-<script type="module" src="wardrobe.js"></script>
-
-<script type="module" src="profile.js"></script>
-
-
 
 </body>
-
 
 </html>
