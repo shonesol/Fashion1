@@ -1,4 +1,3 @@
-// gemini-ai.js
 // FashionAI Gemini Connection
 
 
@@ -7,28 +6,16 @@ const WORKER_URL =
 
 
 
-
-
 export async function askGemini(
-
 prompt,
-
 image=null
-
 ){
-
-
-
-try{
-
 
 
 let parts=[
 
 {
-
 text:prompt
-
 }
 
 ];
@@ -37,44 +24,18 @@ text:prompt
 
 
 
-
-
 if(image){
 
 
-
 const base64 =
-
-image.includes(",")
-
-?
-
-image.split(",")[1]
-
-:
-
-image;
-
-
-
+image.split(",")[1];
 
 
 const mimeType =
-
-image.startsWith(
-"data:image/png"
-)
-
-?
-
-"image/png"
-
-:
-
-"image/jpeg";
-
-
-
+image.substring(
+5,
+image.indexOf(";")
+);
 
 
 
@@ -82,7 +43,7 @@ parts.push({
 
 inlineData:{
 
-mimeType,
+mimeType:mimeType,
 
 data:base64
 
@@ -91,27 +52,19 @@ data:base64
 });
 
 
-
 }
 
 
 
 
 
-
-
-
-const response =
-
-await fetch(
+const response = await fetch(
 
 WORKER_URL,
 
 {
 
-
 method:"POST",
-
 
 headers:{
 
@@ -119,15 +72,13 @@ headers:{
 
 },
 
-
-
 body:JSON.stringify({
 
 contents:[
 
 {
 
-parts
+parts:parts
 
 }
 
@@ -135,12 +86,9 @@ parts
 
 })
 
-
-
 }
 
 );
-
 
 
 
@@ -149,17 +97,12 @@ parts
 
 
 const data =
-
 await response.json();
 
 
 
-
-
-
-
 console.log(
-"Gemini Response:",
+"Gemini Data:",
 data
 );
 
@@ -167,53 +110,31 @@ data
 
 
 
-
-
-return (
+const answer =
 
 data
-
-?.candidates
-
-?.[0]
-
+?.candidates?.[0]
 ?.content
+?.parts?.[0]
+?.text;
 
-?.parts
 
-?.[0]
 
-?.text
 
-||
 
-"AI failed"
 
+if(!answer){
+
+throw new Error(
+"Gemini returned no answer"
 );
-
-
 
 }
 
-catch(error){
 
 
 
-console.error(
-
-"Gemini Error:",
-
-error
-
-);
-
-
-
-return "AI connection failed";
-
-
-}
-
+return answer;
 
 
 }
