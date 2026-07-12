@@ -1,10 +1,7 @@
-instead of pure JSON. Then `JSON.parse()` fails and upload stops.
 
 
-Replace your upload with this improved version:
 
 
-```javascript
 // upload.js
 // FashionAI Clothing Upload System
 
