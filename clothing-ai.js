@@ -10,51 +10,28 @@ from "./gemini-ai.js";
 
 
 
-
 // ==========================
 // ANALYZE CLOTHING IMAGE
 // ==========================
 
 
-export async function analyzeClothing(
-
-image
-
-){
+export async function analyzeClothing(image){
 
 
 try{
 
 
-
 const prompt = `
 
+You are FashionAI, a professional fashion recognition AI.
 
-You are FashionAI, a professional fashion stylist and clothing recognition AI.
+Analyze this clothing image.
 
-
-Analyze the clothing image carefully.
-
-
-Identify:
-
-- clothing type
-- category
-- main color
-- secondary colors
-- material
-- texture
-- pattern
-- fashion style
-- suitable occasion
-- season
-
-
-Return ONLY valid JSON.
-
+Return ONLY JSON.
+Do not add explanations.
+Do not use markdown.
 
 Use this exact format:
-
 
 {
 "type":"",
@@ -70,26 +47,18 @@ Use this exact format:
 }
 
 
-
-Allowed categories:
+Categories allowed:
 
 Top
-
 Bottom
-
 Dress
-
 Shoes
-
 Jacket
-
 Accessories
-
 Other
 
 
-
-Be accurate with colors and garment type.
+Be accurate.
 
 `;
 
@@ -97,11 +66,7 @@ Be accurate with colors and garment type.
 
 
 
-
-
-const result =
-
-await askGemini(
+const result = await askGemini(
 
 prompt,
 
@@ -113,40 +78,46 @@ image
 
 
 
-
-
-// Remove markdown JSON formatting
-
-
-const clean =
-
+console.log(
+"Gemini Vision Response:",
 result
-
-.replace(
-/```json/g,
-""
-)
-
-.replace(
-/```/g,
-""
-)
-
-.trim();
+);
 
 
 
 
 
 
+// Extract JSON safely
 
-const clothing =
+const jsonMatch = result.match(
+/\{[\s\S]*\}/
+);
 
-JSON.parse(
 
-clean
+
+
+
+if(!jsonMatch){
+
+
+throw new Error(
+"No JSON found"
+);
+
+
+}
+
+
+
+
+
+const clothing = JSON.parse(
+
+jsonMatch[0]
 
 );
+
 
 
 
@@ -158,61 +129,51 @@ return {
 
 
 type:
-
 clothing.type || "Unknown",
 
 
 
 category:
-
 clothing.category || "Other",
 
 
 
 primaryColor:
-
 clothing.primaryColor || "Unknown",
 
 
 
 secondaryColor:
-
 clothing.secondaryColor || "",
 
 
 
 material:
-
 clothing.material || "Unknown",
 
 
 
 texture:
-
 clothing.texture || "Unknown",
 
 
 
 pattern:
-
 clothing.pattern || "Plain",
 
 
 
 style:
-
 clothing.style || "Casual",
 
 
 
 occasion:
-
 clothing.occasion || "Casual",
 
 
 
 season:
-
 clothing.season || "All"
 
 
@@ -221,9 +182,8 @@ clothing.season || "All"
 
 
 
+
 }
-
-
 
 catch(error){
 
@@ -239,10 +199,11 @@ error
 
 
 
+
 return {
 
 
-type:"Unknown",
+type:"Unknown Clothing",
 
 
 category:"Other",
@@ -260,7 +221,7 @@ material:"Unknown",
 texture:"Unknown",
 
 
-pattern:"Unknown",
+pattern:"Plain",
 
 
 style:"Casual",
@@ -272,11 +233,11 @@ occasion:"Casual",
 season:"All"
 
 
-
 };
 
 
-
 }
+
+
 
 }
