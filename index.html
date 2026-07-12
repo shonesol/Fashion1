@@ -1,15 +1,19 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>
 FashionAI Assistant
 </title>
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <link rel="stylesheet" href="style.css">
+
 
 </head>
 
@@ -35,7 +39,6 @@ Loading user...
 </p>
 
 
-
 <button id="logoutBtn">
 🚪 Logout
 </button>
@@ -50,6 +53,7 @@ Loading user...
 <!-- HEADER -->
 
 <div class="card">
+
 
 <h1>
 🤖 FashionAI
@@ -70,7 +74,7 @@ Your personal AI fashion stylist
 
 
 
-<!-- UPLOAD CLOTHING -->
+<!-- CLOTHING UPLOAD -->
 
 <div class="card">
 
@@ -80,11 +84,13 @@ Your personal AI fashion stylist
 </h2>
 
 
-<input 
+
+<input
 type="file"
 id="clothingImage"
 accept="image/*"
 >
+
 
 
 <button id="uploadBtn">
@@ -92,6 +98,7 @@ accept="image/*"
 ✨ Analyze Clothing
 
 </button>
+
 
 
 
@@ -120,6 +127,7 @@ accept="image/*"
 </h2>
 
 
+
 <button id="outfitBtn">
 
 ✨ Create My Outfit
@@ -128,9 +136,11 @@ accept="image/*"
 
 
 
+
 <div id="outfitResult">
 
 </div>
+
 
 
 </div>
@@ -153,7 +163,6 @@ accept="image/*"
 </h2>
 
 
-
 <p>
 Ask about outfits, clothes, colors and style.
 </p>
@@ -169,11 +178,9 @@ Ask about outfits, clothes, colors and style.
 
 
 
-
 <h3>
 You said:
 </h3>
-
 
 
 <div id="userText">
@@ -187,7 +194,6 @@ You said:
 <h3>
 FashionAI:
 </h3>
-
 
 
 <div id="voiceAnswer">
@@ -216,28 +222,25 @@ FashionAI:
 
 
 
+
 <select id="occasion">
 
-
-<option value="casual">
+<option value="Casual">
 Casual
 </option>
 
 
-
-<option value="work">
+<option value="Work">
 Work
 </option>
 
 
-
-<option value="party">
+<option value="Party">
 Party
 </option>
 
 
-
-<option value="travel">
+<option value="Travel">
 Travel
 </option>
 
@@ -248,22 +251,22 @@ Travel
 
 
 
+
+
 <select id="weather">
 
 
-<option value="hot">
+<option value="Hot">
 Hot
 </option>
 
 
-
-<option value="cold">
+<option value="Cold">
 Cold
 </option>
 
 
-
-<option value="normal">
+<option value="Normal">
 Normal
 </option>
 
@@ -275,11 +278,13 @@ Normal
 
 
 
+
 <button id="smartOutfitBtn">
 
 🌟 Recommend Outfit
 
 </button>
+
 
 
 
@@ -300,7 +305,7 @@ Normal
 
 
 
-<!-- WARDROBE AI ANALYSIS -->
+<!-- WARDROBE AI -->
 
 <div class="card">
 
@@ -348,11 +353,17 @@ Normal
 
 
 
-<input 
+
+<input
+
 type="search"
+
 id="searchClothes"
+
 placeholder="Search clothes..."
+
 >
+
 
 
 
@@ -367,11 +378,9 @@ All
 </option>
 
 
-
 <option value="Top">
 Top
 </option>
-
 
 
 <option value="Bottom">
@@ -379,11 +388,9 @@ Bottom
 </option>
 
 
-
 <option value="Shoes">
 Shoes
 </option>
-
 
 
 <option value="Dress">
@@ -391,11 +398,9 @@ Dress
 </option>
 
 
-
 <option value="Jacket">
 Jacket
 </option>
-
 
 
 <option value="Accessories">
@@ -432,6 +437,11 @@ Accessories
 <div class="card">
 
 
+<h2>
+📊 Wardrobe Statistics
+</h2>
+
+
 <div id="wardrobeStats">
 
 </div>
@@ -445,7 +455,6 @@ Accessories
 
 
 
-
 </div>
 
 
@@ -455,7 +464,7 @@ Accessories
 
 
 
-<!-- JAVASCRIPT -->
+<!-- MAIN CONTROLLERS -->
 
 <script type="module" src="app.js"></script>
 
@@ -468,5 +477,6 @@ Accessories
 
 
 </body>
+
 
 </html>
