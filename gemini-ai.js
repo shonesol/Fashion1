@@ -1,4 +1,5 @@
-// FashionAI Gemini Connection
+// gemini-ai.js
+// FashionAI Gemini Connection via Cloudflare Worker
 
 
 const WORKER_URL =
@@ -6,16 +7,32 @@ const WORKER_URL =
 
 
 
+
+// ==========================
+// SEND REQUEST TO GEMINI
+// ==========================
+
+
 export async function askGemini(
+
 prompt,
-image=null
+
+image = null
+
 ){
 
 
-let parts=[
+try{
+
+
+
+let parts = [
 
 {
-text:prompt
+
+text:
+prompt
+
 }
 
 ];
@@ -24,18 +41,41 @@ text:prompt
 
 
 
+
+
+// ==========================
+// ADD IMAGE IF AVAILABLE
+// ==========================
+
+
 if(image){
 
 
-const base64 =
-image.split(",")[1];
+
+let base64 =
+image.includes(",")
+
+?
+
+image.split(",")[1]
+
+:
+
+image;
 
 
-const mimeType =
-image.substring(
-5,
-image.indexOf(";")
-);
+
+
+
+let mimeType =
+image.match(
+/data:(.*?);/
+)?.[1]
+||
+"image/jpeg";
+
+
+
 
 
 
@@ -43,16 +83,32 @@ parts.push({
 
 inlineData:{
 
+
 mimeType:mimeType,
 
+
 data:base64
+
 
 }
 
 });
 
 
+
 }
+
+
+
+
+
+
+
+console.log(
+"📤 Sending request to Cloudflare..."
+);
+
+
 
 
 
@@ -66,11 +122,14 @@ WORKER_URL,
 
 method:"POST",
 
+
 headers:{
+
 
 "Content-Type":"application/json"
 
 },
+
 
 body:JSON.stringify({
 
@@ -96,15 +155,117 @@ parts:parts
 
 
 
-const data =
-await response.json();
+
+
+console.log(
+
+"Cloudflare status:",
+
+response.status
+
+);
+
+
+
+
+
+
+
+const raw = await response.text();
+
+
 
 
 
 console.log(
-"Gemini Data:",
-data
+
+"📥 Cloudflare Response:",
+
+raw
+
 );
+
+
+
+
+
+
+
+
+if(!response.ok){
+
+
+throw new Error(
+
+"Worker Error: " + raw
+
+);
+
+
+}
+
+
+
+
+
+
+
+let data;
+
+
+try{
+
+
+data = JSON.parse(raw);
+
+
+}
+
+catch(error){
+
+
+throw new Error(
+
+"Cloudflare did not return JSON"
+
+);
+
+
+}
+
+
+
+
+
+
+
+
+// ==========================
+// CHECK GEMINI RESPONSE
+// ==========================
+
+
+if(
+
+data.error
+
+){
+
+
+
+throw new Error(
+
+data.error.message ||
+
+"Gemini API Error"
+
+);
+
+
+}
+
+
+
 
 
 
@@ -113,10 +274,24 @@ data
 const answer =
 
 data
-?.candidates?.[0]
+
+?.candidates
+
+?.[0]
+
 ?.content
-?.parts?.[0]
-?.text;
+
+?.parts
+
+?.map(
+
+p=>p.text
+
+)
+
+.join("");
+
+
 
 
 
@@ -125,16 +300,60 @@ data
 
 if(!answer){
 
+
 throw new Error(
-"Gemini returned no answer"
+
+"No Gemini response received"
+
 );
+
 
 }
 
 
 
 
-return answer;
+
+
+
+console.log(
+
+"🤖 Gemini Answer:",
+
+answer
+
+);
+
+
+
+
+
+
+return answer.trim();
+
+
+
+}
+
+catch(error){
+
+
+
+console.error(
+
+"❌ Gemini Connection Failed:",
+
+error
+
+);
+
+
+
+throw error;
+
+
+
+}
 
 
 }
