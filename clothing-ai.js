@@ -1,10 +1,10 @@
+// clothing-ai.js
 // FashionAI Clothing Vision Analyzer
 
 
 import {
 askGemini
-}
-from "./gemini-ai.js";
+} from "./gemini-ai.js";
 
 
 
@@ -13,21 +13,21 @@ from "./gemini-ai.js";
 export async function analyzeClothing(image){
 
 
-const prompt = `
+try{
 
+
+const prompt = `
 
 You are FashionAI.
 
 Analyze the clothing image.
 
-Return ONLY JSON.
+Return ONLY valid JSON.
 
-No explanation.
 No markdown.
-No code block.
+No explanation.
 
-
-Use exactly:
+Use this format:
 
 {
 "type":"",
@@ -53,29 +53,41 @@ Jacket
 Accessories
 Other
 
-
 `;
 
 
 
 
 
+
 const response = await askGemini(
-
 prompt,
-
 image
-
 );
+
 
 
 
 
 
 console.log(
-"AI RESPONSE:",
+"🤖 GEMINI CLOTHING RESPONSE:",
 response
 );
+
+
+
+
+
+
+if(!response){
+
+throw new Error(
+"Empty AI response"
+);
+
+}
+
 
 
 
@@ -91,13 +103,18 @@ response.match(
 
 
 
+
 if(!json){
+
 
 throw new Error(
 "AI did not return JSON: "+response
 );
 
+
 }
+
+
 
 
 
@@ -116,65 +133,49 @@ json[0]
 return {
 
 
-type:data.type || "Unknown",
+type:
+data.type || "Unknown",
 
 
-category:data.category || "Other",
+
+category:
+data.category || "Other",
 
 
-primaryColor:data.primaryColor || "Unknown",
 
-
-secondaryColor:data.secondaryColor || "",
-
-
-material:data.material || "Unknown",
-
-
-texture:data.texture || "Unknown",
-
-
-pattern:data.pattern || "Plain",
-
-
-style:data.style || "Casual",
-
-
-occasion:data.occasion || "Casual",
-
-
-season:data.season || "All"
-
-
-};
-
-
-}
+primaryColor:
 data.primaryColor || "Unknown",
+
 
 
 secondaryColor:
 data.secondaryColor || "",
 
 
+
 material:
 data.material || "Unknown",
+
 
 
 texture:
 data.texture || "Unknown",
 
 
+
 pattern:
 data.pattern || "Plain",
+
 
 
 style:
 data.style || "Casual",
 
 
+
 occasion:
 data.occasion || "Casual",
+
 
 
 season:
@@ -185,8 +186,6 @@ data.season || "All"
 
 
 
-
-
 }
 
 catch(error){
@@ -194,11 +193,8 @@ catch(error){
 
 
 console.error(
-
 "❌ Clothing AI Error:",
-
 error
-
 );
 
 
