@@ -1,12 +1,13 @@
-// upload.js TEST
+// upload.js IMAGE TEST
 
-console.log("🔥 upload.js loaded");
+import {
+analyzeClothing
+} from "./clothing-ai.js";
 
 
-document.addEventListener("DOMContentLoaded",()=>{
-
-
-console.log("DOM ready");
+document.addEventListener(
+"DOMContentLoaded",
+()=>{
 
 
 const uploadBtn =
@@ -22,15 +23,17 @@ document.getElementById("result");
 
 
 
-console.log("BUTTON:",uploadBtn);
-console.log("INPUT:",imageInput);
-console.log("RESULT:",result);
+uploadBtn.onclick = ()=>{
 
 
+const file =
+imageInput.files[0];
 
-if(!uploadBtn){
 
-alert("❌ upload button missing");
+if(!file){
+
+result.innerHTML =
+"❌ No image selected";
 
 return;
 
@@ -38,26 +41,94 @@ return;
 
 
 
-uploadBtn.addEventListener(
-"click",
-()=>{
+result.innerHTML =
+"📸 Image reading...";
 
 
-console.log("BUTTON CLICKED");
+
+const reader =
+new FileReader();
 
 
-alert("✅ Button works");
+
+reader.onload = async()=>{
 
 
-if(result){
+console.log(
+"IMAGE READY"
+);
+
 
 result.innerHTML =
-"Button connected successfully";
+"🤖 Sending to AI...";
+
+
+
+try{
+
+
+const ai =
+await analyzeClothing(
+reader.result
+);
+
+
+
+console.log(
+"AI RESULT:",
+ai
+);
+
+
+
+result.innerHTML =
+
+`
+<h3>AI WORKS</h3>
+
+<p>
+${JSON.stringify(ai)}
+</p>
+`;
+
+
+
+}
+
+catch(error){
+
+
+console.error(
+error
+);
+
+
+result.innerHTML =
+
+`
+❌ AI ERROR
+
+<br>
+
+${error.message}
+
+`;
+
+
 
 }
 
 
-});
+
+};
+
+
+
+reader.readAsDataURL(file);
+
+
+
+};
 
 
 });
