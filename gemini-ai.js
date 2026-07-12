@@ -1,5 +1,5 @@
 // gemini-ai.js
-// FashionAI Gemini Connection
+// FashionAI Gemini Debug Connection
 
 
 const WORKER_URL =
@@ -7,50 +7,33 @@ const WORKER_URL =
 
 
 
-export async function askGemini(prompt, image = null) {
+export async function askGemini(prompt, image=null){
 
 
-try {
+console.log("🚀 Sending to Worker");
 
 
-const parts = [
+try{
 
+
+const parts=[
 {
-text: prompt
+text:prompt
 }
-
 ];
 
 
 
-
-// Add image
-
 if(image){
 
 
-const splitImage =
-image.split(",");
-
-
-if(splitImage.length < 2){
-
-throw new Error(
-"Invalid image format"
-);
-
-}
-
-
-
 const base64 =
-splitImage[1];
+image.split(",")[1];
 
 
 const mime =
-splitImage[0]
+image.split(",")[0]
 .match(/:(.*?);/)[1];
-
 
 
 parts.push({
@@ -67,15 +50,6 @@ data:base64
 
 
 }
-
-
-
-
-
-
-console.log(
-"Sending request to Worker..."
-);
 
 
 
@@ -102,7 +76,7 @@ contents:[
 
 {
 
-parts:parts
+parts
 
 }
 
@@ -118,18 +92,15 @@ parts:parts
 
 
 
-
-const text =
+const serverText =
 await response.text();
 
 
 
-
 console.log(
-"Worker raw response:",
-text
+"🔥 WORKER ANSWER:",
+serverText
 );
-
 
 
 
@@ -137,55 +108,8 @@ text
 
 if(!response.ok){
 
-
 throw new Error(
-
-`Worker ${response.status}: ${text}`
-
-);
-
-
-}
-
-
-
-
-
-
-let data;
-
-
-try{
-
-
-data =
-JSON.parse(text);
-
-
-}
-
-catch(e){
-
-
-throw new Error(
-"Worker returned invalid JSON: "+text
-);
-
-
-}
-
-
-
-
-
-
-if(data.error){
-
-
-throw new Error(
-
-data.error.message || data.error
-
+serverText
 );
 
 }
@@ -194,12 +118,39 @@ data.error.message || data.error
 
 
 
+const data =
+JSON.parse(serverText);
 
-if(
 
-data.candidates &&
 
-data.candidates[0] &&
+return data
+.candidates[0]
+.content
+.parts[0]
+.text;
+
+
+
+}
+
+catch(error){
+
+
+console.error(
+"REAL GEMINI ERROR:",
+error
+);
+
+
+throw new Error(
+error.message
+);
+
+
+}
+
+
+}
 
 data.candidates[0]
 .content &&
