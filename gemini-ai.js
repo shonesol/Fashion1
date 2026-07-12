@@ -7,26 +7,19 @@ const WORKER_URL =
 
 
 
-
-
 export async function askGemini(
-
 prompt,
-
 image=null
-
 ){
-
 
 
 try{
 
 
-
-let parts = [
+let parts=[
 
 {
-text: prompt
+text:prompt
 }
 
 ];
@@ -34,35 +27,35 @@ text: prompt
 
 
 
-
-
-// ADD IMAGE
+// IMAGE HANDLING
 
 if(image){
 
 
+let base64=image;
 
-let base64 =
-image.includes(",")
-
-?
-
-image.split(",")[1]
-
-:
-
-image;
+let mimeType="image/jpeg";
 
 
 
+if(image.includes(",")){
 
 
+const split=image.split(",");
 
-let mimeType =
-image.substring(
-5,
-image.indexOf(";")
-);
+
+base64=split[1];
+
+
+mimeType =
+split[0]
+.match(/data:(.*);base64/)
+?.[1]
+||
+"image/jpeg";
+
+
+}
 
 
 
@@ -85,10 +78,8 @@ data:base64
 
 
 
-
-
-
-const response = await fetch(
+const response =
+await fetch(
 
 WORKER_URL,
 
@@ -100,11 +91,9 @@ method:"POST",
 
 headers:{
 
-
 "Content-Type":"application/json"
 
 },
-
 
 
 body:JSON.stringify({
@@ -122,12 +111,9 @@ parts:parts
 })
 
 
-
 }
 
 );
-
-
 
 
 
@@ -143,8 +129,6 @@ response.status
 
 
 
-
-
 const text =
 await response.text();
 
@@ -152,14 +136,10 @@ await response.text();
 
 
 
-
-
 console.log(
-"Worker raw response:",
+"Worker response:",
 text
 );
-
-
 
 
 
@@ -172,16 +152,16 @@ let data;
 try{
 
 
-data = JSON.parse(text);
+data=JSON.parse(text);
 
 
 }
 
-catch{
+catch(e){
 
 
 throw new Error(
-"Worker did not return JSON"
+"Worker returned invalid JSON: "+text
 );
 
 
@@ -192,17 +172,11 @@ throw new Error(
 
 
 
-
-
-if(data.error){
+if(!response.ok){
 
 
 throw new Error(
-
-data.error.message ||
-
-"Gemini API error"
-
+text
 );
 
 
@@ -215,15 +189,9 @@ data.error.message ||
 
 
 const answer =
-
-data
-
-?.candidates?.[0]
-
+data?.candidates?.[0]
 ?.content?.parts?.[0]
-
 ?.text;
-
 
 
 
@@ -233,8 +201,14 @@ data
 if(!answer){
 
 
+console.log(
+"Full Gemini response:",
+data
+);
+
+
 throw new Error(
-"No Gemini answer"
+"No AI response received"
 );
 
 
@@ -254,18 +228,14 @@ return answer;
 catch(error){
 
 
-
 console.error(
-
-"❌ Gemini Connection Error:",
-
+"Gemini Error:",
 error
-
 );
 
 
 
-throw error;
+return null;
 
 
 }
