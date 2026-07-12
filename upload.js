@@ -6,7 +6,7 @@ import {
 analyzeClothing
 } from "./clothing-ai.js";
 
-
+alert("UPLOAD JS LOADED");
 
 document.addEventListener(
 "DOMContentLoaded",
