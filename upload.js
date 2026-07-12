@@ -38,7 +38,7 @@ document.getElementById("clothingImage");
 const result =
 document.getElementById("result");
 
-
+console.log("🔥 upload.js loaded");
 
 console.log("UPLOAD READY");
 
