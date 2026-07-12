@@ -1,3 +1,571 @@
+// db.js
+// FashionAI Database Functions
+
+
+
+// ==========================
+// ADD CLOTHING
+// ==========================
+
+
+export function addClothing(
+
+database,
+
+clothing
+
+){
+
+
+return new Promise((resolve,reject)=>{
+
+
+const transaction =
+
+database.transaction(
+
+"wardrobe",
+
+"readwrite"
+
+);
+
+
+
+const store =
+
+transaction.objectStore(
+
+"wardrobe"
+
+);
+
+
+
+
+
+const item = {
+
+
+...clothing,
+
+
+laundryStatus:
+
+clothing.laundryStatus || "Clean",
+
+
+
+timesWorn:
+
+clothing.timesWorn || 0,
+
+
+
+favorite:
+
+clothing.favorite || false,
+
+
+
+createdAt:
+
+Date.now()
+
+
+
+};
+
+
+
+
+
+
+const request =
+
+store.add(item);
+
+
+
+
+
+request.onsuccess=()=>{
+
+
+resolve(request.result);
+
+
+};
+
+
+
+request.onerror=()=>{
+
+
+reject(request.error);
+
+
+};
+
+
+
+});
+
+
+}
+
+
+
+
+
+
+
+
+
+// ==========================
+// GET ALL CLOTHES
+// ==========================
+
+
+export function getClothes(database){
+
+
+return new Promise((resolve,reject)=>{
+
+
+const transaction =
+
+database.transaction(
+
+"wardrobe",
+
+"readonly"
+
+);
+
+
+
+const store =
+
+transaction.objectStore(
+
+"wardrobe"
+
+);
+
+
+
+const request =
+
+store.getAll();
+
+
+
+
+
+request.onsuccess=()=>{
+
+
+resolve(
+
+request.result || []
+
+);
+
+
+};
+
+
+
+
+
+request.onerror=()=>{
+
+
+reject(request.error);
+
+
+};
+
+
+
+});
+
+
+}
+
+
+
+
+
+
+
+
+
+// ==========================
+// GET ONE CLOTHING
+// ==========================
+
+
+export function getClothing(
+
+database,
+
+id
+
+){
+
+
+return new Promise((resolve,reject)=>{
+
+
+const transaction =
+
+database.transaction(
+
+"wardrobe",
+
+"readonly"
+
+);
+
+
+
+const store =
+
+transaction.objectStore(
+
+"wardrobe"
+
+);
+
+
+
+const request =
+
+store.get(id);
+
+
+
+
+
+request.onsuccess=()=>{
+
+
+resolve(request.result);
+
+
+};
+
+
+
+request.onerror=()=>{
+
+
+reject(request.error);
+
+
+};
+
+
+
+});
+
+
+}
+
+
+
+
+
+
+
+
+
+// ==========================
+// UPDATE CLOTHING
+// ==========================
+
+
+export function updateClothing(
+
+database,
+
+item
+
+){
+
+
+return new Promise((resolve,reject)=>{
+
+
+const transaction =
+
+database.transaction(
+
+"wardrobe",
+
+"readwrite"
+
+);
+
+
+
+const store =
+
+transaction.objectStore(
+
+"wardrobe"
+
+);
+
+
+
+const request =
+
+store.put(item);
+
+
+
+
+
+request.onsuccess=()=>{
+
+
+resolve();
+
+
+};
+
+
+
+request.onerror=()=>{
+
+
+reject(request.error);
+
+
+};
+
+
+
+});
+
+
+}
+
+
+
+
+
+
+
+
+
+// ==========================
+// DELETE CLOTHING
+// ==========================
+
+
+export function deleteClothing(
+
+database,
+
+id
+
+){
+
+
+return new Promise((resolve,reject)=>{
+
+
+const transaction =
+
+database.transaction(
+
+"wardrobe",
+
+"readwrite"
+
+);
+
+
+
+const store =
+
+transaction.objectStore(
+
+"wardrobe"
+
+);
+
+
+
+const request =
+
+store.delete(id);
+
+
+
+
+
+request.onsuccess=()=>{
+
+
+resolve();
+
+
+};
+
+
+
+request.onerror=()=>{
+
+
+reject(request.error);
+
+
+};
+
+
+
+});
+
+
+}
+
+
+
+
+
+
+
+
+
+// ==========================
+// UPDATE LAUNDRY STATUS
+// ==========================
+
+
+export function updateLaundryStatus(
+
+database,
+
+id,
+
+status
+
+){
+
+
+return new Promise((resolve,reject)=>{
+
+
+const transaction =
+
+database.transaction(
+
+"wardrobe",
+
+"readwrite"
+
+);
+
+
+
+const store =
+
+transaction.objectStore(
+
+"wardrobe"
+
+);
+
+
+
+const request =
+
+store.get(id);
+
+
+
+
+
+request.onsuccess=()=>{
+
+
+const item =
+request.result;
+
+
+
+if(item){
+
+
+item.laundryStatus = status;
+
+
+
+if(status==="Clean"){
+
+
+item.lastWashed =
+new Date().toISOString();
+
+
+}
+
+
+
+store.put(item);
+
+
+}
+
+
+
+};
+
+
+
+
+
+
+transaction.oncomplete=()=>{
+
+
+resolve();
+
+
+};
+
+
+
+
+
+transaction.onerror=()=>{
+
+
+reject(transaction.error);
+
+
+};
+
+
+
+});
+
+
+}
+
+
+
+
+
+
+
+
+
 // ==========================
 // SAVE AI MEMORY
 // ==========================
@@ -63,16 +631,10 @@ resolve();
 
 
 
-
-
 request.onerror=()=>{
 
 
-reject(
-
-request.error
-
-);
+reject(request.error);
 
 
 };
@@ -131,12 +693,9 @@ transaction.objectStore(
 
 
 
-
-
 const request =
 
 store.get(id);
-
 
 
 
@@ -147,7 +706,7 @@ request.onsuccess=()=>{
 
 resolve(
 
-request.result
+request.result || null
 
 );
 
@@ -156,16 +715,94 @@ request.result
 
 
 
-
-
 request.onerror=()=>{
 
 
-reject(
+reject(request.error);
 
-request.error
+
+};
+
+
+
+});
+
+
+}
+
+
+
+
+
+
+
+
+
+// ==========================
+// SAVE OUTFIT HISTORY
+// ==========================
+
+
+export function saveHistory(
+
+database,
+
+data
+
+){
+
+
+return new Promise((resolve,reject)=>{
+
+
+const transaction =
+
+database.transaction(
+
+"history",
+
+"readwrite"
 
 );
+
+
+
+const store =
+
+transaction.objectStore(
+
+"history"
+
+);
+
+
+
+store.add({
+
+outfit:data,
+
+date:Date.now()
+
+});
+
+
+
+
+
+transaction.oncomplete=()=>{
+
+
+resolve();
+
+
+};
+
+
+
+transaction.onerror=()=>{
+
+
+reject(transaction.error);
 
 
 };
