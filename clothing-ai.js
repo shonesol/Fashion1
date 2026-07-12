@@ -1,4 +1,5 @@
 // clothing-ai.js
+// FashionAI Clothing Vision // clothing-ai.js
 // FashionAI Clothing Vision Analyzer
 
 
