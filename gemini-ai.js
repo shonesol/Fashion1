@@ -236,15 +236,16 @@ throw new Error(
 
 catch(error){
 
-
 console.error(
 "❌ Gemini Error:",
 error
 );
 
+alert(
+"Gemini ERROR: " + error.message
+);
 
 throw error;
-
 
 }
 
