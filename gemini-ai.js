@@ -7,19 +7,28 @@ const WORKER_URL =
 
 
 
+
+
 export async function askGemini(
+
 prompt,
+
 image=null
+
 ){
+
 
 
 try{
 
 
+
 let parts=[
 
 {
+
 text:prompt
+
 }
 
 ];
@@ -27,35 +36,45 @@ text:prompt
 
 
 
-// IMAGE HANDLING
+
+
 
 if(image){
 
 
-let base64=image;
 
-let mimeType="image/jpeg";
+const base64 =
+
+image.includes(",")
+
+?
+
+image.split(",")[1]
+
+:
+
+image;
 
 
 
-if(image.includes(",")){
 
 
-const split=image.split(",");
+const mimeType =
 
+image.startsWith(
+"data:image/png"
+)
 
-base64=split[1];
+?
 
+"image/png"
 
-mimeType =
-split[0]
-.match(/data:(.*);base64/)
-?.[1]
-||
+:
+
 "image/jpeg";
 
 
-}
+
 
 
 
@@ -63,7 +82,7 @@ parts.push({
 
 inlineData:{
 
-mimeType:mimeType,
+mimeType,
 
 data:base64
 
@@ -78,7 +97,12 @@ data:base64
 
 
 
+
+
+
+
 const response =
+
 await fetch(
 
 WORKER_URL,
@@ -96,13 +120,14 @@ headers:{
 },
 
 
+
 body:JSON.stringify({
 
 contents:[
 
 {
 
-parts:parts
+parts
 
 }
 
@@ -111,9 +136,22 @@ parts:parts
 })
 
 
+
 }
 
 );
+
+
+
+
+
+
+
+
+const data =
+
+await response.json();
+
 
 
 
@@ -121,105 +159,37 @@ parts:parts
 
 
 console.log(
-"Worker status:",
-response.status
-);
-
-
-
-
-
-const text =
-await response.text();
-
-
-
-
-
-console.log(
-"Worker response:",
-text
-);
-
-
-
-
-
-
-let data;
-
-
-try{
-
-
-data=JSON.parse(text);
-
-
-}
-
-catch(e){
-
-
-throw new Error(
-"Worker returned invalid JSON: "+text
-);
-
-
-}
-
-
-
-
-
-
-if(!response.ok){
-
-
-throw new Error(
-text
-);
-
-
-}
-
-
-
-
-
-
-
-const answer =
-data?.candidates?.[0]
-?.content?.parts?.[0]
-?.text;
-
-
-
-
-
-
-if(!answer){
-
-
-console.log(
-"Full Gemini response:",
+"Gemini Response:",
 data
 );
 
 
-throw new Error(
-"No AI response received"
+
+
+
+
+
+return (
+
+data
+
+?.candidates
+
+?.[0]
+
+?.content
+
+?.parts
+
+?.[0]
+
+?.text
+
+||
+
+"AI failed"
+
 );
-
-
-}
-
-
-
-
-
-
-return answer;
 
 
 
@@ -228,14 +198,18 @@ return answer;
 catch(error){
 
 
+
 console.error(
+
 "Gemini Error:",
+
 error
+
 );
 
 
 
-return null;
+return "AI connection failed";
 
 
 }
