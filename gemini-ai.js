@@ -23,12 +23,10 @@ try{
 
 
 
-let parts=[
+let parts = [
 
 {
-
-text:prompt
-
+text: prompt
 }
 
 ];
@@ -38,13 +36,13 @@ text:prompt
 
 
 
+// ADD IMAGE
 
 if(image){
 
 
 
-const base64 =
-
+let base64 =
 image.includes(",")
 
 ?
@@ -59,22 +57,12 @@ image;
 
 
 
-const mimeType =
 
-image.startsWith(
-"data:image/png"
-)
-
-?
-
-"image/png"
-
-:
-
-"image/jpeg";
-
-
-
+let mimeType =
+image.substring(
+5,
+image.indexOf(";")
+);
 
 
 
@@ -82,7 +70,7 @@ parts.push({
 
 inlineData:{
 
-mimeType,
+mimeType:mimeType,
 
 data:base64
 
@@ -100,10 +88,7 @@ data:base64
 
 
 
-
-const response =
-
-await fetch(
+const response = await fetch(
 
 WORKER_URL,
 
@@ -114,6 +99,7 @@ method:"POST",
 
 
 headers:{
+
 
 "Content-Type":"application/json"
 
@@ -127,7 +113,7 @@ contents:[
 
 {
 
-parts
+parts:parts
 
 }
 
@@ -148,9 +134,19 @@ parts
 
 
 
-const data =
+console.log(
+"Worker status:",
+response.status
+);
 
-await response.json();
+
+
+
+
+
+
+const text =
+await response.text();
 
 
 
@@ -159,8 +155,8 @@ await response.json();
 
 
 console.log(
-"Gemini Response:",
-data
+"Worker raw response:",
+text
 );
 
 
@@ -169,27 +165,87 @@ data
 
 
 
-return (
+
+let data;
+
+
+try{
+
+
+data = JSON.parse(text);
+
+
+}
+
+catch{
+
+
+throw new Error(
+"Worker did not return JSON"
+);
+
+
+}
+
+
+
+
+
+
+
+
+if(data.error){
+
+
+throw new Error(
+
+data.error.message ||
+
+"Gemini API error"
+
+);
+
+
+}
+
+
+
+
+
+
+
+const answer =
 
 data
 
-?.candidates
+?.candidates?.[0]
 
-?.[0]
+?.content?.parts?.[0]
 
-?.content
+?.text;
 
-?.parts
 
-?.[0]
 
-?.text
 
-||
 
-"AI failed"
 
+
+if(!answer){
+
+
+throw new Error(
+"No Gemini answer"
 );
+
+
+}
+
+
+
+
+
+
+return answer;
 
 
 
@@ -201,7 +257,7 @@ catch(error){
 
 console.error(
 
-"Gemini Error:",
+"❌ Gemini Connection Error:",
 
 error
 
@@ -209,7 +265,7 @@ error
 
 
 
-return "AI connection failed";
+throw error;
 
 
 }
