@@ -1,33 +1,135 @@
 // app.js
-// FashionAI Main Controller Test
-
-console.log("🚀 FashionAI app.js loaded");
+// FashionAI Main Controller
 
 
-document.addEventListener("DOMContentLoaded", () => {
-
-    console.log("📱 Page loaded");
-
-
-    const uploadBtn = document.getElementById("uploadBtn");
-
-    if(uploadBtn){
-
-        console.log("✅ Upload button found");
+import {
+startFashionAI
+}
+from "./auth-manager.js";
 
 
-        uploadBtn.addEventListener("click",()=>{
+import {
+generateOutfit
+}
+from "./outfit-generator.js";
 
-            alert("Upload button is working");
 
-        });
+import {
+saveOutfitHistory
+}
+from "./outfit-history.js";
 
 
-    }else{
+console.log(
+"🚀 FashionAI app.js loaded"
+);
 
-        alert("❌ Upload button not found");
 
-    }
+
+startFashionAI();
+
+
+
+
+
+window.addEventListener(
+"FashionAIReady",
+()=>{
+
+console.log(
+"✅ FashionAI ready"
+);
+
+}
+);
+
+
+
+
+
+
+
+document.addEventListener(
+"DOMContentLoaded",
+()=>{
+
+
+
+const outfitBtn =
+document.getElementById(
+"outfitBtn"
+);
+
+
+
+if(outfitBtn){
+
+
+outfitBtn.onclick = async()=>{
+
+
+const box =
+document.getElementById(
+"outfitResult"
+);
+
+
+box.innerHTML =
+"🤖 Creating outfit...";
+
+
+
+try{
+
+
+const outfit =
+await generateOutfit(
+
+window.FashionAI.database,
+
+"Casual"
+
+);
+
+
+
+await saveOutfitHistory(
+
+window.FashionAI.database,
+
+outfit
+
+);
+
+
+
+box.innerHTML =
+outfit.message;
+
+
+
+}
+
+catch(error){
+
+
+console.error(error);
+
+
+box.innerHTML =
+"❌ Outfit failed";
+
+
+}
+
+
+
+};
+
+
+
+}
+
 
 
 });
