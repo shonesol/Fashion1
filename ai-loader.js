@@ -1,42 +1,49 @@
 // ai-loader.js
-// FashionAI Loading Controller
-
-
-console.log("🔥 ai-loader.js loaded");
+// FashionAI Loading + Message Controller
 
 
 
 // ==========================
-// SHOW AI LOADING
+// SHOW LOADING
 // ==========================
 
 export function showAILoading(
-    element,
-    message = "FashionAI is thinking..."
+element,
+message = "FashionAI is thinking..."
 ){
 
-    if(!element){
-        console.error(
-            "AI Loading element missing"
-        );
-        return;
-    }
+
+if(!element){
+console.error(
+"AI Loader: element missing"
+);
+return;
+}
 
 
-    element.innerHTML = `
 
-    <div class="ai-loading">
+element.innerHTML = `
 
-        <div class="ai-circle">
-        </div>
+<div class="ai-loading">
 
-        <div class="ai-text">
-            🤖 ${message}
-        </div>
 
-    </div>
+<div class="ai-circle">
 
-    `;
+🤖
+
+</div>
+
+
+<div class="ai-text">
+
+${message}
+
+</div>
+
+
+</div>
+
+`;
 
 }
 
@@ -44,48 +51,48 @@ export function showAILoading(
 
 
 
-// ==========================
-// HIDE AI LOADING
-// ==========================
-
-export function hideAILoading(element){
-
-    if(!element){
-        return;
-    }
-
-
-    element.innerHTML = "";
-
-}
-
-
 
 
 
 // ==========================
-// SHOW AI SUCCESS
+// SUCCESS MESSAGE
 // ==========================
 
 export function showAISuccess(
-    element,
-    message
+
+element,
+
+message
+
 ){
 
-    if(!element){
-        return;
-    }
+
+if(!element){
+
+return;
+
+}
 
 
-    element.innerHTML = `
 
-    <div class="ai-success">
+element.innerHTML = `
 
-        ✅ ${message}
+<div class="ai-success">
 
-    </div>
 
-    `;
+<h3>
+✅ Success
+</h3>
+
+
+<p>
+${message}
+</p>
+
+
+</div>
+
+`;
 
 }
 
@@ -95,29 +102,46 @@ export function showAISuccess(
 
 
 
+
 // ==========================
-// SHOW AI ERROR
+// ERROR MESSAGE
 // ==========================
 
 export function showAIError(
-    element,
-    message
+
+element,
+
+message
+
 ){
 
-    if(!element){
-        return;
-    }
+
+if(!element){
+
+return;
+
+}
 
 
-    element.innerHTML = `
 
-    <div class="ai-error">
+element.innerHTML = `
 
-        ❌ ${message}
+<div class="ai-error">
 
-    </div>
 
-    `;
+<h3>
+❌ FashionAI Error
+</h3>
+
+
+<p>
+${message}
+</p>
+
+
+</div>
+
+`;
 
 }
 
@@ -126,15 +150,24 @@ export function showAIError(
 
 
 
+
+
 // ==========================
-// AI STATUS
+// CLEAR MESSAGE
 // ==========================
 
-export function aiStatus(message){
+export function hideAILoading(
 
-    console.log(
-        "🤖 FashionAI:",
-        message
-    );
+element
+
+){
+
+
+if(element){
+
+element.innerHTML="";
+
+}
+
 
 }
