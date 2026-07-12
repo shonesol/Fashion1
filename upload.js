@@ -1,5 +1,5 @@
 // upload.js
-// FashionAI Clothing Upload System
+// FashionAI Clothing Upload System (Fixed)
 
 
 import { auth } from "./firebase.js";
@@ -8,16 +8,13 @@ import {
 onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-
 import {
 getDatabase
 } from "./database-manager.js";
 
-
 import {
 addClothing
 } from "./db.js";
-
 
 import {
 analyzeClothing
@@ -30,6 +27,9 @@ console.log("🔥 upload.js loaded");
 
 
 let database = null;
+
+let currentUser = null;
+
 
 
 
@@ -56,31 +56,7 @@ document.getElementById("result");
 if(!uploadBtn){
 
 console.error(
-"❌ Upload button not found"
-);
-
-return;
-
-}
-
-
-
-if(!imageInput){
-
-console.error(
-"❌ Image input not found"
-);
-
-return;
-
-}
-
-
-
-if(!result){
-
-console.error(
-"❌ Result box not found"
+"❌ upload button missing"
 );
 
 return;
@@ -92,20 +68,25 @@ return;
 
 
 // ==========================
-// CONNECT USER DATABASE
+// LOGIN CONNECTION
 // ==========================
 
 
 onAuthStateChanged(
+
 auth,
+
 async(user)=>{
 
 
 if(!user){
 
 console.log(
-"❌ No user logged in"
+"❌ User not logged in"
 );
+
+result.innerHTML =
+"Please login first";
 
 return;
 
@@ -116,6 +97,10 @@ return;
 try{
 
 
+currentUser = user;
+
+
+
 database =
 await getDatabase(
 user.uid
@@ -124,7 +109,8 @@ user.uid
 
 
 console.log(
-"✅ Upload database connected"
+"✅ Database connected",
+database.name
 );
 
 
@@ -135,9 +121,13 @@ catch(error){
 
 
 console.error(
-"Database connection error:",
+"Database error",
 error
 );
+
+
+result.innerHTML =
+"❌ Database connection failed";
 
 
 }
@@ -152,17 +142,14 @@ error
 
 
 
+
+
 // ==========================
 // UPLOAD BUTTON
 // ==========================
 
 
-uploadBtn.addEventListener(
-
-"click",
-
-async()=>{
-
+uploadBtn.onclick = async()=>{
 
 
 try{
@@ -172,8 +159,9 @@ try{
 if(!database){
 
 
-result.innerHTML =
-"❌ Database not ready. Please login again.";
+alert(
+"Database is not ready. Login again."
+);
 
 
 return;
@@ -190,12 +178,11 @@ imageInput.files[0];
 
 
 
-
 if(!file){
 
 
 result.innerHTML =
-"❌ Please select clothing image";
+"❌ Select clothing image";
 
 
 return;
@@ -208,13 +195,13 @@ return;
 
 
 
-
 result.innerHTML =
 `
-<div>
-🤖 FashionAI is analyzing clothing...
-</div>
+<h3>
+🤖 FashionAI is analyzing...
+</h3>
 `;
+
 
 
 
@@ -228,9 +215,7 @@ new FileReader();
 
 
 
-
 reader.onload = async()=>{
-
 
 
 try{
@@ -243,8 +228,9 @@ reader.result;
 
 
 
+
 console.log(
-"📸 Image converted"
+"📸 Image ready"
 );
 
 
@@ -252,7 +238,7 @@ console.log(
 
 
 
-const aiResult =
+const ai =
 await analyzeClothing(
 image
 );
@@ -263,9 +249,11 @@ image
 
 
 console.log(
-"🤖 AI Result:",
-aiResult
+"🤖 AI RESULT:",
+ai
 );
+
+
 
 
 
@@ -279,57 +267,57 @@ image:image,
 
 
 name:
-aiResult.type || "Unknown Clothing",
+ai.type || "Unknown Clothing",
 
 
 
 type:
-aiResult.type || "Unknown",
+ai.type || "Unknown",
 
 
 
 category:
-aiResult.category || "Other",
+ai.category || "Other",
 
 
 
 color:
-aiResult.primaryColor || "Unknown",
+ai.primaryColor || "Unknown",
 
 
 
 secondaryColor:
-aiResult.secondaryColor || "",
+ai.secondaryColor || "",
 
 
 
 material:
-aiResult.material || "Unknown",
+ai.material || "Unknown",
 
 
 
 texture:
-aiResult.texture || "Unknown",
+ai.texture || "Unknown",
 
 
 
 pattern:
-aiResult.pattern || "Plain",
+ai.pattern || "Plain",
 
 
 
 style:
-aiResult.style || "Casual",
+ai.style || "Casual",
 
 
 
 occasion:
-aiResult.occasion || "Casual",
+ai.occasion || "Casual",
 
 
 
 season:
-aiResult.season || "All",
+ai.season || "All",
 
 
 
@@ -346,10 +334,11 @@ favorite:false,
 
 
 
-createdAt:Date.now()
-
+createdAt:
+Date.now()
 
 };
+
 
 
 
@@ -374,7 +363,7 @@ clothing
 
 
 console.log(
-"✅ Saved:",
+"✅ SAVED",
 clothing
 );
 
@@ -383,57 +372,36 @@ clothing
 
 
 
-
-
 result.innerHTML =
-
-
 `
-<h3>✅ Clothing Added Successfully</h3>
 
-<p>👕 ${clothing.name}</p>
+<h3>
+✅ Clothing Added
+</h3>
 
 <p>
-📂 Category:
-${clothing.category}
+👕 ${clothing.name}
 </p>
 
 <p>
-🎨 Color:
-${clothing.color}
+📂 ${clothing.category}
 </p>
 
 <p>
-🧵 Material:
-${clothing.material}
+🎨 ${clothing.color}
 </p>
 
-<p>
-✨ Style:
-${clothing.style}
-</p>
 `;
 
 
 
 
 
-
-imageInput.value="";
-
-
-
-
-
-
 window.dispatchEvent(
-
 new Event(
 "clothingAdded"
 )
-
 );
-
 
 
 
@@ -445,17 +413,16 @@ catch(error){
 
 
 console.error(
-"❌ AI Analysis Error:",
+"❌ AI/SAVE ERROR:",
 error
 );
 
 
-
 result.innerHTML =
-
-
 `
-<h3>❌ AI Analysis Failed</h3>
+<h3>
+❌ Failed
+</h3>
 
 <p>
 ${error.message}
@@ -474,22 +441,6 @@ ${error.message}
 
 
 
-
-reader.onerror=()=>{
-
-
-result.innerHTML =
-"❌ Cannot read image";
-
-
-};
-
-
-
-
-
-
-
 reader.readAsDataURL(file);
 
 
@@ -500,20 +451,16 @@ catch(error){
 
 
 console.error(
-"❌ Upload Error:",
+"UPLOAD ERROR:",
 error
 );
-
-
-result.innerHTML =
-"❌ Upload failed";
 
 
 }
 
 
 
-});
+};
 
 
 
