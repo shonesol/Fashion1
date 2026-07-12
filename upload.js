@@ -1,12 +1,12 @@
 // upload.js
 // FashionAI IMAGE TEST
-alert("UPLOAD JS LOADED");
-
-console.log("UPLOAD JS RUNNING");
 
 import {
 analyzeClothing
 } from "./clothing-ai.js";
+alert("UPLOAD JS LOADED");
+
+console.log("UPLOAD JS RUNNING");
 
 
 document.addEventListener(
