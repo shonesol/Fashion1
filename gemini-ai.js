@@ -1,5 +1,5 @@
 // gemini-ai.js
-// FashionAI Gemini Connection via Cloudflare Worker
+// FashionAI Gemini Connection
 
 
 const WORKER_URL =
@@ -7,32 +7,16 @@ const WORKER_URL =
 
 
 
-
-// ==========================
-// SEND REQUEST TO GEMINI
-// ==========================
-
-
-export async function askGemini(
-
-prompt,
-
-image = null
-
-){
+export async function askGemini(prompt, image){
 
 
 try{
 
 
-
-let parts = [
+const parts = [
 
 {
-
-text:
-prompt
-
+text: prompt
 }
 
 ];
@@ -40,42 +24,18 @@ prompt
 
 
 
-
-
-
-// ==========================
-// ADD IMAGE IF AVAILABLE
-// ==========================
-
+// Add image if available
 
 if(image){
 
 
-
-let base64 =
-image.includes(",")
-
-?
-
-image.split(",")[1]
-
-:
-
-image;
+const base64 =
+image.split(",")[1];
 
 
-
-
-
-let mimeType =
-image.match(
-/data:(.*?);/
-)?.[1]
-||
-"image/jpeg";
-
-
-
+const mime =
+image.split(",")[0]
+.match(/:(.*?);/)[1];
 
 
 
@@ -83,19 +43,15 @@ parts.push({
 
 inlineData:{
 
-
-mimeType:mimeType,
-
+mimeType:mime,
 
 data:base64
-
 
 }
 
 });
 
 
-
 }
 
 
@@ -103,18 +59,8 @@ data:base64
 
 
 
-
-console.log(
-"📤 Sending request to Cloudflare..."
-);
-
-
-
-
-
-
-
-const response = await fetch(
+const response =
+await fetch(
 
 WORKER_URL,
 
@@ -122,9 +68,7 @@ WORKER_URL,
 
 method:"POST",
 
-
 headers:{
-
 
 "Content-Type":"application/json"
 
@@ -145,46 +89,10 @@ parts:parts
 
 })
 
+
 }
 
 );
-
-
-
-
-
-
-
-
-
-console.log(
-
-"Cloudflare status:",
-
-response.status
-
-);
-
-
-
-
-
-
-
-const raw = await response.text();
-
-
-
-
-
-console.log(
-
-"📥 Cloudflare Response:",
-
-raw
-
-);
-
 
 
 
@@ -197,7 +105,7 @@ if(!response.ok){
 
 throw new Error(
 
-"Worker Error: " + raw
+"Worker error: "+response.status
 
 );
 
@@ -210,106 +118,8 @@ throw new Error(
 
 
 
-let data;
-
-
-try{
-
-
-data = JSON.parse(raw);
-
-
-}
-
-catch(error){
-
-
-throw new Error(
-
-"Cloudflare did not return JSON"
-
-);
-
-
-}
-
-
-
-
-
-
-
-
-// ==========================
-// CHECK GEMINI RESPONSE
-// ==========================
-
-
-if(
-
-data.error
-
-){
-
-
-
-throw new Error(
-
-data.error.message ||
-
-"Gemini API Error"
-
-);
-
-
-}
-
-
-
-
-
-
-
-
-const answer =
-
-data
-
-?.candidates
-
-?.[0]
-
-?.content
-
-?.parts
-
-?.map(
-
-p=>p.text
-
-)
-
-.join("");
-
-
-
-
-
-
-
-
-if(!answer){
-
-
-throw new Error(
-
-"No Gemini response received"
-
-);
-
-
-}
-
+const data =
+await response.json();
 
 
 
@@ -317,11 +127,8 @@ throw new Error(
 
 
 console.log(
-
-"🤖 Gemini Answer:",
-
-answer
-
+"Gemini response:",
+data
 );
 
 
@@ -329,7 +136,17 @@ answer
 
 
 
-return answer.trim();
+return (
+
+data
+.candidates?.[0]
+?.content
+?.parts?.[0]
+?.text
+
+|| ""
+
+);
 
 
 
@@ -338,19 +155,15 @@ return answer.trim();
 catch(error){
 
 
-
 console.error(
-
-"❌ Gemini Connection Failed:",
-
+"Gemini connection failed:",
 error
-
 );
 
 
-
-throw error;
-
+throw new Error(
+"Load failed"
+);
 
 
 }
