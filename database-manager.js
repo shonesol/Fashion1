@@ -2,16 +2,10 @@
 // FashionAI Permanent User Storage (IndexedDB)
 
 
-
 let database = null;
 
 
-const DATABASE_VERSION = 8;
-
-
-
-
-
+const DATABASE_VERSION = 9;
 
 
 
@@ -23,35 +17,23 @@ const DATABASE_VERSION = 8;
 export function getDatabase(userId){
 
 
-
 return new Promise((resolve,reject)=>{
 
 
-
-
-
 if(!userId){
-
 
 reject(
 "Missing User ID"
 );
 
-
 return;
-
 
 }
 
 
 
 
-
-
-
-const request =
-
-indexedDB.open(
+const request = indexedDB.open(
 
 "FashionAI_" + userId,
 
@@ -63,160 +45,74 @@ DATABASE_VERSION
 
 
 
-
-
-
-
 request.onupgradeneeded = (event)=>{
 
 
-
-const db =
-
-event.target.result;
-
-
-
-
-
+const db = event.target.result;
 
 
 
 
 // ==========================
-// WARDROBE STORAGE
+// WARDROBE
 // ==========================
-
 
 
 if(
-!db.objectStoreNames.contains(
-"wardrobe"
-)
-
+!db.objectStoreNames.contains("wardrobe")
 ){
 
 
-
-const wardrobe =
-
-db.createObjectStore(
+const wardrobe = db.createObjectStore(
 
 "wardrobe",
 
 {
-
 keyPath:"id",
-
 autoIncrement:true
-
 }
 
 );
 
 
 
-
-
-
-
 wardrobe.createIndex(
-
 "category",
-
 "category"
-
 );
 
 
-
-
-
 wardrobe.createIndex(
-
 "color",
-
 "color"
-
 );
 
 
-
-
-
 wardrobe.createIndex(
-
 "style",
-
 "style"
-
 );
 
 
-
-
-
 wardrobe.createIndex(
-
-"material",
-
-"material"
-
-);
-
-
-
-
-
-wardrobe.createIndex(
-
-"texture",
-
-"texture"
-
-);
-
-
-
-
-
-wardrobe.createIndex(
-
 "laundryStatus",
-
 "laundryStatus"
-
 );
-
-
-
 
 
 }
-
-
-
-
-
 
 
 
 
 // ==========================
-// WEAR HISTORY
+// HISTORY
 // ==========================
 
 
 if(
-
-!db.objectStoreNames.contains(
-
-"history"
-
-)
-
+!db.objectStoreNames.contains("history")
 ){
-
 
 
 db.createObjectStore(
@@ -224,22 +120,14 @@ db.createObjectStore(
 "history",
 
 {
-
 keyPath:"id",
-
 autoIncrement:true
-
 }
 
 );
 
 
-
 }
-
-
-
-
 
 
 
@@ -251,15 +139,8 @@ autoIncrement:true
 
 
 if(
-
-!db.objectStoreNames.contains(
-
-"plans"
-
-)
-
+!db.objectStoreNames.contains("plans")
 ){
-
 
 
 db.createObjectStore(
@@ -267,22 +148,14 @@ db.createObjectStore(
 "plans",
 
 {
-
 keyPath:"id",
-
 autoIncrement:true
-
 }
 
 );
 
 
-
 }
-
-
-
-
 
 
 
@@ -294,15 +167,8 @@ autoIncrement:true
 
 
 if(
-
-!db.objectStoreNames.contains(
-
-"preferences"
-
-)
-
+!db.objectStoreNames.contains("preferences")
 ){
-
 
 
 db.createObjectStore(
@@ -310,20 +176,13 @@ db.createObjectStore(
 "preferences",
 
 {
-
 keyPath:"id"
-
 }
 
 );
 
 
-
 }
-
-
-
-
 
 
 
@@ -335,15 +194,8 @@ keyPath:"id"
 
 
 if(
-
-!db.objectStoreNames.contains(
-
-"profile"
-
-)
-
+!db.objectStoreNames.contains("profile")
 ){
-
 
 
 db.createObjectStore(
@@ -351,17 +203,13 @@ db.createObjectStore(
 "profile",
 
 {
-
 keyPath:"id"
-
 }
 
 );
 
 
-
 }
-
 
 
 
@@ -375,38 +223,20 @@ keyPath:"id"
 
 
 
-
-
-// ==========================
-// DATABASE READY
-// ==========================
-
-
-request.onsuccess =
-
-(event)=>{
-
+request.onsuccess=(event)=>{
 
 
 database =
-
 event.target.result;
-
-
-
 
 
 console.log(
 
-"✅ FashionAI User Storage Ready:",
+"✅ FashionAI Database Ready:",
 
 database.name
 
 );
-
-
-
-
 
 
 resolve(database);
@@ -421,27 +251,19 @@ resolve(database);
 
 
 
-
-
-request.onerror = ()=>{
-
+request.onerror=()=>{
 
 
 console.error(
 
-"Database Error",
+"Database opening error:",
 
 request.error
 
 );
 
 
-
-reject(
-
-request.error
-
-);
+reject(request.error);
 
 
 
@@ -449,13 +271,10 @@ request.error
 
 
 
-
-
-
 });
 
-}
 
+}
 
 
 
@@ -472,26 +291,18 @@ request.error
 export function closeDatabase(){
 
 
-
 if(database){
-
 
 
 database.close();
 
-
-
 database=null;
 
 
-
 }
 
 
-
 }
-
-
 
 
 
@@ -500,27 +311,17 @@ database=null;
 
 
 // ==========================
-// DELETE USER STORAGE
+// DELETE DATABASE
 // ==========================
 
 
-export function deleteUserDatabase(
-
-userId
-
-){
+export function deleteUserDatabase(userId){
 
 
-
-return new Promise(
-
-(resolve,reject)=>{
+return new Promise((resolve,reject)=>{
 
 
-
-const request =
-
-indexedDB.deleteDatabase(
+const request = indexedDB.deleteDatabase(
 
 "FashionAI_" + userId
 
@@ -528,53 +329,34 @@ indexedDB.deleteDatabase(
 
 
 
-
-
 request.onsuccess=()=>{
 
 
-
 console.log(
-
-"FashionAI storage deleted"
-
+"✅ FashionAI database deleted"
 );
-
 
 
 resolve();
 
 
-
 };
-
-
-
 
 
 
 request.onerror=()=>{
 
 
-
 reject(
-
 request.error
-
 );
-
 
 
 };
 
 
 
-}
-
-
-
-);
-
+});
 
 
 }
