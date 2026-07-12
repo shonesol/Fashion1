@@ -1,8 +1,11 @@
-// upload.js IMAGE TEST
+// upload.js
+// FashionAI IMAGE TEST
+
 
 import {
 analyzeClothing
 } from "./clothing-ai.js";
+
 
 
 document.addEventListener(
@@ -23,17 +26,19 @@ document.getElementById("result");
 
 
 
-uploadBtn.onclick = ()=>{
 
 
-const file =
-imageInput.files[0];
+console.log("✅ Upload test loaded");
 
 
-if(!file){
 
-result.innerHTML =
-"❌ No image selected";
+
+
+if(!uploadBtn){
+
+console.log(
+"❌ Upload button not found"
+);
 
 return;
 
@@ -41,8 +46,43 @@ return;
 
 
 
+
+
+uploadBtn.addEventListener(
+"click",
+()=>{
+
+
+
+const file =
+imageInput.files[0];
+
+
+
+
+
+if(!file){
+
+
 result.innerHTML =
-"📸 Image reading...";
+"❌ No image selected";
+
+
+return;
+
+
+}
+
+
+
+
+
+
+result.innerHTML =
+"📸 Reading image...";
+
+
+
 
 
 
@@ -51,7 +91,14 @@ new FileReader();
 
 
 
+
+
 reader.onload = async()=>{
+
+
+
+try{
+
 
 
 console.log(
@@ -59,18 +106,23 @@ console.log(
 );
 
 
+
+
 result.innerHTML =
-"🤖 Sending to AI...";
+"🤖 Sending image to Gemini...";
 
 
 
-try{
+
 
 
 const ai =
 await analyzeClothing(
 reader.result
 );
+
+
+
 
 
 
@@ -81,15 +133,29 @@ ai
 
 
 
+
+
+
+
 result.innerHTML =
 
 `
-<h3>AI WORKS</h3>
 
-<p>
-${JSON.stringify(ai)}
-</p>
+<h3>✅ AI WORKS</h3>
+
+<p><b>Type:</b> ${ai.type}</p>
+
+<p><b>Category:</b> ${ai.category}</p>
+
+<p><b>Color:</b> ${ai.primaryColor}</p>
+
+<p><b>Material:</b> ${ai.material}</p>
+
+<p><b>Style:</b> ${ai.style}</p>
+
 `;
+
+
 
 
 
@@ -98,19 +164,23 @@ ${JSON.stringify(ai)}
 catch(error){
 
 
+
 console.error(
+"AI ERROR:",
 error
 );
+
+
+
 
 
 result.innerHTML =
 
 `
-❌ AI ERROR
 
-<br>
+<h3>❌ AI ERROR</h3>
 
-${error.message}
+<p>${error.message}</p>
 
 `;
 
@@ -120,7 +190,25 @@ ${error.message}
 
 
 
+
+
 };
+
+
+
+
+
+
+reader.onerror = ()=>{
+
+
+result.innerHTML =
+"❌ Image reading failed";
+
+
+};
+
+
 
 
 
@@ -128,7 +216,9 @@ reader.readAsDataURL(file);
 
 
 
-};
+
+});
+
 
 
 });
