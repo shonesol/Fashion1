@@ -1,6 +1,6 @@
 // upload.js
 // FashionAI Clothing Upload System FIX
-
+alert("UPLOAD FILE CONNECTED");
 
 import { auth } from "./firebase.js";
 
