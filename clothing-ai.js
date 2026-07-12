@@ -1,5 +1,3 @@
-// clothing-ai.js
-// FashionAI Clothing Vision // clothing-ai.js
 // FashionAI Clothing Vision Analyzer
 
 
@@ -11,29 +9,25 @@ from "./gemini-ai.js";
 
 
 
-// ==========================
-// ANALYZE CLOTHING IMAGE
-// ==========================
-
 
 export async function analyzeClothing(image){
 
 
-try{
-
-
 const prompt = `
 
-You are FashionAI, an expert fashion recognition AI.
+
+You are FashionAI.
 
 Analyze the clothing image.
 
-Return ONLY valid JSON.
+Return ONLY JSON.
 
-No markdown.
 No explanation.
+No markdown.
+No code block.
 
-Format:
+
+Use exactly:
 
 {
 "type":"",
@@ -49,7 +43,7 @@ Format:
 }
 
 
-Category must be one of:
+Allowed category:
 
 Top
 Bottom
@@ -61,8 +55,6 @@ Other
 
 
 `;
-
-
 
 
 
@@ -80,9 +72,8 @@ image
 
 
 
-
 console.log(
-"Gemini Raw Response:",
+"AI RESPONSE:",
 response
 );
 
@@ -91,45 +82,8 @@ response
 
 
 
-if(!response){
-
-throw new Error(
-"Gemini returned empty response"
-);
-
-}
-
-
-
-
-
-
-// Remove markdown if Gemini adds it
-
-
-const clean = response
-
-.replaceAll(
-"```json",
-""
-)
-
-.replaceAll(
-"```",
-""
-)
-
-.trim();
-
-
-
-
-
-
-
-
-const match =
-clean.match(
+const json =
+response.match(
 /\{[\s\S]*\}/
 );
 
@@ -137,13 +91,11 @@ clean.match(
 
 
 
-if(!match){
-
+if(!json){
 
 throw new Error(
-"AI did not return JSON"
+"AI did not return JSON: "+response
 );
-
 
 }
 
@@ -151,15 +103,10 @@ throw new Error(
 
 
 
-
-
-const data = JSON.parse(
-
-match[0]
-
+const data =
+JSON.parse(
+json[0]
 );
-
-
 
 
 
@@ -169,15 +116,40 @@ match[0]
 return {
 
 
-type:
-data.type || "Unknown Clothing",
+type:data.type || "Unknown",
 
 
-category:
-data.category || "Other",
+category:data.category || "Other",
 
 
-primaryColor:
+primaryColor:data.primaryColor || "Unknown",
+
+
+secondaryColor:data.secondaryColor || "",
+
+
+material:data.material || "Unknown",
+
+
+texture:data.texture || "Unknown",
+
+
+pattern:data.pattern || "Plain",
+
+
+style:data.style || "Casual",
+
+
+occasion:data.occasion || "Casual",
+
+
+season:data.season || "All"
+
+
+};
+
+
+}
 data.primaryColor || "Unknown",
 
 
