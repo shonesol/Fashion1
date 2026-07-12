@@ -2,11 +2,12 @@
 
 
 
-// upload.js
+/// upload.js
 // FashionAI Clothing Upload System
 
 
 import { auth } from "./firebase.js";
+
 
 import {
 onAuthStateChanged
@@ -34,28 +35,38 @@ from "./db.js";
 
 
 
+
+
 let database = null;
 
 
 
-
 const uploadBtn =
-document.getElementById("uploadBtn");
+document.getElementById(
+"uploadBtn"
+);
+
 
 
 const imageInput =
-document.getElementById("clothingImage");
+document.getElementById(
+"clothingImage"
+);
+
 
 
 const result =
-document.getElementById("result");
+document.getElementById(
+"result"
+);
+
 
 
 
 
 
 // ==========================
-// AUTH CONNECTION
+// CONNECT DATABASE
 // ==========================
 
 
@@ -68,11 +79,14 @@ async(user)=>{
 
 if(!user){
 
+
 console.log(
-"❌ No user logged in"
+"❌ User not logged in"
 );
 
+
 return;
+
 
 }
 
@@ -82,11 +96,17 @@ try{
 
 
 database =
-await getDatabase(user.uid);
+
+await getDatabase(
+
+user.uid
+
+);
+
 
 
 console.log(
-"✅ Upload database ready"
+"✅ Upload database connected"
 );
 
 
@@ -95,13 +115,14 @@ console.log(
 
 catch(error){
 
+
 console.error(
-"Database error:",
 error
 );
 
 
 }
+
 
 
 });
@@ -113,27 +134,37 @@ error
 
 
 
+
 // ==========================
-// UPLOAD
+// UPLOAD BUTTON
 // ==========================
 
 
-uploadBtn?.addEventListener(
+if(uploadBtn){
+
+
+uploadBtn.addEventListener(
 
 "click",
 
 async()=>{
 
 
+
 try{
+
 
 
 if(!database){
 
+
 result.innerHTML =
-"❌ Wait for login to finish";
+
+"❌ Please login first";
+
 
 return;
+
 
 }
 
@@ -142,7 +173,11 @@ return;
 
 
 const file =
+
 imageInput.files[0];
+
+
+
 
 
 
@@ -151,7 +186,8 @@ if(!file){
 
 
 result.innerHTML =
-"❌ Choose a clothing photo";
+
+"❌ Please choose a clothing image";
 
 
 return;
@@ -163,11 +199,17 @@ return;
 
 
 
+
 result.innerHTML =
+
 `
-<h3>
-🤖 FashionAI is thinking...
-</h3>
+
+<div class="ai-loading">
+
+🤖 FashionAI is analyzing your clothing...
+
+</div>
+
 `;
 
 
@@ -176,8 +218,15 @@ result.innerHTML =
 
 
 
+
+
 const reader =
+
 new FileReader();
+
+
+
+
 
 
 
@@ -186,31 +235,43 @@ new FileReader();
 reader.onload = async()=>{
 
 
+
 try{
 
 
+
 const image =
+
 reader.result;
 
 
 
-console.log(
-"Image ready"
-);
 
 
 
+// SEND IMAGE TO GEMINI
 
 
 const ai =
-await analyzeClothing(image);
+
+await analyzeClothing(
+
+image
+
+);
+
+
+
 
 
 
 console.log(
-"Gemini:",
+"AI Clothing:",
 ai
 );
+
+
+
 
 
 
@@ -220,60 +281,100 @@ ai
 const clothing = {
 
 
+
 image:image,
 
 
+
 name:
+
+ai.type || "Unknown Clothing",
+
+
+
+type:
+
 ai.type || "Unknown",
 
 
+
 category:
+
 ai.category || "Other",
 
 
+
 color:
+
 ai.primaryColor || "Unknown",
 
 
+
 secondaryColor:
+
 ai.secondaryColor || "",
 
 
+
 material:
+
 ai.material || "Unknown",
 
 
+
 texture:
+
 ai.texture || "Unknown",
 
 
+
 pattern:
+
 ai.pattern || "Plain",
 
 
+
 style:
+
 ai.style || "Casual",
 
 
+
 occasion:
+
 ai.occasion || "Casual",
 
 
+
 season:
+
 ai.season || "All",
 
 
+
+
 laundryStatus:
+
 "Clean",
 
 
-timesWorn:0,
+
+timesWorn:
+
+0,
 
 
-favorite:false,
+
+favorite:
+
+false,
 
 
-createdAt:Date.now()
+
+createdAt:
+
+Date.now()
+
 
 
 };
@@ -281,6 +382,12 @@ createdAt:Date.now()
 
 
 
+
+
+
+
+
+// SAVE TO DATABASE
 
 
 await addClothing(
@@ -296,25 +403,44 @@ clothing
 
 
 
+
+
 result.innerHTML =
 
 
 `
 
 <h3>
-✅ Added To Wardrobe
+✅ Clothing Added Successfully
 </h3>
+
 
 <p>
 👕 ${clothing.name}
 </p>
 
-<p>
-🎨 ${clothing.color}
-</p>
 
 <p>
-✨ ${clothing.style}
+Category:
+${clothing.category}
+</p>
+
+
+<p>
+🎨 Color:
+${clothing.color}
+</p>
+
+
+<p>
+🧵 Material:
+${clothing.material}
+</p>
+
+
+<p>
+✨ Style:
+${clothing.style}
 </p>
 
 `;
@@ -323,16 +449,25 @@ result.innerHTML =
 
 
 
+
+
+imageInput.value="";
+
+
+
+
+
+
+
 window.dispatchEvent(
 
 new Event(
+
 "clothingAdded"
+
 )
 
 );
-
-
-
 
 
 
@@ -341,15 +476,27 @@ new Event(
 catch(error){
 
 
+
 console.error(
+
+"AI Error:",
+
 error
+
 );
 
 
+
 result.innerHTML =
+
 `
-❌ AI failed:
+
+❌ AI analysis failed
+
+<br>
+
 ${error.message}
+
 `;
 
 
@@ -364,7 +511,27 @@ ${error.message}
 
 
 
+
+
+
+reader.onerror=()=>{
+
+
+result.innerHTML=
+
+"❌ Cannot read image";
+
+
+};
+
+
+
+
+
+
+
 reader.readAsDataURL(file);
+
 
 
 
@@ -375,13 +542,27 @@ reader.readAsDataURL(file);
 catch(error){
 
 
+
 console.error(
-"Upload error",
+
+"Upload Error:",
+
 error
+
 );
+
+
+
+result.innerHTML=
+
+"❌ Upload failed";
 
 
 }
 
 
+
 });
+
+
+}
