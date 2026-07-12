@@ -8,20 +8,53 @@
 
 export function addClothing(database, clothing){
 
-
 return new Promise((resolve,reject)=>{
 
 
 try{
 
 
-const transaction = database.transaction(
+console.log(
+"📦 ADD CLOTHING STARTED"
+);
+
+
+console.log(
+"Database:",
+database
+);
+
+
+console.log(
+"Item:",
+clothing
+);
+
+
+
+if(!database){
+
+reject(
+new Error("Database missing")
+);
+
+return;
+
+}
+
+
+
+
+const transaction =
+database.transaction(
 "wardrobe",
 "readwrite"
 );
 
 
-const store = transaction.objectStore(
+
+const store =
+transaction.objectStore(
 "wardrobe"
 );
 
@@ -29,35 +62,47 @@ const store = transaction.objectStore(
 
 const item = {
 
+
 ...clothing,
+
 
 laundryStatus:
 clothing.laundryStatus || "Clean",
 
+
 timesWorn:
 clothing.timesWorn || 0,
+
 
 favorite:
 clothing.favorite || false,
 
+
 createdAt:
 clothing.createdAt || Date.now()
+
 
 };
 
 
 
 
-const request = store.add(item);
+
+const request =
+store.add(item);
 
 
 
-request.onsuccess=()=>{
+
+
+request.onsuccess = ()=>{
+
 
 console.log(
-"✅ Clothing saved:",
+"✅ CLOTHING SAVED ID:",
 request.result
 );
+
 
 resolve(request.result);
 
@@ -66,12 +111,16 @@ resolve(request.result);
 
 
 
-request.onerror=()=>{
+
+
+request.onerror = ()=>{
+
 
 console.error(
-"Add clothing error:",
+"❌ SAVE ERROR:",
 request.error
 );
+
 
 reject(request.error);
 
@@ -80,9 +129,16 @@ reject(request.error);
 
 
 
+
 }
 
 catch(error){
+
+
+console.error(
+"❌ ADD CLOTHING FAILED:",
+error
+);
 
 
 reject(error);
@@ -108,6 +164,7 @@ reject(error);
 // ==========================
 // GET ALL CLOTHES
 // ==========================
+
 
 export function getClothes(database){
 
@@ -139,7 +196,15 @@ store.getAll();
 
 
 
-request.onsuccess=()=>{
+
+request.onsuccess = ()=>{
+
+
+console.log(
+"👕 CLOTHES FOUND:",
+request.result
+);
+
 
 
 resolve(
@@ -147,11 +212,14 @@ request.result || []
 );
 
 
+
 };
 
 
 
-request.onerror=()=>{
+
+
+request.onerror = ()=>{
 
 
 reject(request.error);
@@ -187,8 +255,9 @@ reject(error);
 
 
 // ==========================
-// GET SINGLE CLOTHING
+// GET ONE CLOTHING
 // ==========================
+
 
 export function getClothing(database,id){
 
@@ -216,21 +285,24 @@ store.get(id);
 
 
 
+request.onsuccess = ()=>{
 
-request.onsuccess=()=>{
 
-
-resolve(request.result);
+resolve(
+request.result
+);
 
 
 };
 
 
 
-request.onerror=()=>{
+request.onerror = ()=>{
 
 
-reject(request.error);
+reject(
+request.error
+);
 
 
 };
@@ -253,6 +325,7 @@ reject(request.error);
 // ==========================
 // UPDATE CLOTHING
 // ==========================
+
 
 export function updateClothing(database,item){
 
@@ -280,7 +353,7 @@ store.put(item);
 
 
 
-request.onsuccess=()=>{
+request.onsuccess = ()=>{
 
 
 resolve();
@@ -290,10 +363,12 @@ resolve();
 
 
 
-request.onerror=()=>{
+request.onerror = ()=>{
 
 
-reject(request.error);
+reject(
+request.error
+);
 
 
 };
@@ -316,6 +391,7 @@ reject(request.error);
 // ==========================
 // DELETE CLOTHING
 // ==========================
+
 
 export function deleteClothing(database,id){
 
@@ -343,12 +419,11 @@ store.delete(id);
 
 
 
-
-request.onsuccess=()=>{
+request.onsuccess = ()=>{
 
 
 console.log(
-"🗑 Clothing deleted"
+"🗑 Deleted"
 );
 
 
@@ -359,10 +434,12 @@ resolve();
 
 
 
-request.onerror=()=>{
+request.onerror = ()=>{
 
 
-reject(request.error);
+reject(
+request.error
+);
 
 
 };
@@ -383,8 +460,9 @@ reject(request.error);
 
 
 // ==========================
-// UPDATE LAUNDRY STATUS
+// UPDATE LAUNDRY
 // ==========================
+
 
 export function updateLaundryStatus(
 database,
@@ -416,12 +494,11 @@ store.get(id);
 
 
 
+request.onsuccess = ()=>{
 
 
-request.onsuccess=()=>{
-
-
-const item=request.result;
+const item =
+request.result;
 
 
 
@@ -429,7 +506,7 @@ if(!item){
 
 
 reject(
-"Clothing not found"
+"Item not found"
 );
 
 
@@ -440,20 +517,8 @@ return;
 
 
 
-
-item.laundryStatus=status;
-
-
-
-if(status==="Clean"){
-
-
-item.lastWashed =
-new Date().toISOString();
-
-
-}
-
+item.laundryStatus =
+status;
 
 
 
@@ -465,9 +530,7 @@ store.put(item);
 
 
 
-
-
-transaction.oncomplete=()=>{
+transaction.oncomplete = ()=>{
 
 
 resolve();
@@ -477,10 +540,12 @@ resolve();
 
 
 
-transaction.onerror=()=>{
+transaction.onerror = ()=>{
 
 
-reject(transaction.error);
+reject(
+transaction.error
+);
 
 
 };
@@ -501,8 +566,9 @@ reject(transaction.error);
 
 
 // ==========================
-// SAVE AI MEMORY
+// SAVE MEMORY
 // ==========================
+
 
 export function saveMemory(database,data){
 
@@ -526,11 +592,17 @@ transaction.objectStore(
 
 
 const request =
-store.put(data);
+store.put({
+
+id:data.id,
+
+...data
+
+});
 
 
 
-request.onsuccess=()=>{
+request.onsuccess = ()=>{
 
 
 resolve();
@@ -540,10 +612,12 @@ resolve();
 
 
 
-request.onerror=()=>{
+request.onerror = ()=>{
 
 
-reject(request.error);
+reject(
+request.error
+);
 
 
 };
@@ -564,8 +638,9 @@ reject(request.error);
 
 
 // ==========================
-// GET AI MEMORY
+// GET MEMORY
 // ==========================
+
 
 export function getMemory(database,id){
 
@@ -593,7 +668,7 @@ store.get(id);
 
 
 
-request.onsuccess=()=>{
+request.onsuccess = ()=>{
 
 
 resolve(
@@ -605,10 +680,12 @@ request.result || null
 
 
 
-request.onerror=()=>{
+request.onerror = ()=>{
 
 
-reject(request.error);
+reject(
+request.error
+);
 
 
 };
@@ -632,6 +709,7 @@ reject(request.error);
 // SAVE HISTORY
 // ==========================
 
+
 export function saveHistory(database,data){
 
 
@@ -653,6 +731,7 @@ transaction.objectStore(
 
 
 
+const request =
 store.add({
 
 outfit:data,
@@ -663,9 +742,7 @@ date:Date.now()
 
 
 
-
-
-transaction.oncomplete=()=>{
+request.onsuccess = ()=>{
 
 
 resolve();
@@ -675,10 +752,12 @@ resolve();
 
 
 
-transaction.onerror=()=>{
+request.onerror = ()=>{
 
 
-reject(transaction.error);
+reject(
+request.error
+);
 
 
 };
