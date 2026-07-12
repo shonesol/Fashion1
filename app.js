@@ -24,7 +24,9 @@ console.log(
 "🚀 FashionAI app.js loaded"
 );
 
-
+console.log("🔥 APP JS STARTED");
+console.log("🔥 UPLOAD JS STARTED");
+console.log("🔥 WARDROBE JS STARTED");
 
 startFashionAI();
 
