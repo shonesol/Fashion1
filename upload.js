@@ -1,5 +1,5 @@
 // upload.js
-// FashionAI Clothing Upload Fix
+// FashionAI Clothing Upload System FIX
 
 
 import { auth } from "./firebase.js";
@@ -21,21 +21,17 @@ analyzeClothing
 } from "./clothing-ai.js";
 
 
-
 let database = null;
 
 
-
-window.addEventListener(
-"DOMContentLoaded",
-()=>{
+document.addEventListener("DOMContentLoaded",()=>{
 
 
-const button =
+const uploadBtn =
 document.getElementById("uploadBtn");
 
 
-const input =
+const imageInput =
 document.getElementById("clothingImage");
 
 
@@ -44,33 +40,20 @@ document.getElementById("result");
 
 
 
-
-if(!button){
-
-console.log("Upload button missing");
-
-return;
-
-}
+console.log("UPLOAD READY");
 
 
 
-
-
-onAuthStateChanged(
-auth,
-async(user)=>{
+onAuthStateChanged(auth, async(user)=>{
 
 
 if(!user){
 
-result.innerHTML =
-"❌ Login first";
+console.log("No user");
 
 return;
 
 }
-
 
 
 database =
@@ -78,7 +61,7 @@ await getDatabase(user.uid);
 
 
 console.log(
-"✅ Upload database ready"
+"Upload database connected"
 );
 
 
@@ -88,23 +71,11 @@ console.log(
 
 
 
+if(!uploadBtn){
 
-
-button.onclick = async()=>{
-
-
-try{
-
-
-const file =
-input.files[0];
-
-
-
-if(!file){
-
-result.innerHTML =
-"❌ Select an image first";
+console.log(
+"Upload button missing"
+);
 
 return;
 
@@ -114,15 +85,52 @@ return;
 
 
 
+uploadBtn.addEventListener(
+"click",
+async()=>{
+
+
+try{
+
+
+if(!database){
+
 result.innerHTML =
-"🤖 Reading image...";
+"❌ Database not ready. Refresh and login again";
+
+return;
+
+}
+
+
+
+
+const file =
+imageInput.files[0];
+
+
+
+if(!file){
+
+result.innerHTML =
+"❌ Choose clothing image first";
+
+return;
+
+}
+
+
+
+
+result.innerHTML =
+"🤖 AI is analyzing...";
+
 
 
 
 
 const reader =
 new FileReader();
-
 
 
 
@@ -138,21 +146,13 @@ reader.result;
 
 
 
-result.innerHTML =
-"🤖 AI analyzing clothing...";
-
-
-
-
-
 const ai =
 await analyzeClothing(image);
 
 
 
-
 console.log(
-"AI RESULT:",
+"AI RESULT",
 ai
 );
 
@@ -160,7 +160,7 @@ ai
 
 
 
-const clothing = {
+const item={
 
 
 image:image,
@@ -186,16 +186,16 @@ material:
 ai.material || "Unknown",
 
 
-style:
-ai.style || "Casual",
+texture:
+ai.texture || "Unknown",
 
 
 pattern:
 ai.pattern || "Plain",
 
 
-texture:
-ai.texture || "Unknown",
+style:
+ai.style || "Casual",
 
 
 occasion:
@@ -216,13 +216,10 @@ timesWorn:0,
 favorite:false,
 
 
-createdAt:
-Date.now()
-
+createdAt:Date.now()
 
 
 };
-
 
 
 
@@ -232,7 +229,7 @@ await addClothing(
 
 database,
 
-clothing
+item
 
 );
 
@@ -240,17 +237,25 @@ clothing
 
 
 
-result.innerHTML =
+console.log(
+"SAVED",
+item
+);
+
+
+
+
+
+result.innerHTML=
 
 `
-<h3>✅ Added Successfully</h3>
+<h3>✅ Clothing Added</h3>
 
-<p>${clothing.name}</p>
+<p>${item.name}</p>
 
-<p>Category: ${clothing.category}</p>
+<p>Category: ${item.category}</p>
 
-<p>Color: ${clothing.color}</p>
-
+<p>Color: ${item.color}</p>
 `;
 
 
@@ -263,22 +268,19 @@ new Event("clothingAdded")
 
 
 
-
-
 }
 
-catch(error){
+catch(e){
 
 
 console.error(
-"UPLOAD ERROR:",
-error
+"ANALYSIS ERROR",
+e
 );
 
 
 result.innerHTML =
-"❌ "+error.message;
-
+"❌ "+e.message;
 
 
 }
@@ -286,7 +288,6 @@ result.innerHTML =
 
 
 };
-
 
 
 
@@ -299,7 +300,9 @@ reader.readAsDataURL(file);
 catch(error){
 
 
-console.error(error);
+console.error(
+error
+);
 
 
 result.innerHTML =
@@ -310,7 +313,7 @@ result.innerHTML =
 
 
 
-};
+});
 
 
 
