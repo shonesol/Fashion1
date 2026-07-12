@@ -40,7 +40,7 @@ document.getElementById("result");
 
 console.log("🔥 upload.js loaded");
 
-console.log("UPLOAD READY");
+alert("UPLOAD JS IS WORKING");
 
 
 
