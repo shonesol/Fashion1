@@ -14,31 +14,48 @@ try {
 
 
 const parts = [
+
 {
 text: prompt
 }
+
 ];
 
 
 
-// Add image if available
+
+// Add image
 
 if(image){
 
 
+const splitImage =
+image.split(",");
+
+
+if(splitImage.length < 2){
+
+throw new Error(
+"Invalid image format"
+);
+
+}
+
+
+
 const base64 =
-image.split(",")[1];
+splitImage[1];
 
 
 const mime =
-image.split(",")[0]
+splitImage[0]
 .match(/:(.*?);/)[1];
 
 
 
 parts.push({
 
-inlineData: {
+inlineData:{
 
 mimeType:mime,
 
@@ -50,6 +67,16 @@ data:base64
 
 
 }
+
+
+
+
+
+
+console.log(
+"Sending request to Worker..."
+);
+
 
 
 
@@ -91,15 +118,30 @@ parts:parts
 
 
 
-if(!response.ok){
 
-
-const error =
+const text =
 await response.text();
 
 
+
+
+console.log(
+"Worker raw response:",
+text
+);
+
+
+
+
+
+
+if(!response.ok){
+
+
 throw new Error(
-`Worker ${response.status}: ${error}`
+
+`Worker ${response.status}: ${text}`
+
 );
 
 
@@ -109,15 +151,44 @@ throw new Error(
 
 
 
-const data =
-await response.json();
+
+let data;
 
 
+try{
 
-console.log(
-"Gemini Response:",
-data
+
+data =
+JSON.parse(text);
+
+
+}
+
+catch(e){
+
+
+throw new Error(
+"Worker returned invalid JSON: "+text
 );
+
+
+}
+
+
+
+
+
+
+if(data.error){
+
+
+throw new Error(
+
+data.error.message || data.error
+
+);
+
+}
 
 
 
@@ -128,19 +199,24 @@ if(
 
 data.candidates &&
 
-data.candidates.length > 0 &&
+data.candidates[0] &&
 
-data.candidates[0].content &&
+data.candidates[0]
+.content &&
 
-data.candidates[0].content.parts &&
+data.candidates[0]
+.content.parts &&
 
-data.candidates[0].content.parts.length > 0
+data.candidates[0]
+.content.parts[0]
 
 ){
 
 
-return data.candidates[0]
-.content.parts[0]
+return data
+.candidates[0]
+.content
+.parts[0]
 .text;
 
 
@@ -151,7 +227,7 @@ return data.candidates[0]
 
 
 throw new Error(
-"No response returned from Gemini."
+"No Gemini response received"
 );
 
 
@@ -162,7 +238,7 @@ catch(error){
 
 
 console.error(
-"Gemini Connection Error:",
+"❌ Gemini Error:",
 error
 );
 
