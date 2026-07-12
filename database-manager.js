@@ -5,14 +5,13 @@
 let database = null;
 
 
-const DATABASE_VERSION = 9;
+const DATABASE_VERSION = 1;
 
 
 
 // ==========================
-// CREATE / OPEN USER DATABASE
+// OPEN USER DATABASE
 // ==========================
-
 
 export function getDatabase(userId){
 
@@ -29,7 +28,6 @@ reject(
 return;
 
 }
-
 
 
 
@@ -52,18 +50,17 @@ const db = event.target.result;
 
 
 
-
 // ==========================
 // WARDROBE
 // ==========================
-
 
 if(
 !db.objectStoreNames.contains("wardrobe")
 ){
 
 
-const wardrobe = db.createObjectStore(
+const store =
+db.createObjectStore(
 
 "wardrobe",
 
@@ -76,28 +73,32 @@ autoIncrement:true
 
 
 
-wardrobe.createIndex(
+store.createIndex(
 "category",
 "category"
 );
 
 
-wardrobe.createIndex(
+
+store.createIndex(
 "color",
 "color"
 );
 
 
-wardrobe.createIndex(
+
+store.createIndex(
 "style",
 "style"
 );
 
 
-wardrobe.createIndex(
-"laundryStatus",
-"laundryStatus"
+
+store.createIndex(
+"material",
+"material"
 );
+
 
 
 }
@@ -105,10 +106,12 @@ wardrobe.createIndex(
 
 
 
-// ==========================
-// HISTORY
-// ==========================
 
+
+
+// ==========================
+// OUTFIT HISTORY
+// ==========================
 
 if(
 !db.objectStoreNames.contains("history")
@@ -133,38 +136,11 @@ autoIncrement:true
 
 
 
-// ==========================
-// OUTFIT PLANS
-// ==========================
-
-
-if(
-!db.objectStoreNames.contains("plans")
-){
-
-
-db.createObjectStore(
-
-"plans",
-
-{
-keyPath:"id",
-autoIncrement:true
-}
-
-);
-
-
-}
-
-
-
 
 
 // ==========================
 // AI MEMORY
 // ==========================
-
 
 if(
 !db.objectStoreNames.contains("preferences")
@@ -188,10 +164,11 @@ keyPath:"id"
 
 
 
-// ==========================
-// USER PROFILE
-// ==========================
 
+
+// ==========================
+// PROFILE
+// ==========================
 
 if(
 !db.objectStoreNames.contains("profile")
@@ -213,8 +190,6 @@ keyPath:"id"
 
 
 
-
-
 };
 
 
@@ -231,20 +206,16 @@ event.target.result;
 
 
 console.log(
-
 "✅ FashionAI Database Ready:",
-
 database.name
-
 );
+
 
 
 resolve(database);
 
 
-
 };
-
 
 
 
@@ -255,16 +226,13 @@ request.onerror=()=>{
 
 
 console.error(
-
-"Database opening error:",
-
+"Database error:",
 request.error
-
 );
 
 
-reject(request.error);
 
+reject(request.error);
 
 
 };
@@ -275,6 +243,7 @@ reject(request.error);
 
 
 }
+
 
 
 
@@ -296,6 +265,7 @@ if(database){
 
 database.close();
 
+
 database=null;
 
 
@@ -310,8 +280,9 @@ database=null;
 
 
 
+
 // ==========================
-// DELETE DATABASE
+// DELETE USER DATABASE
 // ==========================
 
 
@@ -321,7 +292,8 @@ export function deleteUserDatabase(userId){
 return new Promise((resolve,reject)=>{
 
 
-const request = indexedDB.deleteDatabase(
+const request =
+indexedDB.deleteDatabase(
 
 "FashionAI_" + userId
 
@@ -333,7 +305,7 @@ request.onsuccess=()=>{
 
 
 console.log(
-"✅ FashionAI database deleted"
+"FashionAI database deleted"
 );
 
 
@@ -347,9 +319,7 @@ resolve();
 request.onerror=()=>{
 
 
-reject(
-request.error
-);
+reject(request.error);
 
 
 };
