@@ -1,6 +1,19 @@
+or the response structure is slightly different.
+
+Replace your **entire `clothing-ai.js`** with this:
+
+```javascript
+// =====================================
+// FashionAI Clothing AI Analyzer
+// =====================================
+
+
 import {
     askGemini
 } from "./gemini-ai.js";
+
+
+
 
 
 export async function analyzeClothing(image){
@@ -8,11 +21,15 @@ export async function analyzeClothing(image){
 
 const prompt = `
 
-Analyze this clothing image.
+You are FashionAI.
+
+Analyze the clothing image.
 
 Return ONLY JSON.
+No markdown.
+No explanation.
 
-Format:
+Use this exact format:
 
 {
 "type":"",
@@ -30,42 +47,92 @@ Format:
 
 
 
+
+try{
+
+
 const response =
 await askGemini(
-    prompt,
-    image
+prompt,
+image
 );
 
 
 
 console.log(
-"Gemini raw response:",
+"RAW GEMINI RESPONSE:",
 response
 );
 
 
 
-try{
 
+
+// Get Gemini text
 
 const text =
 
-response.candidates[0]
-.content.parts[0]
-.text;
+response
+?.candidates
+?.[0]
+?.content
+?.parts
+?.[0]
+?.text;
 
 
 
-return JSON.parse(text);
+if(!text){
+
+
+return {
+
+error:
+"No AI text returned",
+
+raw:
+response
+
+};
+
+
+}
+
+
+
+
+
+// Remove markdown if Gemini adds it
+
+const cleanText =
+text
+.replace(/```json/g,"")
+.replace(/```/g,"")
+.trim();
+
+
+
+
+
+const result =
+JSON.parse(
+cleanText
+);
+
+
+
+return result;
+
 
 
 
 }
+
 catch(error){
 
 
 console.error(
-"JSON conversion failed:",
+"AI parsing error:",
 error
 );
 
@@ -73,8 +140,13 @@ error
 
 return {
 
+
 error:
-"Invalid AI response"
+"Invalid AI response",
+
+details:
+error.message
+
 
 };
 
