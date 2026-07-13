@@ -1,13 +1,26 @@
+// =====================================
 // FashionAI Hugging Face Connection
+// =====================================
+
 
 const WORKER_URL =
 "https://fashion1.shonesol28.workers.dev/";
 
 
-export async function askGemini(prompt, image=null){
+
+export async function askHuggingFace(
+    prompt,
+    image = null
+){
 
 
     try{
+
+
+        console.log(
+            "Sending image to Hugging Face"
+        );
+
 
 
         const response =
@@ -27,9 +40,9 @@ export async function askGemini(prompt, image=null){
 
                 body:JSON.stringify({
 
-                    image:image,
+                    prompt:prompt,
 
-                    prompt:prompt
+                    image:image
 
                 })
 
@@ -44,7 +57,7 @@ export async function askGemini(prompt, image=null){
 
 
         console.log(
-            "AI Response:",
+            "Hugging Face response:",
             data
         );
 
@@ -60,7 +73,7 @@ export async function askGemini(prompt, image=null){
 
 
         console.error(
-            "AI Connection Error:",
+            "Hugging Face error:",
             error
         );
 
