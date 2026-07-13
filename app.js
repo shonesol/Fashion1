@@ -8,6 +8,11 @@ import {
 
 
 import {
+    startDatabase
+} from "./database-manager.js";
+
+
+import {
     generateOutfit
 } from "./outfit-generator.js";
 
@@ -24,18 +29,42 @@ console.log(
 
 
 
-async function initFashionAI(){
 
+// ==========================
+// INITIALIZE FASHIONAI
+// ==========================
+
+async function initFashionAI(){
 
     try{
 
 
+        // Start local database first
+        const database =
+        await startDatabase();
+
+
+
+        // Start authentication
         await startFashionAI();
 
 
 
         window.FashionAI =
         window.FashionAI || {};
+
+
+
+        // Store database globally
+        window.FashionAI.database =
+        database;
+
+
+
+        console.log(
+            "✅ Database connected",
+            database
+        );
 
 
 
@@ -46,8 +75,16 @@ async function initFashionAI(){
 
 
 
+        // Send database to other files
         window.dispatchEvent(
-            new Event("FashionAIReady")
+            new CustomEvent(
+                "FashionAIReady",
+                {
+                    detail:{
+                        database
+                    }
+                }
+            )
         );
 
 
@@ -65,7 +102,6 @@ async function initFashionAI(){
 
     }
 
-
 }
 
 
@@ -75,28 +111,30 @@ initFashionAI();
 
 
 
-
-
+// ==========================
+// LISTEN FOR READY
+// ==========================
 
 window.addEventListener(
-"FashionAIReady",
-()=>{
+    "FashionAIReady",
+    (event)=>{
 
 
-console.log(
-"✅ FashionAI ready"
+        console.log(
+            "✅ FashionAI ready",
+            event.detail.database
+        );
+
+
+    }
 );
 
 
 
-});
 
-
-
-
-
-
-
+// ==========================
+// CREATE OUTFIT BUTTON
+// ==========================
 
 document.addEventListener(
 "DOMContentLoaded",
@@ -125,15 +163,24 @@ document.getElementById(
 
 
 
+if(box){
+
 box.innerHTML =
 "🤖 Creating outfit...";
+
+}
 
 
 
 try{
 
 
-if(!window.FashionAI?.database){
+const database =
+window.FashionAI?.database;
+
+
+
+if(!database){
 
 throw new Error(
 "Database not ready"
@@ -145,27 +192,26 @@ throw new Error(
 
 const outfit =
 await generateOutfit(
-
-window.FashionAI.database,
-
-"Casual"
-
+    database,
+    "Casual"
 );
 
 
 
 await saveOutfitHistory(
-
-window.FashionAI.database,
-
-outfit
-
+    database,
+    outfit
 );
 
 
 
+if(box){
+
 box.innerHTML =
-outfit.message;
+outfit.message ||
+JSON.stringify(outfit);
+
+}
 
 
 
@@ -175,13 +221,19 @@ catch(error){
 
 
 console.error(
+"❌ Outfit error:",
 error
 );
 
 
+
+if(box){
+
 box.innerHTML =
 "❌ Outfit failed: " +
 error.message;
+
+}
 
 
 
