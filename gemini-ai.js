@@ -1,16 +1,16 @@
 // gemini-ai.js
-// FashionAI Gemini Connection
+// FashionAI Gemini Connection (Vercel Function)
 
 
-const WORKER_URL =
-"https://fashionai-api.shonesol28.workers.dev/";
+const GEMINI_URL =
+"/api/gemini";
 
 
 
 export async function askGemini(prompt, image = null){
 
 
-    console.log("🚀 Sending to Worker");
+    console.log("🚀 Sending to Vercel Gemini Function");
 
 
     try{
@@ -23,7 +23,6 @@ export async function askGemini(prompt, image = null){
             }
 
         ];
-
 
 
 
@@ -59,12 +58,10 @@ export async function askGemini(prompt, image = null){
 
 
 
-
-
         const response =
         await fetch(
 
-            WORKER_URL,
+            GEMINI_URL,
 
             {
 
@@ -99,18 +96,15 @@ export async function askGemini(prompt, image = null){
 
 
 
-
         const serverText =
         await response.text();
 
 
 
-
         console.log(
-            "🔥 WORKER ANSWER:",
+            "🔥 VERCEL ANSWER:",
             serverText
         );
-
 
 
 
@@ -128,26 +122,18 @@ export async function askGemini(prompt, image = null){
 
 
 
-
         const data =
         JSON.parse(serverText);
 
 
 
 
-
         if(
-
             data.candidates &&
-
             data.candidates[0] &&
-
             data.candidates[0].content &&
-
             data.candidates[0].content.parts &&
-
             data.candidates[0].content.parts[0]
-
         ){
 
 
@@ -162,6 +148,13 @@ export async function askGemini(prompt, image = null){
 
 
 
+        // If using the new function response format
+        if(data.text){
+
+            return data.text;
+
+        }
+
 
 
         throw new Error(
@@ -171,6 +164,7 @@ export async function askGemini(prompt, image = null){
 
 
     }
+
 
 
     catch(error){
