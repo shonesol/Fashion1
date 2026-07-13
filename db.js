@@ -1,136 +1,386 @@
-// db.js
-// FashionAI IndexedDB Manager
+// =====================================
+// FashionAI Offline Database
+// IndexedDB Manager
+// =====================================
 
-const DB_NAME = "FashionAI";
-const DB_VERSION = 1;
-const STORE_NAME = "clothes";
 
-let db = null;
+const DATABASE_NAME = "FashionAI_DB";
 
-// Open the database
-export function openDatabase() {
+const DATABASE_VERSION = 1;
 
-    return new Promise((resolve, reject) => {
+const STORE_NAME = "wardrobe";
 
-        if (db) {
-            resolve(db);
+
+let database;
+
+
+
+// Open Database
+
+export function openDB(){
+
+    return new Promise((resolve,reject)=>{
+
+
+        if(database){
+
+            resolve(database);
+
             return;
+
         }
 
-        const request = indexedDB.open(DB_NAME, DB_VERSION);
 
-        request.onupgradeneeded = (event) => {
 
-            db = event.target.result;
+        const request =
+        indexedDB.open(
+            DATABASE_NAME,
+            DATABASE_VERSION
+        );
 
-            if (!db.objectStoreNames.contains(STORE_NAME)) {
 
-                db.createObjectStore(STORE_NAME, {
-                    keyPath: "id",
-                    autoIncrement: true
-                });
+
+        request.onupgradeneeded = (event)=>{
+
+
+            database =
+            event.target.result;
+
+
+
+            if(
+            !database.objectStoreNames.contains(STORE_NAME)
+            ){
+
+                const store =
+                database.createObjectStore(
+                    STORE_NAME,
+                    {
+                        keyPath:"id",
+                        autoIncrement:true
+                    }
+                );
+
+
+                store.createIndex(
+                    "category",
+                    "category",
+                    {
+                        unique:false
+                    }
+                );
+
+
+                store.createIndex(
+                    "color",
+                    "color",
+                    {
+                        unique:false
+                    }
+                );
+
 
             }
 
-        };
-
-        request.onsuccess = (event) => {
-
-            db = event.target.result;
-            resolve(db);
 
         };
 
-        request.onerror = () => {
 
-            reject("Failed to open FashionAI database.");
+
+
+        request.onsuccess = (event)=>{
+
+
+            database =
+            event.target.result;
+
+
+            resolve(database);
+
 
         };
 
-    });
 
-}
 
-// Save clothing
-export async function saveClothing(item) {
 
-    const database = await openDatabase();
+        request.onerror = ()=>{
 
-    return new Promise((resolve, reject) => {
 
-        const tx = database.transaction(STORE_NAME, "readwrite");
+            reject(
+            "Database failed to open"
+            );
 
-        const store = tx.objectStore(STORE_NAME);
 
-        const request = store.add(item);
+        };
 
-        request.onsuccess = () => resolve(true);
 
-        request.onerror = () => reject("Could not save clothing.");
 
     });
 
 }
 
-// Get all clothes
-export async function getClothes() {
 
-    const database = await openDatabase();
 
-    return new Promise((resolve, reject) => {
 
-        const tx = database.transaction(STORE_NAME, "readonly");
 
-        const store = tx.objectStore(STORE_NAME);
+// =====================================
+// Save Clothing Item
+// =====================================
 
-        const request = store.getAll();
 
-        request.onsuccess = () => resolve(request.result);
+export async function addClothing(clothing){
 
-        request.onerror = () => reject([]);
+
+    const db =
+    await openDB();
+
+
+
+    return new Promise((resolve,reject)=>{
+
+
+        const transaction =
+        db.transaction(
+            STORE_NAME,
+            "readwrite"
+        );
+
+
+
+        const store =
+        transaction.objectStore(
+            STORE_NAME
+        );
+
+
+
+        const request =
+        store.add(clothing);
+
+
+
+        request.onsuccess=()=>{
+
+
+            resolve(true);
+
+
+        };
+
+
+
+        request.onerror=()=>{
+
+
+            reject(
+            "Could not save clothing"
+            );
+
+
+        };
+
 
     });
+
 
 }
 
-// Delete clothing
-export async function deleteClothing(id) {
 
-    const database = await openDatabase();
 
-    return new Promise((resolve, reject) => {
 
-        const tx = database.transaction(STORE_NAME, "readwrite");
 
-        const store = tx.objectStore(STORE_NAME);
 
-        const request = store.delete(id);
+// =====================================
+// Get All Clothes
+// =====================================
 
-        request.onsuccess = () => resolve(true);
 
-        request.onerror = () => reject(false);
+export async function getAllClothes(){
+
+
+    const db =
+    await openDB();
+
+
+
+    return new Promise((resolve,reject)=>{
+
+
+        const transaction =
+        db.transaction(
+            STORE_NAME,
+            "readonly"
+        );
+
+
+
+        const store =
+        transaction.objectStore(
+            STORE_NAME
+        );
+
+
+
+        const request =
+        store.getAll();
+
+
+
+        request.onsuccess=()=>{
+
+
+            resolve(
+            request.result
+            );
+
+
+        };
+
+
+
+        request.onerror=()=>{
+
+
+            reject([]);
+
+
+        };
+
+
 
     });
+
+
 
 }
 
-// Clear wardrobe
-export async function clearWardrobe() {
 
-    const database = await openDatabase();
 
-    return new Promise((resolve, reject) => {
 
-        const tx = database.transaction(STORE_NAME, "readwrite");
 
-        const store = tx.objectStore(STORE_NAME);
 
-        const request = store.clear();
+// =====================================
+// Delete Clothing
+// =====================================
 
-        request.onsuccess = () => resolve(true);
 
-        request.onerror = () => reject(false);
+export async function deleteClothing(id){
+
+
+    const db =
+    await openDB();
+
+
+
+    return new Promise((resolve,reject)=>{
+
+
+        const transaction =
+        db.transaction(
+            STORE_NAME,
+            "readwrite"
+        );
+
+
+
+        const store =
+        transaction.objectStore(
+            STORE_NAME
+        );
+
+
+
+        const request =
+        store.delete(id);
+
+
+
+        request.onsuccess=()=>{
+
+
+            resolve(true);
+
+
+        };
+
+
+
+        request.onerror=()=>{
+
+
+            reject(false);
+
+
+        };
+
 
     });
+
+
+}
+
+
+
+
+
+
+// =====================================
+// Clear Entire Wardrobe
+// =====================================
+
+
+export async function clearWardrobe(){
+
+
+    const db =
+    await openDB();
+
+
+
+    return new Promise((resolve,reject)=>{
+
+
+        const transaction =
+        db.transaction(
+            STORE_NAME,
+            "readwrite"
+        );
+
+
+
+        const store =
+        transaction.objectStore(
+            STORE_NAME
+        );
+
+
+
+        const request =
+        store.clear();
+
+
+
+        request.onsuccess=()=>{
+
+
+            resolve(true);
+
+
+        };
+
+
+
+        request.onerror=()=>{
+
+
+            reject(false);
+
+
+        };
+
+
+    });
+
+
 
 }
