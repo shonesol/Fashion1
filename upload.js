@@ -262,3 +262,98 @@ function clearForm(){
 
 
 }
+// =====================================
+// AI Analyze Button
+// =====================================
+
+
+const analyzeButton =
+document.getElementById(
+"analyzeClothingBtn"
+);
+
+
+
+if(analyzeButton){
+
+
+analyzeButton.addEventListener(
+"click",
+async ()=>{
+
+
+    if(!selectedImage){
+
+
+        alert(
+        "Please upload a clothing image first."
+        );
+
+
+        return;
+
+    }
+
+
+
+
+    analyzeButton.innerText =
+    "🤖 Analyzing...";
+
+
+
+    const result =
+    await analyzeClothing(
+        selectedImage
+    );
+
+
+
+    console.log(
+        "AI Clothing Result:",
+        result
+    );
+
+
+
+    analyzeButton.innerText =
+    "🤖 Analyze With AI";
+
+
+
+    if(result.error){
+
+
+        alert(
+        "AI Error: " + result.error
+        );
+
+
+        return;
+
+    }
+
+
+
+
+
+    alert(
+
+    "AI Analysis Complete!\n\n" +
+
+    "Type: " +
+    (result.type || "") +
+
+    "\nCategory: " +
+    (result.category || "") +
+
+    "\nColor: " +
+    (result.primaryColor || "")
+
+    );
+
+
+
+});
+
+}
