@@ -1,79 +1,79 @@
-// gemini-ai.js
-// FashionAI Cloudflare Worker Connection
-
+// FashionAI Hugging Face Connection
 
 const WORKER_URL =
 "https://fashion1.shonesol28.workers.dev/";
 
 
-export async function askGemini(prompt,image=null){
+export async function askGemini(prompt, image=null){
 
 
-    const parts=[
-        {
-            text:prompt
-        }
-    ];
+    try{
 
 
+        const response =
+        await fetch(
+            WORKER_URL,
+            {
 
-    if(image){
+                method:"POST",
+
+                headers:{
+
+                    "Content-Type":
+                    "application/json"
+
+                },
 
 
-        const base64 =
-        image.split(",")[1];
+                body:JSON.stringify({
 
+                    image:image,
 
-        const mime =
-        image.split(",")[0]
-        .match(/:(.*?);/)[1];
+                    prompt:prompt
 
-
-
-        parts.push({
-
-            inline_data:{
-
-                mime_type:mime,
-
-                data:base64
+                })
 
             }
+        );
 
-        });
+
+
+        const data =
+        await response.json();
+
+
+
+        console.log(
+            "AI Response:",
+            data
+        );
+
+
+
+        return data;
+
 
 
     }
 
+    catch(error){
 
 
-    const response =
-    await fetch(
-        WORKER_URL,
-        {
-
-            method:"POST",
-
-            headers:{
-                "Content-Type":"application/json"
-            },
-
-            body:JSON.stringify({
-
-                contents:[
-                    {
-                        parts:parts
-                    }
-                ]
-
-            })
-
-        }
-    );
+        console.error(
+            "AI Connection Error:",
+            error
+        );
 
 
+        return {
 
-    return await response.json();
+            error:
+            error.message
+
+        };
+
+
+    }
 
 
 }
