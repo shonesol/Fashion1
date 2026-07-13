@@ -1,10 +1,6 @@
-or the response structure is slightly different.
-
-Replace your **entire `clothing-ai.js`** with this:
-
-```javascript
 // =====================================
 // FashionAI Clothing AI Analyzer
+// Debug Version
 // =====================================
 
 
@@ -14,37 +10,30 @@ import {
 
 
 
-
-
 export async function analyzeClothing(image){
 
 
 const prompt = `
 
-You are FashionAI.
+Analyze this clothing image.
 
-Analyze the clothing image.
+Return ONLY a JSON object.
 
-Return ONLY JSON.
-No markdown.
-No explanation.
-
-Use this exact format:
+Example:
 
 {
-"type":"",
-"category":"",
-"primaryColor":"",
-"secondaryColor":"",
-"material":"",
-"style":"",
-"season":"",
-"occasion":"",
-"description":""
+"type":"shirt",
+"category":"top",
+"primaryColor":"black",
+"secondaryColor":"white",
+"material":"cotton",
+"style":"casual",
+"season":"all",
+"occasion":"casual",
+"description":"black casual shirt"
 }
 
 `;
-
 
 
 
@@ -60,37 +49,25 @@ image
 
 
 console.log(
-"RAW GEMINI RESPONSE:",
+"========== GEMINI RAW =========="
+);
+
+
+console.log(
 response
 );
 
 
 
-
-
-// Get Gemini text
-
-const text =
-
-response
-?.candidates
-?.[0]
-?.content
-?.parts
-?.[0]
-?.text;
-
-
-
-if(!text){
+if(!response.candidates){
 
 
 return {
 
 error:
-"No AI text returned",
+"No candidates returned",
 
-raw:
+fullResponse:
 response
 
 };
@@ -100,29 +77,28 @@ response
 
 
 
+const text =
+response
+.candidates[0]
+.content
+.parts[0]
+.text;
 
 
-// Remove markdown if Gemini adds it
 
-const cleanText =
+console.log(
+"GEMINI TEXT:",
 text
-.replace(/```json/g,"")
-.replace(/```/g,"")
-.trim();
-
-
-
-
-
-const result =
-JSON.parse(
-cleanText
 );
 
 
 
-return result;
 
+return {
+
+raw:text
+
+};
 
 
 
@@ -132,7 +108,7 @@ catch(error){
 
 
 console.error(
-"AI parsing error:",
+"Analyzer error:",
 error
 );
 
@@ -140,13 +116,8 @@ error
 
 return {
 
-
 error:
-"Invalid AI response",
-
-details:
 error.message
-
 
 };
 
