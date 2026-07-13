@@ -1,163 +1,82 @@
 // db.js
 // FashionAI Database Functions
 
-
 // ==========================
 // ADD CLOTHING
 // ==========================
 
-export function addClothing(database, clothing){
+export function addClothing(database, clothing) {
 
-return new Promise((resolve,reject)=>{
+    return new Promise((resolve, reject) => {
 
+        if (!database) {
+            reject(new Error("Database missing"));
+            return;
+        }
 
-try{
+        try {
 
+            const transaction = database.transaction(
+                "wardrobe",
+                "readwrite"
+            );
 
-console.log(
-"📦 ADD CLOTHING STARTED"
-);
+            const store = transaction.objectStore(
+                "wardrobe"
+            );
 
+            const item = {
 
-console.log(
-"Database:",
-database
-);
+                ...clothing,
 
+                laundryStatus:
+                    clothing.laundryStatus || "Clean",
 
-console.log(
-"Item:",
-clothing
-);
+                timesWorn:
+                    clothing.timesWorn || 0,
 
+                favorite:
+                    clothing.favorite || false,
 
+                createdAt:
+                    Date.now()
 
-if(!database){
+            };
 
-reject(
-new Error("Database missing")
-);
+            const request = store.add(item);
 
-return;
+            request.onsuccess = () => {
+
+                console.log(
+                    "✅ Clothing saved:",
+                    request.result
+                );
+
+                resolve(request.result);
+
+            };
+
+            request.onerror = () => {
+
+                console.error(
+                    request.error
+                );
+
+                reject(request.error);
+
+            };
+
+        }
+
+        catch (error) {
+
+            reject(error);
+
+        }
+
+    });
 
 }
-
-
-
-
-const transaction =
-database.transaction(
-"wardrobe",
-"readwrite"
-);
-
-
-
-const store =
-transaction.objectStore(
-"wardrobe"
-);
-
-
-
-const item = {
-
-
-...clothing,
-
-
-laundryStatus:
-clothing.laundryStatus || "Clean",
-
-
-timesWorn:
-clothing.timesWorn || 0,
-
-
-favorite:
-clothing.favorite || false,
-
-
-createdAt:
-clothing.createdAt || Date.now()
-
-
-};
-
-
-
-
-
-const request =
-store.add(item);
-
-
-
-
-
-request.onsuccess = ()=>{
-
-
-console.log(
-"✅ CLOTHING SAVED ID:",
-request.result
-);
-
-
-resolve(request.result);
-
-
-};
-
-
-
-
-
-request.onerror = ()=>{
-
-
-console.error(
-"❌ SAVE ERROR:",
-request.error
-);
-
-
-reject(request.error);
-
-
-};
-
-
-
-
-}
-
-catch(error){
-
-
-console.error(
-"❌ ADD CLOTHING FAILED:",
-error
-);
-
-
-reject(error);
-
-
-}
-
-
-
-});
-
-
-}
-
-
-
-
-
-
 
 
 
@@ -165,160 +84,85 @@ reject(error);
 // GET ALL CLOTHES
 // ==========================
 
+export function getClothes(database) {
 
-export function getClothes(database){
+    return new Promise((resolve, reject) => {
 
+        if (!database) {
 
-return new Promise((resolve,reject)=>{
+            resolve([]);
 
+            return;
 
-try{
+        }
 
+        const transaction = database.transaction(
+            "wardrobe",
+            "readonly"
+        );
 
-const transaction =
-database.transaction(
-"wardrobe",
-"readonly"
-);
+        const store = transaction.objectStore(
+            "wardrobe"
+        );
 
+        const request = store.getAll();
 
+        request.onsuccess = () => {
 
-const store =
-transaction.objectStore(
-"wardrobe"
-);
+            resolve(
+                request.result || []
+            );
 
+        };
 
+        request.onerror = () => {
 
-const request =
-store.getAll();
+            reject(request.error);
 
+        };
 
-
-
-
-request.onsuccess = ()=>{
-
-
-console.log(
-"👕 CLOTHES FOUND:",
-request.result
-);
-
-
-
-resolve(
-request.result || []
-);
-
-
-
-};
-
-
-
-
-
-request.onerror = ()=>{
-
-
-reject(request.error);
-
-
-};
-
-
+    });
 
 }
-
-catch(error){
-
-
-reject(error);
-
-
-}
-
-
-
-});
-
-
-}
-
-
-
-
-
-
-
-
-
 // ==========================
 // GET ONE CLOTHING
 // ==========================
 
+export function getClothing(database, id) {
 
-export function getClothing(database,id){
+    return new Promise((resolve, reject) => {
 
+        if (!database) {
+            reject(new Error("Database missing"));
+            return;
+        }
 
-return new Promise((resolve,reject)=>{
+        const transaction = database.transaction(
+            "wardrobe",
+            "readonly"
+        );
 
+        const store = transaction.objectStore(
+            "wardrobe"
+        );
 
-const transaction =
-database.transaction(
-"wardrobe",
-"readonly"
-);
+        const request = store.get(id);
 
+        request.onsuccess = () => {
 
+            resolve(request.result);
 
-const store =
-transaction.objectStore(
-"wardrobe"
-);
+        };
 
+        request.onerror = () => {
 
+            reject(request.error);
 
-const request =
-store.get(id);
+        };
 
-
-
-request.onsuccess = ()=>{
-
-
-resolve(
-request.result
-);
-
-
-};
-
-
-
-request.onerror = ()=>{
-
-
-reject(
-request.error
-);
-
-
-};
-
-
-
-});
-
+    });
 
 }
-
-
-
-
-
-
 
 
 
@@ -326,65 +170,41 @@ request.error
 // UPDATE CLOTHING
 // ==========================
 
+export function updateClothing(database, item) {
 
-export function updateClothing(database,item){
+    return new Promise((resolve, reject) => {
 
+        if (!database) {
+            reject(new Error("Database missing"));
+            return;
+        }
 
-return new Promise((resolve,reject)=>{
+        const transaction = database.transaction(
+            "wardrobe",
+            "readwrite"
+        );
 
+        const store = transaction.objectStore(
+            "wardrobe"
+        );
 
-const transaction =
-database.transaction(
-"wardrobe",
-"readwrite"
-);
+        const request = store.put(item);
 
+        request.onsuccess = () => {
 
+            resolve();
 
-const store =
-transaction.objectStore(
-"wardrobe"
-);
+        };
 
+        request.onerror = () => {
 
+            reject(request.error);
 
-const request =
-store.put(item);
+        };
 
-
-
-request.onsuccess = ()=>{
-
-
-resolve();
-
-
-};
-
-
-
-request.onerror = ()=>{
-
-
-reject(
-request.error
-);
-
-
-};
-
-
-
-});
-
+    });
 
 }
-
-
-
-
-
-
 
 
 
@@ -392,248 +212,150 @@ request.error
 // DELETE CLOTHING
 // ==========================
 
+export function deleteClothing(database, id) {
 
-export function deleteClothing(database,id){
+    return new Promise((resolve, reject) => {
 
+        if (!database) {
+            reject(new Error("Database missing"));
+            return;
+        }
 
-return new Promise((resolve,reject)=>{
+        const transaction = database.transaction(
+            "wardrobe",
+            "readwrite"
+        );
 
+        const store = transaction.objectStore(
+            "wardrobe"
+        );
 
-const transaction =
-database.transaction(
-"wardrobe",
-"readwrite"
-);
+        const request = store.delete(id);
 
+        request.onsuccess = () => {
 
+            console.log("🗑 Clothing deleted");
 
-const store =
-transaction.objectStore(
-"wardrobe"
-);
+            resolve();
 
+        };
 
+        request.onerror = () => {
 
-const request =
-store.delete(id);
+            reject(request.error);
 
+        };
 
-
-request.onsuccess = ()=>{
-
-
-console.log(
-"🗑 Deleted"
-);
-
-
-resolve();
-
-
-};
-
-
-
-request.onerror = ()=>{
-
-
-reject(
-request.error
-);
-
-
-};
-
-
-
-});
-
+    });
 
 }
 
 
 
-
-
-
-
-
-
 // ==========================
-// UPDATE LAUNDRY
+// UPDATE LAUNDRY STATUS
 // ==========================
-
 
 export function updateLaundryStatus(
-database,
-id,
-status
-){
+    database,
+    id,
+    status
+) {
 
+    return new Promise((resolve, reject) => {
 
-return new Promise((resolve,reject)=>{
+        if (!database) {
+            reject(new Error("Database missing"));
+            return;
+        }
 
+        const transaction = database.transaction(
+            "wardrobe",
+            "readwrite"
+        );
 
-const transaction =
-database.transaction(
-"wardrobe",
-"readwrite"
-);
+        const store = transaction.objectStore(
+            "wardrobe"
+        );
 
+        const request = store.get(id);
 
+        request.onsuccess = () => {
 
-const store =
-transaction.objectStore(
-"wardrobe"
-);
+            const item = request.result;
 
+            if (!item) {
 
+                reject(new Error("Item not found"));
 
-const request =
-store.get(id);
+                return;
 
+            }
 
+            item.laundryStatus = status;
 
-request.onsuccess = ()=>{
+            store.put(item);
 
+        };
 
-const item =
-request.result;
+        transaction.oncomplete = () => {
 
+            resolve();
 
+        };
 
-if(!item){
+        transaction.onerror = () => {
 
+            reject(transaction.error);
 
-reject(
-"Item not found"
-);
+        };
 
-
-return;
-
-
-}
-
-
-
-item.laundryStatus =
-status;
-
-
-
-store.put(item);
-
-
-
-};
-
-
-
-transaction.oncomplete = ()=>{
-
-
-resolve();
-
-
-};
-
-
-
-transaction.onerror = ()=>{
-
-
-reject(
-transaction.error
-);
-
-
-};
-
-
-
-});
-
+    });
 
 }
-
-
-
-
-
-
-
-
 
 // ==========================
 // SAVE MEMORY
 // ==========================
 
+export function saveMemory(database, data) {
 
-export function saveMemory(database,data){
+    return new Promise((resolve, reject) => {
 
+        if (!database) {
+            reject(new Error("Database missing"));
+            return;
+        }
 
-return new Promise((resolve,reject)=>{
+        const transaction = database.transaction(
+            "preferences",
+            "readwrite"
+        );
 
+        const store = transaction.objectStore(
+            "preferences"
+        );
 
-const transaction =
-database.transaction(
-"preferences",
-"readwrite"
-);
+        const request = store.put({
+            id: data.id,
+            ...data
+        });
 
+        request.onsuccess = () => {
 
+            resolve();
 
-const store =
-transaction.objectStore(
-"preferences"
-);
+        };
 
+        request.onerror = () => {
 
+            reject(request.error);
 
-const request =
-store.put({
+        };
 
-id:data.id,
-
-...data
-
-});
-
-
-
-request.onsuccess = ()=>{
-
-
-resolve();
-
-
-};
-
-
-
-request.onerror = ()=>{
-
-
-reject(
-request.error
-);
-
-
-};
-
-
-
-});
-
+    });
 
 }
-
-
-
-
-
-
 
 
 
@@ -641,67 +363,41 @@ request.error
 // GET MEMORY
 // ==========================
 
+export function getMemory(database, id) {
 
-export function getMemory(database,id){
+    return new Promise((resolve, reject) => {
 
+        if (!database) {
+            reject(new Error("Database missing"));
+            return;
+        }
 
-return new Promise((resolve,reject)=>{
+        const transaction = database.transaction(
+            "preferences",
+            "readonly"
+        );
 
+        const store = transaction.objectStore(
+            "preferences"
+        );
 
-const transaction =
-database.transaction(
-"preferences",
-"readonly"
-);
+        const request = store.get(id);
 
+        request.onsuccess = () => {
 
+            resolve(request.result || null);
 
-const store =
-transaction.objectStore(
-"preferences"
-);
+        };
 
+        request.onerror = () => {
 
+            reject(request.error);
 
-const request =
-store.get(id);
+        };
 
-
-
-request.onsuccess = ()=>{
-
-
-resolve(
-request.result || null
-);
-
-
-};
-
-
-
-request.onerror = ()=>{
-
-
-reject(
-request.error
-);
-
-
-};
-
-
-
-});
-
+    });
 
 }
-
-
-
-
-
-
 
 
 
@@ -709,62 +405,44 @@ request.error
 // SAVE HISTORY
 // ==========================
 
+export function saveHistory(database, outfit) {
 
-export function saveHistory(database,data){
+    return new Promise((resolve, reject) => {
 
+        if (!database) {
+            reject(new Error("Database missing"));
+            return;
+        }
 
-return new Promise((resolve,reject)=>{
+        const transaction = database.transaction(
+            "history",
+            "readwrite"
+        );
 
+        const store = transaction.objectStore(
+            "history"
+        );
 
-const transaction =
-database.transaction(
-"history",
-"readwrite"
-);
+        const request = store.add({
 
+            outfit,
 
+            date: Date.now()
 
-const store =
-transaction.objectStore(
-"history"
-);
+        });
 
+        request.onsuccess = () => {
 
+            resolve(request.result);
 
-const request =
-store.add({
+        };
 
-outfit:data,
+        request.onerror = () => {
 
-date:Date.now()
+            reject(request.error);
 
-});
+        };
 
-
-
-request.onsuccess = ()=>{
-
-
-resolve();
-
-
-};
-
-
-
-request.onerror = ()=>{
-
-
-reject(
-request.error
-);
-
-
-};
-
-
-
-});
-
+    });
 
 }
