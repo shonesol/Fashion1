@@ -24,9 +24,8 @@ import {
 
 
 console.log(
-    "🚀 FashionAI app.js loaded"
+"🚀 FashionAI app.js loaded"
 );
-
 
 
 
@@ -36,71 +35,67 @@ console.log(
 
 async function initFashionAI(){
 
-    try{
+try{
 
 
-        // Start local database first
-        const database =
-        await startDatabase();
-
-
-
-        // Start authentication
-        await startFashionAI();
+const database =
+await startDatabase();
 
 
 
-        window.FashionAI =
-        window.FashionAI || {};
+await startFashionAI();
 
 
 
-        // Store database globally
-        window.FashionAI.database =
-        database;
+window.FashionAI =
+window.FashionAI || {};
 
 
 
-        console.log(
-            "✅ Database connected",
-            database
-        );
+window.FashionAI.database =
+database;
 
 
 
-        console.log(
-            "✅ FashionAI initialized",
-            window.FashionAI
-        );
+console.log(
+"✅ Database connected",
+database
+);
 
 
 
-        // Send database to other files
-        window.dispatchEvent(
-            new CustomEvent(
-                "FashionAIReady",
-                {
-                    detail:{
-                        database
-                    }
-                }
-            )
-        );
+window.dispatchEvent(
+
+new CustomEvent(
+"FashionAIReady",
+{
+detail:{
+database
+}
+}
+
+)
+
+);
 
 
 
-    }
-
-    catch(error){
-
-
-        console.error(
-            "❌ FashionAI startup failed:",
-            error
-        );
+console.log(
+"✅ FashionAI ready"
+);
 
 
-    }
+
+}
+
+catch(error){
+
+console.error(
+"❌ FashionAI startup failed:",
+error
+);
+
+}
 
 }
 
@@ -112,33 +107,11 @@ initFashionAI();
 
 
 // ==========================
-// LISTEN FOR READY
+// OUTFIT BUTTON
 // ==========================
 
-window.addEventListener(
-    "FashionAIReady",
-    (event)=>{
 
-
-        console.log(
-            "✅ FashionAI ready",
-            event.detail.database
-        );
-
-
-    }
-);
-
-
-
-
-// ==========================
-// CREATE OUTFIT BUTTON
-// ==========================
-
-document.addEventListener(
-"DOMContentLoaded",
-()=>{
+function setupOutfitButton(){
 
 
 const outfitBtn =
@@ -148,7 +121,28 @@ document.getElementById(
 
 
 
-if(outfitBtn){
+const box =
+document.getElementById(
+"outfitResult"
+);
+
+
+
+if(!outfitBtn){
+
+console.error(
+"❌ outfitBtn missing"
+);
+
+return;
+
+}
+
+
+
+console.log(
+"✅ Outfit button connected"
+);
 
 
 
@@ -156,11 +150,7 @@ outfitBtn.onclick =
 async()=>{
 
 
-const box =
-document.getElementById(
-"outfitResult"
-);
-
+try{
 
 
 if(box){
@@ -170,9 +160,6 @@ box.innerHTML =
 
 }
 
-
-
-try{
 
 
 const database =
@@ -192,15 +179,15 @@ throw new Error(
 
 const outfit =
 await generateOutfit(
-    database,
-    "Casual"
+database,
+"Casual"
 );
 
 
 
 await saveOutfitHistory(
-    database,
-    outfit
+database,
+outfit
 );
 
 
@@ -230,23 +217,21 @@ error
 if(box){
 
 box.innerHTML =
-"❌ Outfit failed: " +
-error.message;
+"❌ " + error.message;
 
 }
 
 
-
 }
-
 
 
 };
 
 
-
 }
 
 
 
-});
+// Run immediately
+
+setupOutfitButton();
