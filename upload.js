@@ -6,7 +6,9 @@ import { analyzeClothing } from "./clothing-ai.js";
 import { addClothing } from "./db.js";
 
 
-console.log("🚀 upload.js loaded");
+console.log(
+"🚀 upload.js loaded"
+);
 
 
 
@@ -14,44 +16,48 @@ function setupUpload(){
 
 
 const uploadBtn =
-document.getElementById("uploadBtn");
+document.getElementById(
+"uploadBtn"
+);
 
 
 const imageInput =
-document.getElementById("clothingImage");
+document.getElementById(
+"clothingImage"
+);
 
 
 const result =
-document.getElementById("result");
+document.getElementById(
+"result"
+);
 
 
 
 if(!uploadBtn || !imageInput || !result){
 
-    console.error(
-        "❌ Upload elements missing",
-        {
-            uploadBtn,
-            imageInput,
-            result
-        }
-    );
+console.error(
+"❌ Upload elements missing",
+{
+uploadBtn,
+imageInput,
+result
+}
+);
 
-    return;
+return;
 
 }
 
 
 
 console.log(
-"✅ Upload elements found"
+"✅ Upload button connected"
 );
 
 
 
-
-uploadBtn.addEventListener(
-"click",
+uploadBtn.onclick =
 async()=>{
 
 
@@ -74,13 +80,11 @@ result.innerHTML =
 
 
 console.error(
-"Database missing:",
 window.FashionAI
 );
 
 
 return;
-
 
 }
 
@@ -100,13 +104,12 @@ result.innerHTML =
 
 return;
 
-
 }
 
 
 
 result.innerHTML =
-"📸 Reading image...";
+"🤖 FashionAI is analyzing...";
 
 
 
@@ -120,11 +123,6 @@ async()=>{
 
 
 try{
-
-
-result.innerHTML =
-"🤖 FashionAI is analyzing...";
-
 
 
 const ai =
@@ -143,13 +141,16 @@ ai
 
 const clothing = {
 
-    ...ai,
 
-    image:
-    reader.result,
+...ai,
 
-    name:
-    ai.type || "Clothing"
+
+image:
+reader.result,
+
+
+name:
+ai.type || "Clothing"
 
 };
 
@@ -157,13 +158,6 @@ const clothing = {
 
 await addClothing(
 database,
-clothing
-);
-
-
-
-console.log(
-"✅ Saved:",
 clothing
 );
 
@@ -193,6 +187,7 @@ new Event("clothingAdded")
 
 }
 
+
 catch(error){
 
 
@@ -200,6 +195,7 @@ console.error(
 "❌ UPLOAD ERROR:",
 error
 );
+
 
 
 result.innerHTML =
@@ -218,15 +214,13 @@ reader.readAsDataURL(file);
 
 
 
-});
+};
 
 
 }
 
 
 
-
-
-// Run immediately because modules load after HTML parsing
+// Start immediately
 
 setupUpload();
