@@ -3,32 +3,76 @@
 
 
 import {
-startFashionAI
-}
-from "./auth-manager.js";
+    startFashionAI
+} from "./auth-manager.js";
 
 
 import {
-generateOutfit
-}
-from "./outfit-generator.js";
+    generateOutfit
+} from "./outfit-generator.js";
 
 
 import {
-saveOutfitHistory
-}
-from "./outfit-history.js";
+    saveOutfitHistory
+} from "./outfit-history.js";
+
 
 
 console.log(
-"🚀 FashionAI app.js loaded"
+    "🚀 FashionAI app.js loaded"
 );
 
-console.log("🔥 APP JS STARTED");
-console.log("🔥 UPLOAD JS STARTED");
-console.log("🔥 WARDROBE JS STARTED");
 
-startFashionAI();
+
+async function initFashionAI(){
+
+
+    try{
+
+
+        await startFashionAI();
+
+
+
+        window.FashionAI =
+        window.FashionAI || {};
+
+
+
+        console.log(
+            "✅ FashionAI initialized",
+            window.FashionAI
+        );
+
+
+
+        window.dispatchEvent(
+            new Event("FashionAIReady")
+        );
+
+
+
+    }
+
+    catch(error){
+
+
+        console.error(
+            "❌ FashionAI startup failed:",
+            error
+        );
+
+
+    }
+
+
+}
+
+
+
+initFashionAI();
+
+
 
 
 
@@ -38,12 +82,15 @@ window.addEventListener(
 "FashionAIReady",
 ()=>{
 
+
 console.log(
 "✅ FashionAI ready"
 );
 
-}
-);
+
+
+});
+
 
 
 
@@ -56,7 +103,6 @@ document.addEventListener(
 ()=>{
 
 
-
 const outfitBtn =
 document.getElementById(
 "outfitBtn"
@@ -67,7 +113,9 @@ document.getElementById(
 if(outfitBtn){
 
 
-outfitBtn.onclick = async()=>{
+
+outfitBtn.onclick =
+async()=>{
 
 
 const box =
@@ -76,12 +124,23 @@ document.getElementById(
 );
 
 
+
 box.innerHTML =
 "🤖 Creating outfit...";
 
 
 
 try{
+
+
+if(!window.FashionAI?.database){
+
+throw new Error(
+"Database not ready"
+);
+
+}
+
 
 
 const outfit =
@@ -115,11 +174,15 @@ outfit.message;
 catch(error){
 
 
-console.error(error);
+console.error(
+error
+);
 
 
 box.innerHTML =
-"❌ Outfit failed";
+"❌ Outfit failed: " +
+error.message;
+
 
 
 }
