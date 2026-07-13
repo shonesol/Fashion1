@@ -1,131 +1,163 @@
-// api/gemini.js
-// FashionAI Vercel Gemini Function
+// gemini-ai.js
+// FashionAI Vercel Gemini Connection
 
 
-export default async function handler(req, res) {
+const API_URL =
+"https://fashion1-nine.vercel.app/api/gemini";
 
 
-    // CORS
-    res.setHeader(
-        "Access-Control-Allow-Origin",
-        "*"
-    );
 
-    res.setHeader(
-        "Access-Control-Allow-Headers",
-        "Content-Type"
-    );
+export async function askGemini(prompt, image = null){
 
-    res.setHeader(
-        "Access-Control-Allow-Methods",
-        "POST, OPTIONS"
-    );
 
+console.log(
+"🚀 Sending request to Vercel Gemini"
+);
 
 
-    if(req.method === "OPTIONS"){
 
-        return res.status(200).end();
+try{
 
-    }
 
+const parts = [
 
+{
+text: prompt
+}
 
-    if(req.method !== "POST"){
+];
 
-        return res.status(405).json({
 
-            error:"Only POST requests allowed"
 
-        });
+if(image){
 
-    }
 
+const base64 =
+image.split(",")[1];
 
 
-    try{
+const mime =
+image
+.split(",")[0]
+.match(/:(.*?);/)[1];
 
 
-        const {
-            contents
-        } = req.body || {};
 
+parts.push({
 
+inlineData:{
 
-        if(!contents){
+mimeType:mime,
 
-            return res.status(400).json({
+data:base64
 
-                error:"Missing contents"
+}
 
-            });
+});
 
-        }
 
+}
 
 
-        const response =
-        await fetch(
-            "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
-            {
 
-                method:"POST",
 
-                headers:{
+const response =
+await fetch(
+API_URL,
+{
 
-                    "Content-Type":
-                    "application/json",
+method:"POST",
 
-                    "x-goog-api-key":
-                    process.env.GEMINI_API_KEY
+headers:{
 
-                },
+"Content-Type":"application/json"
 
+},
 
-                body:JSON.stringify({
+body:JSON.stringify({
 
-                    contents
+contents:[
 
-                })
+{
 
-            }
+parts:parts
 
-        );
+}
 
+]
 
+})
 
-        const data =
-        await response.json();
+}
 
+);
 
 
-        return res
-        .status(response.status)
-        .json(data);
 
+const text =
+await response.text();
 
 
-    }
 
+console.log(
+"🔥 Vercel response:",
+text
+);
 
 
-    catch(error){
 
+if(!response.ok){
 
-        console.error(
-            "Gemini Error:",
-            error
-        );
+throw new Error(text);
 
+}
 
-        return res.status(500).json({
 
-            error:error.message
 
-        });
+const data =
+JSON.parse(text);
 
 
-    }
+
+if(
+data.candidates &&
+data.candidates[0] &&
+data.candidates[0].content
+){
+
+
+return data
+.candidates[0]
+.content
+.parts[0]
+.text;
+
+
+}
+
+
+
+throw new Error(
+"No Gemini response"
+);
+
+
+
+}
+
+catch(error){
+
+
+console.error(
+"❌ Gemini Error:",
+error
+);
+
+
+throw error;
+
+
+}
 
 
 }
