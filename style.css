@@ -1,7 +1,8 @@
-/* ===========================
-   FashionAI Theme
+/* =====================================
+   FashionAI Luxury Theme
    Beige • Orange • Gold
-=========================== */
+===================================== */
+
 
 *{
     margin:0;
@@ -9,57 +10,152 @@
     box-sizing:border-box;
 }
 
+
+:root{
+
+    --beige:#f8efe3;
+
+    --cream:#fffaf2;
+
+    --orange:#d9822b;
+
+    --gold:#c89b3c;
+
+    --brown:#6b4226;
+
+    --text:#3b3027;
+
+    --white:#ffffff;
+
+}
+
+
+
 body{
+
     font-family:'Poppins',sans-serif;
-    background:#f7f1e8;
-    color:#333;
+
+    background:var(--beige);
+
+    color:var(--text);
+
     min-height:100vh;
+
 }
 
-/* Header */
 
-header{
-    background:linear-gradient(135deg,#d99028,#c87b16,#b8860b);
+
+/* =====================================
+   Header
+===================================== */
+
+
+.app-header{
+
+    background:
+    linear-gradient(
+    135deg,
+    var(--orange),
+    var(--gold)
+    );
+
     color:white;
+
     padding:20px;
-    text-align:center;
-    box-shadow:0 4px 12px rgba(0,0,0,.15);
-}
 
-.logo h1{
-    font-size:2.3rem;
-    margin-bottom:5px;
-}
-
-.logo p{
-    opacity:.9;
-}
-
-/* Navigation */
-
-nav{
     display:flex;
-    justify-content:center;
-    flex-wrap:wrap;
-    gap:12px;
-    margin-top:20px;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    box-shadow:
+    0 5px 15px rgba(0,0,0,.15);
+
 }
 
-nav button{
 
-    background:#fff3dc;
 
-    color:#8b5a00;
+.brand h1{
+
+    font-size:28px;
+
+}
+
+
+
+.brand p{
+
+    font-size:14px;
+
+    opacity:.9;
+
+}
+
+
+
+
+.profile-area button{
+
+    background:white;
+
+    color:var(--orange);
 
     border:none;
 
-    padding:12px 22px;
+    width:42px;
 
-    border-radius:30px;
+    height:42px;
+
+    border-radius:50%;
+
+    margin-left:8px;
 
     cursor:pointer;
 
-    font-size:15px;
+    font-size:18px;
+
+}
+
+
+
+
+/* =====================================
+   Navigation
+===================================== */
+
+
+#mainNav{
+
+    display:flex;
+
+    gap:10px;
+
+    padding:15px;
+
+    justify-content:center;
+
+    flex-wrap:wrap;
+
+    background:white;
+
+}
+
+
+
+.nav-btn{
+
+    border:none;
+
+    background:#f4dfbc;
+
+    color:var(--brown);
+
+    padding:12px 18px;
+
+    border-radius:25px;
+
+    cursor:pointer;
 
     font-weight:600;
 
@@ -67,81 +163,271 @@ nav button{
 
 }
 
-nav button:hover{
 
-    background:#ffd27a;
 
-    transform:translateY(-2px);
+.nav-btn:hover,
+.nav-btn.active{
+
+    background:var(--orange);
+
+    color:white;
 
 }
 
-/* Hero */
 
-.hero{
+
+
+
+/* =====================================
+   Pages
+===================================== */
+
+
+.page{
+
+    display:none;
+
+    padding:25px;
+
+}
+
+
+
+.page.active{
+
+    display:block;
+
+}
+
+
+
+
+
+/* =====================================
+   Hero
+===================================== */
+
+
+.hero-card{
+
+    background:
+
+    linear-gradient(
+    135deg,
+    #fff4df,
+    #ffe0a8
+    );
+
+    padding:35px;
+
+    border-radius:25px;
 
     text-align:center;
 
-    padding:50px 20px;
-
-}
-
-.hero h2{
-
-    font-size:2rem;
-
-    color:#b66b00;
-
-}
-
-.hero p{
-
-    margin-top:15px;
-
-    font-size:17px;
-
-    color:#666;
-
-}
-
-/* Cards */
-
-.upload-card,
-.wardrobe-card,
-.outfit-card,
-.history-card,
-.settings-card{
-
-    width:95%;
-
     max-width:900px;
 
-    margin:25px auto;
+    margin:auto;
+
+}
+
+
+
+.hero-card h2{
+
+    color:var(--brown);
+
+    font-size:32px;
+
+}
+
+
+
+.hero-card p{
+
+    margin:15px 0;
+
+    color:#66584d;
+
+}
+
+
+
+.hero-card button{
+
+    background:var(--orange);
+
+    color:white;
+
+    border:none;
+
+    padding:15px 30px;
+
+    border-radius:30px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+}
+/* =====================================
+   Feature Cards
+===================================== */
+
+
+.feature-grid{
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(auto-fit,minmax(220px,1fr));
+
+    gap:20px;
+
+    margin-top:30px;
+
+}
+
+
+
+.feature-card{
 
     background:white;
 
     padding:25px;
 
-    border-radius:22px;
+    border-radius:20px;
 
-    box-shadow:0 8px 20px rgba(0,0,0,.08);
-
-}
-
-.upload-card h2,
-.wardrobe-card h2,
-.outfit-card h2,
-.history-card h2,
-.settings-card h2{
-
-    color:#b66b00;
-
-    margin-bottom:20px;
+    box-shadow:
+    0 8px 20px rgba(0,0,0,.08);
 
 }
 
-/* Upload */
 
-.upload-box{
+
+.feature-card h3{
+
+    color:var(--orange);
+
+    margin-bottom:10px;
+
+}
+
+
+
+
+
+/* =====================================
+   Section Titles
+===================================== */
+
+
+.section-title{
+
+    text-align:center;
+
+    margin-bottom:25px;
+
+}
+
+
+
+.section-title h2{
+
+    color:var(--brown);
+
+    font-size:28px;
+
+}
+
+
+
+
+
+/* =====================================
+   Upload Section
+===================================== */
+
+
+.upload-container{
+
+    max-width:900px;
+
+    margin:auto;
+
+    background:white;
+
+    padding:25px;
+
+    border-radius:25px;
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:25px;
+
+}
+
+
+
+.image-upload-card{
+
+    text-align:center;
+
+}
+
+
+
+.upload-label{
+
+    display:block;
+
+    background:var(--orange);
+
+    color:white;
+
+    padding:15px;
+
+    border-radius:20px;
+
+    cursor:pointer;
+
+}
+
+
+
+.preview-container{
+
+    margin-top:20px;
+
+}
+
+
+
+.preview-container img{
+
+    width:100%;
+
+    max-height:350px;
+
+    object-fit:cover;
+
+    border-radius:20px;
+
+    display:none;
+
+}
+
+
+
+
+
+/* =====================================
+   Forms
+===================================== */
+
+
+.clothing-form{
 
     display:flex;
 
@@ -151,88 +437,19 @@ nav button:hover{
 
 }
 
-#imageInput{
 
-    padding:12px;
 
-    border:2px dashed #d6a24a;
+.clothing-form input,
+.clothing-form select,
+.clothing-form textarea,
+.outfit-generator-card select{
+
+
+    padding:14px;
 
     border-radius:15px;
 
-    background:#fff8ef;
-
-}
-
-#preview{
-
-    width:100%;
-
-    max-height:350px;
-
-    object-fit:cover;
-
-    display:none;
-
-    border-radius:18px;
-
-    border:3px solid #f2d18f;
-
-}
-/* ===========================
-   Buttons
-=========================== */
-
-#saveBtn,
-#analyzeBtn,
-#generateBtn,
-#clearWardrobe{
-
-    background:linear-gradient(135deg,#d99028,#b8860b);
-
-    color:white;
-
-    border:none;
-
-    padding:14px;
-
-    border-radius:14px;
-
-    cursor:pointer;
-
-    font-size:16px;
-
-    font-weight:600;
-
-    transition:.3s;
-
-}
-
-#saveBtn:hover,
-#analyzeBtn:hover,
-#generateBtn:hover,
-#clearWardrobe:hover{
-
-    transform:translateY(-2px);
-
-    box-shadow:0 8px 18px rgba(217,144,40,.35);
-
-}
-
-/* ===========================
-   Search
-=========================== */
-
-#searchInput{
-
-    width:100%;
-
-    padding:14px;
-
-    border:2px solid #efd6a0;
-
-    border-radius:12px;
-
-    margin-bottom:20px;
+    border:2px solid #ead3aa;
 
     font-size:15px;
 
@@ -240,45 +457,122 @@ nav button:hover{
 
 }
 
-#searchInput:focus{
 
-    border-color:#d99028;
+
+.clothing-form textarea{
+
+    height:100px;
+
+    resize:none;
 
 }
 
-/* ===========================
-   Wardrobe Grid
-=========================== */
+
+
+
+.action-buttons{
+
+    display:flex;
+
+    gap:10px;
+
+    flex-wrap:wrap;
+
+}
+
+
+
+.action-buttons button,
+#generateOutfitBtn{
+
+    flex:1;
+
+    padding:14px;
+
+    border:none;
+
+    border-radius:20px;
+
+    background:var(--orange);
+
+    color:white;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+}
+
+
+
+
+
+/* =====================================
+   Wardrobe
+===================================== */
+
+
+.wardrobe-tools{
+
+    max-width:900px;
+
+    margin:auto;
+
+    display:flex;
+
+    gap:15px;
+
+    margin-bottom:25px;
+
+}
+
+
+
+.wardrobe-tools input,
+.wardrobe-tools select{
+
+    flex:1;
+
+    padding:14px;
+
+    border-radius:15px;
+
+    border:2px solid #ead3aa;
+
+}
+
+
+
+
 
 .wardrobe-grid{
 
     display:grid;
 
-    grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+    grid-template-columns:
+
+    repeat(auto-fit,minmax(160px,1fr));
 
     gap:20px;
 
 }
 
+
+
 .clothing-card{
 
-    background:#fffaf2;
+    background:white;
 
-    border-radius:18px;
+    border-radius:20px;
 
     overflow:hidden;
 
-    box-shadow:0 6px 14px rgba(0,0,0,.08);
-
-    transition:.3s;
-
-}
-
-.clothing-card:hover{
-
-    transform:translateY(-5px);
+    box-shadow:
+    0 8px 20px rgba(0,0,0,.1);
 
 }
+
+
 
 .clothing-card img{
 
@@ -290,172 +584,28 @@ nav button:hover{
 
 }
 
-.clothing-card h3{
 
-    padding:12px;
 
-    font-size:16px;
-
-    color:#8b5a00;
-
-}
-
-.clothing-card p{
-
-    padding:0 12px 12px;
-
-    color:#666;
-
-    font-size:14px;
-
-}
-
-/* ===========================
-   Results
-=========================== */
-
-#analysisResult,
-#outfitResult,
-#historyList{
-
-    background:#fff8ef;
-
-    border-left:5px solid #d99028;
+.clothing-info{
 
     padding:15px;
 
-    border-radius:12px;
+}
 
-    margin-top:15px;
 
-    white-space:pre-wrap;
+
+.clothing-info h3{
+
+    color:var(--brown);
 
 }
 
-/* ===========================
-   Footer
-=========================== */
 
-footer{
 
-    margin-top:40px;
+.clothing-info p{
 
-    background:#b8860b;
+    font-size:14px;
 
-    color:white;
-
-    text-align:center;
-
-    padding:30px 20px;
-
-}
-
-.footer-links{
-
-    display:flex;
-
-    justify-content:center;
-
-    flex-wrap:wrap;
-
-    gap:18px;
-
-    margin:15px 0;
-
-}
-
-.footer-links a{
-
-    color:white;
-
-    text-decoration:none;
-
-}
-
-.footer-links a:hover{
-
-    text-decoration:underline;
-
-}
-
-/* ===========================
-   Dark Theme
-=========================== */
-
-body.dark{
-
-    background:#1f1f1f;
-
-    color:#f5f5f5;
-
-}
-
-body.dark .upload-card,
-body.dark .wardrobe-card,
-body.dark .outfit-card,
-body.dark .history-card,
-body.dark .settings-card{
-
-    background:#2d2d2d;
-
-}
-
-body.dark #searchInput{
-
-    background:#3a3a3a;
-
-    color:white;
-
-    border-color:#666;
-
-}
-
-body.dark #analysisResult,
-body.dark #outfitResult,
-body.dark #historyList{
-
-    background:#383838;
-
-    color:white;
-
-}
-
-/* ===========================
-   Responsive
-=========================== */
-
-@media(max-width:768px){
-
-    nav{
-
-        flex-direction:column;
-
-        align-items:center;
-
-    }
-
-    .hero h2{
-
-        font-size:1.6rem;
-
-    }
-
-    .upload-card,
-    .wardrobe-card,
-    .outfit-card,
-    .history-card,
-    .settings-card{
-
-        width:94%;
-
-        padding:20px;
-
-    }
-
-    .wardrobe-grid{
-
-        grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
-
-    }
+    color:#777;
 
 }
