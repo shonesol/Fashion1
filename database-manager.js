@@ -1,53 +1,31 @@
 // database-manager.js
-// FashionAI Permanent User Storage (IndexedDB)
+// FashionAI IndexedDB Manager
 
 
 let database = null;
 
 
-const DATABASE_VERSION = 8;
+export function startDatabase(){
+
+    return new Promise((resolve,reject)=>{
 
 
-
-// ==========================
-// OPEN USER DATABASE
-// ==========================
-
-export function getDatabase(userId){
-
-    return new Promise((resolve, reject)=>{
-
-
-        if(!userId){
-
-            reject("Missing User ID");
-
-            return;
-
-        }
-
-
-
-        const request = indexedDB.open(
-            "FashionAI_" + userId,
-            DATABASE_VERSION
+        const request =
+        indexedDB.open(
+            "FashionAI",
+            1
         );
-
 
 
         request.onupgradeneeded = (event)=>{
 
 
-            const db = event.target.result;
+            const db =
+            event.target.result;
 
-
-
-            // WARDROBE STORAGE
 
             if(!db.objectStoreNames.contains("wardrobe")){
 
-
-                const wardrobe =
                 db.createObjectStore(
                     "wardrobe",
                     {
@@ -56,52 +34,22 @@ export function getDatabase(userId){
                     }
                 );
 
+            }
 
-                wardrobe.createIndex(
-                    "category",
-                    "category",
+
+            if(!db.objectStoreNames.contains("preferences")){
+
+                db.createObjectStore(
+                    "preferences",
                     {
-                        unique:false
+                        keyPath:"id"
                     }
                 );
-
-
-                wardrobe.createIndex(
-                    "color",
-                    "primaryColor",
-                    {
-                        unique:false
-                    }
-                );
-
-
-                wardrobe.createIndex(
-                    "style",
-                    "style",
-                    {
-                        unique:false
-                    }
-                );
-
-
-                wardrobe.createIndex(
-                    "material",
-                    "material",
-                    {
-                        unique:false
-                    }
-                );
-
 
             }
 
 
-
-
-            // OUTFIT HISTORY
-
             if(!db.objectStoreNames.contains("history")){
-
 
                 db.createObjectStore(
                     "history",
@@ -111,121 +59,49 @@ export function getDatabase(userId){
                     }
                 );
 
-
-            }
-
-
-
-
-            // SAVED PLANS
-
-            if(!db.objectStoreNames.contains("plans")){
-
-
-                db.createObjectStore(
-                    "plans",
-                    {
-                        keyPath:"id",
-                        autoIncrement:true
-                    }
-                );
-
-
-            }
-
-
-
-
-            // AI MEMORY
-
-            if(!db.objectStoreNames.contains("preferences")){
-
-
-                db.createObjectStore(
-                    "preferences",
-                    {
-                        keyPath:"id"
-                    }
-                );
-
-
-            }
-
-
-
-
-            // PROFILE
-
-            if(!db.objectStoreNames.contains("profile")){
-
-
-                db.createObjectStore(
-                    "profile",
-                    {
-                        keyPath:"id"
-                    }
-                );
-
-
             }
 
 
         };
 
 
+        request.onsuccess=(event)=>{
 
 
-
-        request.onsuccess = (event)=>{
-
-
-            database = event.target.result;
-
-
-
-            // CONNECT GLOBAL DATABASE
-
-            window.FashionAI =
-            window.FashionAI || {};
-
-
-
-            window.FashionAI.database =
-            database;
-
+            database =
+            event.target.result;
 
 
             console.log(
-                "✅ FashionAI Database Ready:",
-                database.name
+                "✅ Database Ready"
             );
 
+
+            window.dispatchEvent(
+                new CustomEvent(
+                    "FashionAIReady",
+                    {
+                        detail:{
+                            database
+                        }
+                    }
+                )
+            );
 
 
             resolve(database);
 
 
-
         };
 
 
+        request.onerror=()=>{
 
-
-
-        request.onerror = ()=>{
-
-
-            console.error(
-                "❌ Database error:",
+            reject(
                 request.error
             );
 
-
-            reject(request.error);
-
-
         };
-
 
 
     });
@@ -234,106 +110,8 @@ export function getDatabase(userId){
 
 
 
-
-
-
-
-// ==========================
-// GET CURRENT DATABASE
-// ==========================
-
-export function getCurrentDatabase(){
-
+export function getDatabase(){
 
     return database;
-
-
-}
-
-
-
-
-
-
-
-// ==========================
-// CLOSE DATABASE
-// ==========================
-
-export function closeDatabase(){
-
-
-    if(database){
-
-
-        database.close();
-
-
-        database = null;
-
-
-        if(window.FashionAI){
-
-            window.FashionAI.database = null;
-
-        }
-
-
-    }
-
-
-}
-
-
-
-
-
-
-
-// ==========================
-// DELETE DATABASE
-// ==========================
-
-export function deleteUserDatabase(userId){
-
-
-    return new Promise((resolve,reject)=>{
-
-
-        const request =
-        indexedDB.deleteDatabase(
-            "FashionAI_" + userId
-        );
-
-
-
-        request.onsuccess = ()=>{
-
-
-            console.log(
-                "🗑 FashionAI database deleted"
-            );
-
-
-            resolve();
-
-
-        };
-
-
-
-
-        request.onerror = ()=>{
-
-
-            reject(request.error);
-
-
-        };
-
-
-
-    });
-
 
 }
