@@ -15,15 +15,9 @@ import {
 
 
 
-
-// Selected image
-
 let selectedImage = null;
 
 
-
-
-// Elements
 
 const imageInput =
 document.getElementById("imageInput");
@@ -44,9 +38,9 @@ document.getElementById("analyzeClothingBtn");
 
 
 
-// =====================================
-// Image Selection
-// =====================================
+// ================================
+// IMAGE UPLOAD
+// ================================
 
 
 if(imageInput){
@@ -55,12 +49,6 @@ if(imageInput){
 imageInput.addEventListener(
 "change",
 (event)=>{
-
-
-console.log(
-"Image selected"
-);
-
 
 
 const file =
@@ -76,10 +64,8 @@ return;
 
 
 
-
 const reader =
 new FileReader();
-
 
 
 
@@ -95,20 +81,17 @@ imagePreview.src =
 selectedImage;
 
 
-
 imagePreview.style.display =
 "block";
 
 
 
 console.log(
-"Image ready"
+"Image loaded"
 );
 
 
-
 };
-
 
 
 
@@ -127,10 +110,9 @@ reader.readAsDataURL(file);
 
 
 
-
-// =====================================
-// Save Clothing
-// =====================================
+// ================================
+// SAVE CLOTHING
+// ================================
 
 
 if(saveButton){
@@ -141,17 +123,11 @@ saveButton.addEventListener(
 async()=>{
 
 
-console.log(
-"Save clicked"
-);
-
-
-
 if(!selectedImage){
 
 
 alert(
-"Please select an image first"
+"Please upload an image first"
 );
 
 
@@ -159,7 +135,6 @@ return;
 
 
 }
-
 
 
 
@@ -173,7 +148,7 @@ image:selectedImage,
 name:
 document.getElementById(
 "clothingName"
-).value || "Unnamed Clothing",
+).value || "Unnamed Item",
 
 
 
@@ -221,6 +196,7 @@ new Date().toISOString()
 
 
 
+
 try{
 
 
@@ -231,19 +207,18 @@ clothing
 
 
 alert(
-"✅ Saved to wardrobe"
+"✅ Clothing saved"
 );
 
 
 
 }
 
-
-
 catch(error){
 
 
 console.error(
+"Save error:",
 error
 );
 
@@ -252,7 +227,6 @@ error
 alert(
 "Save failed"
 );
-
 
 
 }
@@ -270,11 +244,9 @@ alert(
 
 
 
-
-
-// =====================================
+// ================================
 // AI ANALYSIS
-// =====================================
+// ================================
 
 
 if(analyzeButton){
@@ -286,9 +258,8 @@ async()=>{
 
 
 console.log(
-"Analyze button clicked"
+"Analyze clicked"
 );
-
 
 
 
@@ -297,7 +268,7 @@ if(!selectedImage){
 
 
 alert(
-"Upload an image first"
+"Please upload clothing image first"
 );
 
 
@@ -309,9 +280,9 @@ return;
 
 
 
-
 analyzeButton.innerText =
 "🤖 Analyzing...";
+
 
 
 
@@ -328,7 +299,7 @@ selectedImage
 
 
 console.log(
-"AI RESULT:",
+"FULL AI RESULT:",
 result
 );
 
@@ -343,84 +314,95 @@ analyzeButton.innerText =
 
 
 
+
 if(result.error){
 
-    console.log(
-        "FULL AI ERROR:",
-        result
-    );
+
+console.error(
+"AI ERROR:",
+result
+);
 
 
-    alert(
-        "AI Error:\n" +
-        JSON.stringify(result, null, 2)
-    );
+
+alert(
+
+"AI Error:\n\n" +
+
+JSON.stringify(
+result,
+null,
+2
+)
+
+);
 
 
-    return;
+
+return;
+
 
 }
 
-
-
-
-
-const aiText =
-
-`
-Type: ${result.type || ""}
-
-Category: ${result.category || ""}
-
-Primary Color: ${result.primaryColor || ""}
-
-Material: ${result.material || ""}
-
-Style: ${result.style || ""}
-
-Season: ${result.season || ""}
-
-Occasion: ${result.occasion || ""}
-`;
 
 
 
 
 
 alert(
-"✅ AI Analysis Complete\n\n"
-+
-aiText
+
+"✅ Analysis Complete\n\n" +
+
+"Type: " +
+(result.type || "Unknown") +
+
+"\nCategory: " +
+(result.category || "Unknown") +
+
+"\nColor: " +
+(result.primaryColor || "Unknown") +
+
+"\nMaterial: " +
+(result.material || "Unknown")
+
 );
+
+
 
 
 
 }
 
-
-
-
 catch(error){
 
 
 console.error(
-"Analysis failed:",
+"Analysis crashed:",
 error
 );
 
 
 
 alert(
-"AI analysis failed"
+
+"Analysis failed:\n\n" +
+
+JSON.stringify(
+error,
+null,
+2
+)
+
 );
+
+
+
+}
 
 
 
 analyzeButton.innerText =
 "🤖 Analyze With AI";
-
-
-}
 
 
 
