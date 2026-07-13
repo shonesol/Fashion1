@@ -16,6 +16,11 @@ export default async function handler(req, res) {
         "Content-Type"
     );
 
+    res.setHeader(
+        "Access-Control-Allow-Methods",
+        "POST, OPTIONS"
+    );
+
 
 
     if(req.method === "OPTIONS"){
@@ -26,10 +31,36 @@ export default async function handler(req, res) {
 
 
 
+    if(req.method !== "POST"){
+
+        return res.status(405).json({
+
+            error:"Only POST requests allowed"
+
+        });
+
+    }
+
+
+
     try{
 
 
-        const { contents } = req.body;
+        const {
+            contents
+        } = req.body || {};
+
+
+
+        if(!contents){
+
+            return res.status(400).json({
+
+                error:"Missing contents"
+
+            });
+
+        }
 
 
 
@@ -42,7 +73,8 @@ export default async function handler(req, res) {
 
                 headers:{
 
-                    "Content-Type":"application/json",
+                    "Content-Type":
+                    "application/json",
 
                     "x-goog-api-key":
                     process.env.GEMINI_API_KEY
@@ -67,17 +99,21 @@ export default async function handler(req, res) {
 
 
 
-        return res.status(200).json(data);
+        return res
+        .status(response.status)
+        .json(data);
 
 
 
     }
 
 
+
     catch(error){
 
 
         console.error(
+            "Gemini Error:",
             error
         );
 
