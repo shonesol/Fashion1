@@ -5,13 +5,12 @@
 import { analyzeClothing } from "./clothing-ai.js";
 import { addClothing } from "./db.js";
 
+
 console.log("🚀 upload.js loaded");
 
 
 
-document.addEventListener(
-"DOMContentLoaded",
-()=>{
+function setupUpload(){
 
 
 const uploadBtn =
@@ -29,13 +28,24 @@ document.getElementById("result");
 
 if(!uploadBtn || !imageInput || !result){
 
-console.error(
-"❌ Upload elements missing"
-);
+    console.error(
+        "❌ Upload elements missing",
+        {
+            uploadBtn,
+            imageInput,
+            result
+        }
+    );
 
-return;
+    return;
 
 }
+
+
+
+console.log(
+"✅ Upload elements found"
+);
 
 
 
@@ -76,8 +86,6 @@ return;
 
 
 
-
-
 const file =
 imageInput.files[0];
 
@@ -97,10 +105,8 @@ return;
 
 
 
-
 result.innerHTML =
 "📸 Reading image...";
-
 
 
 
@@ -129,29 +135,23 @@ reader.result
 
 
 console.log(
-"AI RESULT:",
+"🤖 AI RESULT:",
 ai
 );
 
 
 
-
 const clothing = {
 
+    ...ai,
 
-...ai,
+    image:
+    reader.result,
 
-
-image:
-reader.result,
-
-
-name:
-ai.type || "Clothing"
-
+    name:
+    ai.type || "Clothing"
 
 };
-
 
 
 
@@ -163,10 +163,9 @@ clothing
 
 
 console.log(
-"Saved:",
+"✅ Saved:",
 clothing
 );
-
 
 
 
@@ -174,13 +173,13 @@ result.innerHTML = `
 
 <h3>✅ Clothing Saved</h3>
 
-<p>Type: ${clothing.type}</p>
+<p>Type: ${clothing.type || ""}</p>
 
-<p>Category: ${clothing.category}</p>
+<p>Category: ${clothing.category || ""}</p>
 
-<p>Color: ${clothing.primaryColor}</p>
+<p>Color: ${clothing.primaryColor || ""}</p>
 
-<p>Material: ${clothing.material}</p>
+<p>Material: ${clothing.material || ""}</p>
 
 `;
 
@@ -198,15 +197,13 @@ catch(error){
 
 
 console.error(
-"UPLOAD ERROR:",
+"❌ UPLOAD ERROR:",
 error
 );
 
 
-
 result.innerHTML =
 "❌ " + error.message;
-
 
 
 }
@@ -224,4 +221,12 @@ reader.readAsDataURL(file);
 });
 
 
-});
+}
+
+
+
+
+
+// Run immediately because modules load after HTML parsing
+
+setupUpload();
