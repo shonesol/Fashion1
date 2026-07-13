@@ -1,80 +1,124 @@
-// upload.js TEST ONLY
+// upload.js
+// FashionAI Upload Controller
 
-console.log("🔥 UPLOAD FILE STARTED");
+import { analyzeClothing } from "./clothing-ai.js";
+import { addClothing } from "./db.js";
 
+console.log("🚀 upload.js loaded");
 
-document.addEventListener("DOMContentLoaded",()=>{
+document.addEventListener("DOMContentLoaded", () => {
 
+    const uploadBtn =
+        document.getElementById("uploadBtn");
 
-console.log("🔥 DOM READY");
+    const imageInput =
+        document.getElementById("clothingImage");
 
+    const result =
+        document.getElementById("result");
 
-const button =
-document.getElementById("uploadBtn");
+    if (!uploadBtn || !imageInput || !result) {
 
+        console.error("Upload elements missing");
 
-const input =
-document.getElementById("clothingImage");
+        return;
 
+    }
 
-const result =
-document.getElementById("result");
+    uploadBtn.addEventListener("click", async () => {
 
+        if (!window.FashionAI?.database) {
 
+            result.innerHTML =
+                "❌ Database not ready";
 
-console.log(
-"BUTTON:",
-button
-);
+            return;
 
-console.log(
-"INPUT:",
-input
-);
+        }
 
+        const file = imageInput.files[0];
 
+        if (!file) {
 
+            result.innerHTML =
+                "❌ Please choose an image.";
 
-button.addEventListener(
-"click",
-()=>{
+            return;
 
+        }
 
-console.log(
-"BUTTON CLICKED"
-);
+        result.innerHTML =
+            "📸 Reading image...";
 
+        const reader = new FileReader();
 
+        reader.onload = async () => {
 
-if(!input.files[0]){
+            try {
 
+                result.innerHTML =
+                    "🤖 FashionAI is analyzing...";
 
-result.innerHTML =
-"❌ No image selected";
+                const ai =
+                    await analyzeClothing(
+                        reader.result
+                    );
 
+                const clothing = {
 
-return;
+                    ...ai,
 
+                    image: reader.result,
 
-}
+                    name:
+                        ai.type || "Clothing"
 
+                };
 
+                await addClothing(
 
-result.innerHTML =
+                    window.FashionAI.database,
 
-`
+                    clothing
 
-<h3>✅ Upload is working</h3>
+                );
 
-<p>
-${input.files[0].name}
-</p>
+                result.innerHTML = `
+
+<h3>✅ Clothing Saved</h3>
+
+<p><b>Type:</b> ${clothing.type}</p>
+
+<p><b>Category:</b> ${clothing.category}</p>
+
+<p><b>Color:</b> ${clothing.primaryColor}</p>
+
+<p><b>Material:</b> ${clothing.material}</p>
 
 `;
 
+                window.dispatchEvent(
 
+                    new Event("clothingAdded")
 
-});
+                );
 
+            }
+
+            catch (error) {
+
+                console.error(error);
+
+                result.innerHTML =
+
+                    `❌ ${error.message}`;
+
+            }
+
+        };
+
+        reader.readAsDataURL(file);
+
+    });
 
 });
