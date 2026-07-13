@@ -1,23 +1,18 @@
-// FashionAI Clothing AI Analyzer
-
 import {
     askGemini
 } from "./gemini-ai.js";
 
 
-
 export async function analyzeClothing(image){
 
 
-    const prompt = `
-
-You are FashionAI.
+const prompt = `
 
 Analyze this clothing image.
 
-Return ONLY valid JSON.
+Return ONLY JSON.
 
-Use exactly this format:
+Format:
 
 {
 "type":"",
@@ -31,53 +26,61 @@ Use exactly this format:
 "description":""
 }
 
-Do not add markdown.
-Do not explain.
-
 `;
 
 
 
-    try{
-
-
-        const result =
-        await askGemini(
-            prompt,
-            image
-        );
+const response =
+await askGemini(
+    prompt,
+    image
+);
 
 
 
-        console.log(
-            "AI Result:",
-            result
-        );
+console.log(
+"Gemini raw response:",
+response
+);
 
 
 
-        return result;
+try{
+
+
+const text =
+
+response.candidates[0]
+.content.parts[0]
+.text;
 
 
 
-    }catch(error){
+return JSON.parse(text);
 
 
-        console.error(
-            "Clothing analysis failed:",
-            error
-        );
+
+}
+catch(error){
 
 
-        return {
-
-            error:
-            error.message
-
-        };
+console.error(
+"JSON conversion failed:",
+error
+);
 
 
-    }
+
+return {
+
+error:
+"Invalid AI response"
+
+};
+
+
+}
+
 
 
 }
