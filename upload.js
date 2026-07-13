@@ -1,6 +1,6 @@
 // =====================================
 // FashionAI Upload Manager
-// Handles image upload, preview and saving
+// Upload + Save + AI Analysis
 // =====================================
 
 
@@ -8,22 +8,22 @@ import {
     addClothing
 } from "./db.js";
 
+
 import {
     analyzeClothing
 } from "./clothing-ai.js";
 
 
-// Selected image storage
+
+
+// Selected image
 
 let selectedImage = null;
 
 
 
 
-// =====================================
-// Image Preview
-// =====================================
-
+// Elements
 
 const imageInput =
 document.getElementById("imageInput");
@@ -32,6 +32,21 @@ document.getElementById("imageInput");
 const imagePreview =
 document.getElementById("imagePreview");
 
+
+const saveButton =
+document.getElementById("saveClothingBtn");
+
+
+const analyzeButton =
+document.getElementById("analyzeClothingBtn");
+
+
+
+
+
+// =====================================
+// Image Selection
+// =====================================
 
 
 if(imageInput){
@@ -42,50 +57,72 @@ imageInput.addEventListener(
 (event)=>{
 
 
-    const file =
-    event.target.files[0];
+console.log(
+"Image selected"
+);
 
 
 
-    if(!file){
-        return;
-    }
+const file =
+event.target.files[0];
 
 
 
-    const reader =
-    new FileReader();
+if(!file){
+
+return;
+
+}
 
 
 
-    reader.onload = ()=>{
 
-
-        selectedImage =
-        reader.result;
-
-
-
-        imagePreview.src =
-        selectedImage;
+const reader =
+new FileReader();
 
 
 
-        imagePreview.style.display =
-        "block";
+
+reader.onload = ()=>{
 
 
-    };
+selectedImage =
+reader.result;
 
 
 
-    reader.readAsDataURL(file);
+imagePreview.src =
+selectedImage;
+
+
+
+imagePreview.style.display =
+"block";
+
+
+
+console.log(
+"Image ready"
+);
+
+
+
+};
+
+
+
+
+reader.readAsDataURL(file);
 
 
 
 });
 
+
 }
+
+
+
 
 
 
@@ -96,131 +133,135 @@ imageInput.addEventListener(
 // =====================================
 
 
-const saveButton =
-document.getElementById(
-"saveClothingBtn"
-);
-
-
-
 if(saveButton){
 
 
 saveButton.addEventListener(
 "click",
-async ()=>{
+async()=>{
 
 
-    if(!selectedImage){
-
-
-        alert(
-        "Please choose a clothing image first."
-        );
-
-        return;
-
-    }
+console.log(
+"Save clicked"
+);
 
 
 
-    const clothing = {
+if(!selectedImage){
 
 
-        image:selectedImage,
+alert(
+"Please select an image first"
+);
 
 
-        name:
-        document.getElementById(
-        "clothingName"
-        ).value || "Unnamed Item",
+return;
 
 
-
-        category:
-        document.getElementById(
-        "category"
-        ).value || "Other",
-
-
-
-        color:
-        document.getElementById(
-        "color"
-        ).value || "Unknown",
-
-
-
-        season:
-        document.getElementById(
-        "season"
-        ).value || "All Season",
-
-
-
-        occasion:
-        document.getElementById(
-        "occasion"
-        ).value || "Casual",
-
-
-
-        notes:
-        document.getElementById(
-        "notes"
-        ).value || "",
-
-
-
-        created:
-        new Date().toISOString()
-
-
-    };
+}
 
 
 
 
 
-    try{
+const clothing = {
 
 
-        await addClothing(
-        clothing
-        );
+image:selectedImage,
 
 
-
-        alert(
-        "✅ Clothing saved to wardrobe!"
-        );
-
-
-
-        clearForm();
+name:
+document.getElementById(
+"clothingName"
+).value || "Unnamed Clothing",
 
 
 
-    }
-    catch(error){
+category:
+document.getElementById(
+"category"
+).value || "Other",
 
 
-        console.error(error);
+
+color:
+document.getElementById(
+"color"
+).value || "Unknown",
 
 
-        alert(
-        "❌ Failed to save clothing."
-        );
+
+season:
+document.getElementById(
+"season"
+).value || "All Season",
 
 
-    }
+
+occasion:
+document.getElementById(
+"occasion"
+).value || "Casual",
+
+
+
+notes:
+document.getElementById(
+"notes"
+).value || "",
+
+
+
+created:
+new Date().toISOString()
+
+
+};
+
+
+
+
+try{
+
+
+await addClothing(
+clothing
+);
+
+
+
+alert(
+"✅ Saved to wardrobe"
+);
+
+
+
+}
+
+
+
+catch(error){
+
+
+console.error(
+error
+);
+
+
+
+alert(
+"Save failed"
+);
+
+
+
+}
 
 
 
 });
 
 
-
 }
 
 
@@ -229,49 +270,11 @@ async ()=>{
 
 
 
+
+
 // =====================================
-// Clear Form
+// AI ANALYSIS
 // =====================================
-
-
-function clearForm(){
-
-
-    document.getElementById(
-    "clothingName"
-    ).value="";
-
-
-
-    document.getElementById(
-    "notes"
-    ).value="";
-
-
-
-    imagePreview.src="";
-
-
-
-    imagePreview.style.display=
-    "none";
-
-
-
-    selectedImage=null;
-
-
-}
-// =====================================
-// AI Analyze Button
-// =====================================
-
-
-const analyzeButton =
-document.getElementById(
-"analyzeClothingBtn"
-);
-
 
 
 if(analyzeButton){
@@ -279,81 +282,145 @@ if(analyzeButton){
 
 analyzeButton.addEventListener(
 "click",
-async ()=>{
+async()=>{
 
 
-    if(!selectedImage){
-
-
-        alert(
-        "Please upload a clothing image first."
-        );
-
-
-        return;
-
-    }
-
-
-
-
-    analyzeButton.innerText =
-    "🤖 Analyzing...";
-
-
-
-    const result =
-    await analyzeClothing(
-        selectedImage
-    );
-
-
-
-    console.log(
-        "AI Clothing Result:",
-        result
-    );
-
-
-
-    analyzeButton.innerText =
-    "🤖 Analyze With AI";
-
-
-
-    if(result.error){
-
-
-        alert(
-        "AI Error: " + result.error
-        );
-
-
-        return;
-
-    }
+console.log(
+"Analyze button clicked"
+);
 
 
 
 
 
-    alert(
+if(!selectedImage){
 
-    "AI Analysis Complete!\n\n" +
 
-    "Type: " +
-    (result.type || "") +
+alert(
+"Upload an image first"
+);
 
-    "\nCategory: " +
-    (result.category || "") +
 
-    "\nColor: " +
-    (result.primaryColor || "")
+return;
 
-    );
+
+}
+
+
+
+
+
+analyzeButton.innerText =
+"🤖 Analyzing...";
+
+
+
+
+try{
+
+
+const result =
+await analyzeClothing(
+selectedImage
+);
+
+
+
+
+console.log(
+"AI RESULT:",
+result
+);
+
+
+
+
+
+analyzeButton.innerText =
+"🤖 Analyze With AI";
+
+
+
+
+
+if(result.error){
+
+
+alert(
+"AI Error: " +
+result.error
+);
+
+
+return;
+
+
+}
+
+
+
+
+
+const aiText =
+
+`
+Type: ${result.type || ""}
+
+Category: ${result.category || ""}
+
+Primary Color: ${result.primaryColor || ""}
+
+Material: ${result.material || ""}
+
+Style: ${result.style || ""}
+
+Season: ${result.season || ""}
+
+Occasion: ${result.occasion || ""}
+`;
+
+
+
+
+
+alert(
+"✅ AI Analysis Complete\n\n"
++
+aiText
+);
+
+
+
+}
+
+
+
+
+catch(error){
+
+
+console.error(
+"Analysis failed:",
+error
+);
+
+
+
+alert(
+"AI analysis failed"
+);
+
+
+
+analyzeButton.innerText =
+"🤖 Analyze With AI";
+
+
+}
 
 
 
 });
+
 
 }
