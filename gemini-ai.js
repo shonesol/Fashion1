@@ -1,73 +1,70 @@
-// gemini-ai.js
-
 const WORKER_URL =
 "https://fashionai-api.shonesol28.workers.dev/";
 
 
-export async function askGemini(prompt, image=null){
-
-    const parts = [
-        {
-            text: prompt
-        }
-    ];
+export async function askGemini(prompt,image=null){
 
 
-    if(image){
-
-        const base64 =
-        image.split(",")[1];
-
-
-        const mime =
-        image.split(",")[0]
-        .match(/:(.*?);/)[1];
+const parts=[
+{
+text:prompt
+}
+];
 
 
-        parts.push({
+if(image){
 
-            inline_data:{
-
-                mime_type:mime,
-
-                data:base64
-
-            }
-
-        });
-
-    }
+const base64 =
+image.split(",")[1];
 
 
-
-    const response =
-    await fetch(
-        WORKER_URL,
-        {
-
-            method:"POST",
-
-            headers:{
-
-                "Content-Type":
-                "application/json"
-
-            },
-
-            body:JSON.stringify({
-
-                contents:[
-                    {
-                        parts:parts
-                    }
-                ]
-
-            })
-
-        }
-    );
+const mime =
+image.split(",")[0]
+.match(/:(.*?);/)[1];
 
 
-    return await response.json();
+parts.push({
+
+inline_data:{
+
+mime_type:mime,
+
+data:base64
+
+}
+
+});
+
+
+}
+
+
+
+const response =
+await fetch(
+WORKER_URL,
+{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+
+contents:[
+{
+parts:parts
+}
+]
+
+})
+
+});
+
+
+return await response.json();
+
 
 }
