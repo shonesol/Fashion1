@@ -8,7 +8,9 @@ import {
     addClothing
 } from "./db.js";
 
-
+import {
+    analyzeClothing
+} from "./clothing-ai.js";
 
 
 // Selected image storage
