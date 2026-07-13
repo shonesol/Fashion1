@@ -1,5 +1,5 @@
 // gemini-ai.js
-// FashionAI Gemini Debug Connection
+// FashionAI Gemini Connection
 
 
 const WORKER_URL =
@@ -7,198 +7,185 @@ const WORKER_URL =
 
 
 
-export async function askGemini(prompt, image=null){
+export async function askGemini(prompt, image = null){
 
 
-console.log("🚀 Sending to Worker");
+    console.log("🚀 Sending to Worker");
 
 
-try{
+    try{
 
 
-const parts=[
-{
-text:prompt
-}
-];
+        const parts = [
 
+            {
+                text: prompt
+            }
 
+        ];
 
-if(image){
 
 
-const base64 =
-image.split(",")[1];
 
+        if(image){
 
-const mime =
-image.split(",")[0]
-.match(/:(.*?);/)[1];
 
+            const base64 =
+            image.split(",")[1];
 
-parts.push({
 
-inlineData:{
+            const mime =
+            image
+            .split(",")[0]
+            .match(/:(.*?);/)[1];
 
-mimeType:mime,
 
-data:base64
 
-}
+            parts.push({
 
-});
+                inlineData:{
 
+                    mimeType:mime,
 
-}
+                    data:base64
 
+                }
 
+            });
 
 
+        }
 
-const response =
-await fetch(
 
-WORKER_URL,
 
-{
 
-method:"POST",
 
-headers:{
 
-"Content-Type":"application/json"
+        const response =
+        await fetch(
 
-},
+            WORKER_URL,
 
-body:JSON.stringify({
+            {
 
-contents:[
+                method:"POST",
 
-{
+                headers:{
 
-parts
+                    "Content-Type":"application/json"
 
-}
+                },
 
-]
 
-})
+                body:JSON.stringify({
 
-}
+                    contents:[
 
-);
+                        {
 
+                            parts:parts
 
+                        }
 
+                    ]
 
+                })
 
-const serverText =
-await response.text();
+            }
 
+        );
 
 
-console.log(
-"🔥 WORKER ANSWER:",
-serverText
-);
 
 
 
 
+        const serverText =
+        await response.text();
 
-if(!response.ok){
 
-throw new Error(
-serverText
-);
 
-}
 
+        console.log(
+            "🔥 WORKER ANSWER:",
+            serverText
+        );
 
 
 
 
-const data =
-JSON.parse(serverText);
 
+        if(!response.ok){
 
 
-return data
-.candidates[0]
-.content
-.parts[0]
-.text;
+            throw new Error(
+                serverText
+            );
 
 
+        }
 
-}
 
-catch(error){
 
 
-console.error(
-"REAL GEMINI ERROR:",
-error
-);
 
+        const data =
+        JSON.parse(serverText);
 
-throw new Error(
-error.message
-);
 
 
-}
 
 
-}
+        if(
 
-data.candidates[0]
-.content &&
+            data.candidates &&
 
-data.candidates[0]
-.content.parts &&
+            data.candidates[0] &&
 
-data.candidates[0]
-.content.parts[0]
+            data.candidates[0].content &&
 
-){
+            data.candidates[0].content.parts &&
 
+            data.candidates[0].content.parts[0]
 
-return data
-.candidates[0]
-.content
-.parts[0]
-.text;
+        ){
 
 
-}
+            return data
+            .candidates[0]
+            .content
+            .parts[0]
+            .text;
 
 
+        }
 
 
 
-throw new Error(
-"No Gemini response received"
-);
 
 
+        throw new Error(
+            "No Gemini response received"
+        );
 
-}
 
-catch(error){
 
-console.error(
-"❌ Gemini Error:",
-error
-);
+    }
 
-alert(
-"Gemini ERROR: " + error.message
-);
 
-throw error;
+    catch(error){
 
-}
+
+        console.error(
+            "❌ Gemini Error:",
+            error
+        );
+
+
+        throw error;
+
+
+    }
 
 
 }
