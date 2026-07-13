@@ -3,23 +3,19 @@
 
 
 import {
-auth
-}
-from "./firebase.js";
+    auth
+} from "./firebase.js";
 
 
 import {
-onAuthStateChanged
-}
-from
+    onAuthStateChanged
+} from
 "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 
 import {
-getDatabase
-}
-from "./database-manager.js";
-
+    getDatabase
+} from "./database-manager.js";
 
 
 
@@ -28,13 +24,11 @@ from "./database-manager.js";
 
 window.FashionAI = {
 
-user:null,
+    user:null,
 
-database:null
+    database:null
 
 };
-
-
 
 
 
@@ -45,17 +39,15 @@ database:null
 // START FASHIONAI
 // ==========================
 
-
 export function startFashionAI(){
 
 
+return new Promise((resolve,reject)=>{
+
 
 console.log(
-
 "🤖 Starting FashionAI..."
-
 );
-
 
 
 
@@ -68,7 +60,6 @@ auth,
 async(user)=>{
 
 
-
 try{
 
 
@@ -76,11 +67,8 @@ try{
 if(!user){
 
 
-
 console.log(
-
 "👤 No user logged in"
-
 );
 
 
@@ -91,8 +79,10 @@ window.FashionAI.database=null;
 
 
 
-return;
+resolve(null);
 
+
+return;
 
 
 }
@@ -101,23 +91,15 @@ return;
 
 
 
-
-
 console.log(
-
 "✅ User detected:",
-
 user.email
-
 );
 
 
 
 
 
-
-
-// Create/open user's permanent storage
 
 
 const database =
@@ -144,7 +126,6 @@ user:user,
 database:database
 
 
-
 };
 
 
@@ -153,13 +134,9 @@ database:database
 
 
 
-
 console.log(
-
 "✅ FashionAI Personal Storage Ready"
-
 );
-
 
 
 
@@ -196,19 +173,25 @@ database:database
 
 
 
+resolve(database);
+
+
+
+
+
 }
 
 catch(error){
 
 
-
 console.error(
-
-"FashionAI startup error:",
-
+"❌ FashionAI startup error:",
 error
-
 );
+
+
+
+reject(error);
 
 
 
@@ -222,6 +205,9 @@ error
 
 );
 
+
+
+});
 
 
 }
