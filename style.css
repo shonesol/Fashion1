@@ -609,3 +609,301 @@ body{
     color:#777;
 
 }
+/* =====================================
+   Outfit Generator
+===================================== */
+
+
+.outfit-generator-card{
+
+    max-width:700px;
+
+    margin:auto;
+
+    background:white;
+
+    padding:25px;
+
+    border-radius:25px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:20px;
+
+}
+
+
+
+#outfitResult{
+
+    background:var(--cream);
+
+    border-left:5px solid var(--gold);
+
+    padding:20px;
+
+    border-radius:15px;
+
+    min-height:120px;
+
+}
+
+
+
+
+
+/* =====================================
+   History
+===================================== */
+
+
+#historyContainer{
+
+    max-width:800px;
+
+    margin:auto;
+
+    background:white;
+
+    padding:25px;
+
+    border-radius:25px;
+
+}
+
+
+
+
+
+/* =====================================
+   Settings
+===================================== */
+
+
+.settings-card{
+
+    max-width:600px;
+
+    margin:auto;
+
+    background:white;
+
+    padding:25px;
+
+    border-radius:25px;
+
+}
+
+
+
+.setting-item{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:15px 0;
+
+    border-bottom:1px solid #eee;
+
+}
+
+
+
+.setting-item button{
+
+    background:var(--orange);
+
+    color:white;
+
+    border:none;
+
+    padding:10px 20px;
+
+    border-radius:20px;
+
+    cursor:pointer;
+
+}
+
+
+
+
+
+/* =====================================
+   Footer
+===================================== */
+
+
+footer{
+
+    margin-top:40px;
+
+    background:var(--brown);
+
+    color:white;
+
+    text-align:center;
+
+    padding:30px;
+
+}
+
+
+
+
+
+/* =====================================
+   Dark Mode
+===================================== */
+
+
+body.dark{
+
+    background:#1d1b19;
+
+    color:white;
+
+}
+
+
+
+body.dark #mainNav{
+
+    background:#272421;
+
+}
+
+
+
+body.dark .feature-card,
+body.dark .upload-container,
+body.dark .outfit-generator-card,
+body.dark #historyContainer,
+body.dark .settings-card,
+body.dark .clothing-card{
+
+    background:#302c28;
+
+    color:white;
+
+}
+
+
+
+body.dark input,
+body.dark select,
+body.dark textarea{
+
+    background:#403a34;
+
+    color:white;
+
+    border-color:#80602c;
+
+}
+
+
+
+
+
+/* =====================================
+   Mobile Responsive
+===================================== */
+
+
+@media(max-width:800px){
+
+
+    .app-header{
+
+        flex-direction:column;
+
+        gap:15px;
+
+    }
+
+
+
+    #mainNav{
+
+        flex-direction:column;
+
+        align-items:center;
+
+    }
+
+
+
+    .nav-btn{
+
+        width:90%;
+
+    }
+
+
+
+    .page{
+
+        padding:15px;
+
+    }
+
+
+
+    .hero-card h2{
+
+        font-size:24px;
+
+    }
+
+
+
+    .upload-container{
+
+        grid-template-columns:1fr;
+
+        padding:20px;
+
+    }
+
+
+
+    .wardrobe-tools{
+
+        flex-direction:column;
+
+    }
+
+
+
+    .wardrobe-grid{
+
+        grid-template-columns:
+
+        repeat(2,1fr);
+
+    }
+
+
+
+}
+
+
+
+
+@media(max-width:400px){
+
+
+    .wardrobe-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+
+}
