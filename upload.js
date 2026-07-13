@@ -345,15 +345,19 @@ analyzeButton.innerText =
 
 if(result.error){
 
+    console.log(
+        "FULL AI ERROR:",
+        result
+    );
 
-alert(
-"AI Error: " +
-result.error
-);
+
+    alert(
+        "AI Error:\n" +
+        JSON.stringify(result, null, 2)
+    );
 
 
-return;
-
+    return;
 
 }
 
