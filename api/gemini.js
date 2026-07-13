@@ -1,163 +1,155 @@
-// gemini-ai.js
-// FashionAI Vercel Gemini Connection
+// api/gemini.js
+// FashionAI Vercel Gemini Function
 
 
-const API_URL =
-"https://fashion1-nine.vercel.app/api/gemini";
+export default async function handler(req, res) {
 
 
+    // CORS
 
-export async function askGemini(prompt, image = null){
+    res.setHeader(
+        "Access-Control-Allow-Origin",
+        "*"
+    );
 
+    res.setHeader(
+        "Access-Control-Allow-Headers",
+        "Content-Type"
+    );
 
-console.log(
-"🚀 Sending request to Vercel Gemini"
-);
+    res.setHeader(
+        "Access-Control-Allow-Methods",
+        "POST, OPTIONS"
+    );
 
 
 
-try{
+    if(req.method === "OPTIONS"){
 
+        return res.status(200).end();
 
-const parts = [
+    }
 
-{
-text: prompt
-}
 
-];
 
+    if(req.method !== "POST"){
 
+        return res.status(405).json({
 
-if(image){
+            error:"Only POST requests allowed"
 
+        });
 
-const base64 =
-image.split(",")[1];
+    }
 
 
-const mime =
-image
-.split(",")[0]
-.match(/:(.*?);/)[1];
 
+    try{
 
 
-parts.push({
+        const body =
+        req.body || {};
 
-inlineData:{
 
-mimeType:mime,
 
-data:base64
+        const contents =
+        body.contents;
 
-}
 
-});
 
+        if(!contents){
 
-}
+            return res.status(400).json({
 
+                error:"Missing contents"
 
+            });
 
+        }
 
-const response =
-await fetch(
-API_URL,
-{
 
-method:"POST",
 
-headers:{
+        if(!process.env.GEMINI_API_KEY){
 
-"Content-Type":"application/json"
+            return res.status(500).json({
 
-},
+                error:"Missing GEMINI_API_KEY"
 
-body:JSON.stringify({
+            });
 
-contents:[
+        }
 
-{
 
-parts:parts
 
-}
+        const response =
+        await fetch(
 
-]
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
 
-})
+        {
 
-}
 
-);
+            method:"POST",
 
 
+            headers:{
 
-const text =
-await response.text();
 
+                "Content-Type":
+                "application/json",
 
 
-console.log(
-"🔥 Vercel response:",
-text
-);
+                "x-goog-api-key":
+                process.env.GEMINI_API_KEY
 
 
+            },
 
-if(!response.ok){
 
-throw new Error(text);
+            body:JSON.stringify({
 
-}
+                contents
 
+            })
 
 
-const data =
-JSON.parse(text);
+        });
 
 
 
-if(
-data.candidates &&
-data.candidates[0] &&
-data.candidates[0].content
-){
+        const data =
+        await response.json();
 
 
-return data
-.candidates[0]
-.content
-.parts[0]
-.text;
 
+        return res.status(
+            response.status
+        )
+        .json(data);
 
-}
 
 
+    }
 
-throw new Error(
-"No Gemini response"
-);
 
+    catch(error){
 
 
-}
+        console.error(
+            "SERVER ERROR:",
+            error
+        );
 
-catch(error){
 
 
-console.error(
-"❌ Gemini Error:",
-error
-);
+        return res.status(500).json({
 
+            error:error.message
 
-throw error;
+        });
 
 
-}
+    }
 
 
 }
