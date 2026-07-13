@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>FashionAI</title>
+
+<link rel="stylesheet"
+href="style.css">
+
+<link
+href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+rel="stylesheet">
+
+</head>
+
+<body>
+
+<header>
+
+<div class="logo">
+
+<h1>FashionAI</h1>
+
+<p>Your Personal AI Stylist</p>
+
+</div>
+
+<nav>
+
+<button id="homeBtn">
+Home
+</button>
+
+<button id="uploadBtn">
+Upload
+</button>
+
+<button id="wardrobeBtn">
+Wardrobe
+</button>
+
+<button id="outfitBtn">
+Outfits
+</button>
+
+<button id="historyBtn">
+History
+</button>
+
+<button id="settingsBtn">
+Settings
+</button>
+
+</nav>
+
+</header>
+
+<main>
+
+<section
+class="hero">
+
+<h2>
+
+Build Your Smart Wardrobe
+
+</h2>
+
+<p>
+
+Upload your clothes and let
+FashionAI organize everything
+and create amazing outfits.
+
+</p>
+
+</section>
+
+<section
+class="upload-card">
+
+<h2>
+
+Upload Clothing
+
+</h2>
+
+<div
+class="upload-box">
+
+<input
+type="file"
+id="imageInput"
+accept="image/*">
+
+<img
+id="preview"
+src=""
+alt="Preview">
+
+<button
+id="saveBtn">
+
+Save Clothing
+
+</button>
+
+<button
+id="analyzeBtn">
+
+Analyze Clothing
+
+</button>
+
+</div>
+
+<div
+id="analysisResult">
+
+Waiting for analysis...
+
+</div>
+
+</section>
+
+<section
+class="wardrobe-card">
+
+<h2>
+
+My Wardrobe
+
+</h2>
+
+<input
+type="text"
+id="searchInput"
+placeholder="Search clothing...">
+
+<div
+id="wardrobeGrid"
+class="wardrobe-grid">
+
+</div>
+
+</section>
+
+<section
+class="outfit-card">
+
+<h2>
+
+AI Outfit Generator
+
+</h2>
+
+<button
+id="generateBtn">
+
+Generate Outfit
+
+</button>
+
+<div
+id="outfitResult">
+
+No outfit generated.
+
+</div>
+
+</section>
+
+<section
+class="history-card">
+
+<h2>
+
+Outfit History
+
+</h2>
+
+<div
+id="historyList">
+
+No history yet.
+
+</div>
+
+</section>
+
+<section
+class="settings-card">
+
+<h2>
+
+Settings
+
+</h2>
+
+<label>
+
+Theme
+
+<select
+id="themeSelect">
+
+<option
+value="light">
+
+Light
+
+</option>
+
+<option
+value="dark">
+
+Dark
+
+</option>
+
+</select>
+
+</label>
+
+<br><br>
+
+<button
+id="clearWardrobe">
+
+Clear Wardrobe
+
+</button>
+
+</section>
+
+</main>
