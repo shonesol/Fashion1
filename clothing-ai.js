@@ -1,23 +1,13 @@
 // clothing-ai.js
 // FashionAI Clothing Vision Analyzer
 
+import { askGemini } from "./gemini-ai.js";
 
-import {
-askGemini
-} from "./gemini-ai.js";
+export async function analyzeClothing(image) {
 
+    try {
 
-
-
-
-export async function analyzeClothing(image){
-
-
-try{
-
-
-const prompt = `
-
+        const prompt = `
 You are FashionAI.
 
 Analyze the clothing image.
@@ -42,7 +32,6 @@ Use this format:
 "season":""
 }
 
-
 Allowed category:
 
 Top
@@ -52,157 +41,84 @@ Shoes
 Jacket
 Accessories
 Other
-
 `;
 
+        const response = await askGemini(prompt, image);
 
+        console.log("🤖 Gemini Response:", response);
 
+        if (!response) {
+            throw new Error("Empty AI response.");
+        }
 
+        const json = response.match(/\{[\s\S]*\}/);
 
+        if (!json) {
+            throw new Error("Gemini did not return valid JSON.");
+        }
 
-const response = await askGemini(
-prompt,
-image
-);
+        const data = JSON.parse(json[0]);
 
+        return {
 
+            name:
+                data.type || "Clothing",
 
+            type:
+                data.type || "Unknown",
 
+            category:
+                data.category || "Other",
 
+            color:
+                data.primaryColor || "Unknown",
 
-console.log(
-"🤖 GEMINI CLOTHING RESPONSE:",
-response
-);
+            primaryColor:
+                data.primaryColor || "Unknown",
 
+            secondaryColor:
+                data.secondaryColor || "",
 
+            material:
+                data.material || "Unknown",
 
+            texture:
+                data.texture || "Unknown",
 
+            pattern:
+                data.pattern || "Plain",
 
+            style:
+                data.style || "Casual",
 
-if(!response){
+            occasion:
+                data.occasion || "Casual",
 
-throw new Error(
-"Empty AI response"
-);
+            season:
+                data.season || "All",
 
-}
+            laundryStatus:
+                "Clean",
 
+            timesWorn:
+                0,
 
+            favorite:
+                false
 
+        };
 
+    }
 
+    catch (error) {
 
+        console.error(
+            "❌ Clothing AI Error:",
+            error
+        );
 
-const json =
-response.match(
-/\{[\s\S]*\}/
-);
+        throw error;
 
-
-
-
-
-
-if(!json){
-
-
-throw new Error(
-"AI did not return JSON: "+response
-);
-
-
-}
-
-
-
-
-
-
-
-const data =
-JSON.parse(
-json[0]
-);
-
-
-
-
-
-
-return {
-
-
-type:
-data.type || "Unknown",
-
-
-
-category:
-data.category || "Other",
-
-
-
-primaryColor:
-data.primaryColor || "Unknown",
-
-
-
-secondaryColor:
-data.secondaryColor || "",
-
-
-
-material:
-data.material || "Unknown",
-
-
-
-texture:
-data.texture || "Unknown",
-
-
-
-pattern:
-data.pattern || "Plain",
-
-
-
-style:
-data.style || "Casual",
-
-
-
-occasion:
-data.occasion || "Casual",
-
-
-
-season:
-data.season || "All"
-
-
-};
-
-
-
-}
-
-catch(error){
-
-
-
-console.error(
-"❌ Clothing AI Error:",
-error
-);
-
-
-
-throw error;
-
-
-}
-
+    }
 
 }
