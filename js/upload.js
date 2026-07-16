@@ -14,6 +14,16 @@ import {
     analyzeClothing
 } from "./hybrid-ai.js";
 
+import {
+    showToast,
+    showLoading,
+    hideLoading
+} from "./app.js";
+
+// =====================================
+// Elements
+// =====================================
+
 const imageInput = document.getElementById("clothingImage");
 const cameraInput = document.getElementById("cameraInput");
 const preview = document.getElementById("imagePreview");
@@ -21,9 +31,9 @@ const saveButton = document.getElementById("saveClothing");
 
 let selectedImage = null;
 
-// ================================
+// =====================================
 // Preview Image
-// ================================
+// =====================================
 
 function previewImage(event) {
 
@@ -47,20 +57,16 @@ function previewImage(event) {
 }
 
 if (imageInput) {
-
     imageInput.addEventListener("change", previewImage);
-
 }
 
 if (cameraInput) {
-
     cameraInput.addEventListener("change", previewImage);
-
 }
 
-// ================================
-// Upload
-// ================================
+// =====================================
+// Save Clothing
+// =====================================
 
 if (saveButton) {
 
@@ -70,11 +76,12 @@ if (saveButton) {
 
             if (!selectedImage) {
 
-                alert("Please choose an image first.");
-
+                showToast("Choose an image first");
                 return;
 
             }
+
+            showLoading("Analyzing clothing...");
 
             await initDatabase();
 
@@ -86,7 +93,7 @@ if (saveButton) {
 
                 analysis = await analyzeClothing(imageData);
 
-            } catch (e) {
+            } catch (error) {
 
                 console.log("AI unavailable. Using fallback.");
 
@@ -103,20 +110,17 @@ if (saveButton) {
             await saveClothing({
 
                 image: imageData,
-
                 name: analysis.name || "Clothing Item",
-
                 category: analysis.category || "Top",
-
                 color: analysis.color || "Unknown",
-
                 style: analysis.style || "Casual",
-
                 material: analysis.material || "Unknown"
 
             });
 
-            alert("✅ Clothing added successfully!");
+            hideLoading();
+
+            showToast("✅ Clothing added successfully!");
 
             selectedImage = null;
 
@@ -128,12 +132,16 @@ if (saveButton) {
 
         } catch (error) {
 
-            console.error(error);
+            console.error("UPLOAD ERROR:", error);
 
-            alert("❌ Upload failed.\n\nCheck the browser console for details.");
+            hideLoading();
+
+            showToast("❌ Upload failed");
 
         }
 
     });
 
 }
+
+console.log("✅ upload.js loaded successfully");
