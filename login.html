@@ -4,30 +4,21 @@
 <head>
 
 <meta charset="UTF-8">
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>
-FashionAI Login
-</title>
-
+<title>FashionAI Login</title>
 
 <link rel="stylesheet" href="style.css">
 
-
 <link rel="manifest" href="manifest.json">
 
-
 </head>
-
 
 
 <body>
 
 
-
 <main class="loginPage">
-
 
 <section class="card loginCard">
 
@@ -44,36 +35,52 @@ Your personal AI fashion stylist
 
 
 <img
-
 src="./assets/logo.png"
-
 class="logo"
-
 alt="FashionAI Logo">
 
 
 
+<input 
+type="email"
+id="email"
+placeholder="Enter email"
+required>
+
+
+
+<input 
+type="password"
+id="password"
+placeholder="Enter password"
+required>
+
 
 
 <button 
-id="googleLogin"
-class="google-btn">
+id="signupBtn"
+class="login-btn">
 
-🔵 Continue with Google
+Create Account
 
 </button>
 
 
 
+<button 
+id="loginBtn"
+class="login-btn">
 
-<p id="loginStatus">
+Login
 
-</p>
+</button>
 
+
+
+<p id="loginStatus"></p>
 
 
 </section>
-
 
 </main>
 
@@ -81,41 +88,22 @@ class="google-btn">
 
 
 
-<!-- Protect page -->
+<!-- Login System -->
 
 <script type="module">
 
-import {
-
-protectPage
-
-}
-
-from "./js/auth-guard.js";
+import { 
+setupEmailAuth 
+} from "./js/auth-manager.js";
 
 
-
-protectPage();
+setupEmailAuth();
 
 
 </script>
 
 
-
-
-
-<!-- Login -->
-
-<!-- Login -->
-<script type="module">
-import { setupLoginButton } from "./js/auth-manager.js";
-
-const loginButton = document.getElementById("googleLogin");
-
-if (loginButton) {
-    setupLoginButton();
-}
-</script>
 
 </body>
+
 </html>
