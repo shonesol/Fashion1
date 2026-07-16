@@ -1,502 +1,139 @@
 // =====================================
 // FashionAI Ultimate
 // upload.js
-// Clothing Upload System
 // =====================================
-
 
 console.log("✅ Upload JS loaded");
 
-
+import {
+    initDatabase,
+    saveClothing
+} from "./database.js";
 
 import {
+    analyzeClothing
+} from "./hybrid-ai.js";
 
-initDatabase,
-saveClothing
-
-}
-
-from "./database.js";
-
-
-
-import {
-
-analyzeClothing
-
-}
-
-from "./hybrid-ai.js";
-
-
-
-import {
-
-showToast,
-showLoading,
-hideLoading
-
-}
-
-from "./app.js";
-
-
-
-
-
-
-// =====================================
-// Elements
-// =====================================
-
-
-const imageInput =
-
-document.getElementById(
-"clothingImage"
-);
-
-
-
-const cameraInput =
-
-document.getElementById(
-"cameraInput"
-);
-
-
-
-const preview =
-
-document.getElementById(
-"imagePreview"
-);
-
-
-
-const saveButton =
-
-document.getElementById(
-"saveClothing"
-);
-
-
-
-
-
+const imageInput = document.getElementById("clothingImage");
+const cameraInput = document.getElementById("cameraInput");
+const preview = document.getElementById("imagePreview");
+const saveButton = document.getElementById("saveClothing");
 
 let selectedImage = null;
 
+// ================================
+// Preview Image
+// ================================
 
+function previewImage(event) {
 
+    const file = event.target.files[0];
 
+    if (!file) return;
 
+    selectedImage = file;
 
-// =====================================
-// Image Selection
-// =====================================
+    const reader = new FileReader();
 
+    reader.onload = function (e) {
 
-function handleImage(event){
+        preview.src = e.target.result;
+        preview.style.display = "block";
 
+    };
 
-const file =
-
-event.target.files[0];
-
-
-
-if(!file){
-
-console.log(
-"No image selected"
-);
-
-return;
+    reader.readAsDataURL(file);
 
 }
 
+if (imageInput) {
 
-
-console.log(
-"Selected image:",
-file.name
-);
-
-
-
-selectedImage = file;
-
-
-
-const reader =
-
-new FileReader();
-
-
-
-reader.onload = (e)=>{
-
-
-preview.src =
-
-e.target.result;
-
-
-
-preview.style.display =
-"block";
-
-
-
-};
-
-
-
-reader.readAsDataURL(file);
-
+    imageInput.addEventListener("change", previewImage);
 
 }
 
+if (cameraInput) {
 
-
-
-
-
-if(imageInput){
-
-
-imageInput.addEventListener(
-
-"change",
-
-handleImage
-
-);
-
+    cameraInput.addEventListener("change", previewImage);
 
 }
 
+// ================================
+// Upload
+// ================================
 
+if (saveButton) {
 
+    saveButton.addEventListener("click", async () => {
 
-if(cameraInput){
+        try {
 
+            if (!selectedImage) {
 
-cameraInput.addEventListener(
+                alert("Please choose an image first.");
 
-"change",
+                return;
 
-handleImage
+            }
 
-);
+            await initDatabase();
 
+            const imageData = preview.src;
 
-}
+            let analysis;
 
+            try {
 
+                analysis = await analyzeClothing(imageData);
 
+            } catch (e) {
 
+                console.log("AI unavailable. Using fallback.");
 
+                analysis = {
+                    name: "Clothing Item",
+                    category: "Top",
+                    color: "Unknown",
+                    style: "Casual",
+                    material: "Unknown"
+                };
 
+            }
 
-// =====================================
-// Save Clothing
-// =====================================
+            await saveClothing({
 
+                image: imageData,
 
-if(saveButton){
+                name: analysis.name || "Clothing Item",
 
+                category: analysis.category || "Top",
 
-saveButton.addEventListener(
+                color: analysis.color || "Unknown",
 
-"click",
+                style: analysis.style || "Casual",
 
-async()=>{
+                material: analysis.material || "Unknown"
 
+            });
 
-try{
+            alert("✅ Clothing added successfully!");
 
+            selectedImage = null;
 
-// Start database
+            if (imageInput) imageInput.value = "";
+            if (cameraInput) cameraInput.value = "";
 
-await initDatabase();
+            preview.src = "";
+            preview.style.display = "none";
 
+        } catch (error) {
 
+            console.error(error);
 
+            alert("❌ Upload failed.\n\nCheck the browser console for details.");
 
+        }
 
-if(!selectedImage){
-
-
-showToast(
-"Choose an image first"
-);
-
-
-return;
-
-
-}
-
-
-
-
-
-
-showLoading(
-
-"Analyzing clothing..."
-
-);
-
-
-
-
-
-
-const imageData =
-
-preview.src;
-
-
-
-
-
-
-console.log(
-"Sending image to AI..."
-);
-
-
-
-
-
-
-let analysis;
-
-
-
-try{
-
-
-analysis =
-
-await analyzeClothing(
-
-imageData
-
-);
-
-
-
-}
-
-catch(error){
-
-
-console.log(
-"AI failed, using fallback"
-);
-
-
-
-analysis = {
-
-
-name:
-"Clothing Item",
-
-
-category:
-"Top",
-
-
-color:
-"Unknown",
-
-
-style:
-"Casual",
-
-
-material:
-"Unknown"
-
-
-};
-
-
-}
-
-
-
-
-
-
-
-console.log(
-
-"Analysis result:",
-
-analysis
-
-);
-
-
-
-
-
-
-console.log(
-
-"Saving clothing..."
-
-);
-
-
-
-
-
-
-await saveClothing({
-
-
-
-image:
-
-imageData,
-
-
-
-name:
-
-analysis.name || "Clothing Item",
-
-
-
-category:
-
-analysis.category || "Unknown",
-
-
-
-color:
-
-analysis.color || "Unknown",
-
-
-
-style:
-
-analysis.style || "Casual",
-
-
-
-material:
-
-analysis.material || "Unknown"
-
-
-
-});
-
-
-
-
-
-
-
-hideLoading();
-
-
-
-
-
-showToast(
-
-"Added to wardrobe ✨"
-
-);
-
-
-
-
-
-
-// clear upload
-
-selectedImage = null;
-
-imageInput.value = "";
-
-preview.src = "";
-
-
-
-
-
-
-
-}
-
-catch(error){
-
-
-console.error(
-
-"UPLOAD ERROR:",
-
-error
-
-);
-
-
-
-hideLoading();
-
-
-
-showToast(
-
-"Upload failed"
-
-);
-
-
-
-}
-
-
-
-}
-
-);
-
-
-}
-hideLoading();
-
-
-console.error(
-error
-);
-
-
-
-showToast(
-"Upload failed"
-);
-
-
-}
-
-
-
-
-}
-
-);
-
+    });
 
 }
