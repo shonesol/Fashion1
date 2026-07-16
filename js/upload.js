@@ -3,7 +3,7 @@
 // upload.js
 // Clothing Upload System
 // =====================================
-
+console.log("Upload JS loaded");
 
 import {
 
