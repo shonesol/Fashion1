@@ -1,83 +1,83 @@
 // =====================================
 // FashionAI Ultimate
 // firebase.js
-// Firebase Core Setup
+// Firebase Configuration & Services
 // =====================================
 
 
-// Firebase CDN Imports
-
 import {
 
-    initializeApp
+initializeApp
 
 }
-from 
-"https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
 
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
-import {
-
-    getAuth,
-    GoogleAuthProvider,
-    signInWithPopup,
-    signOut,
-    onAuthStateChanged
-
-}
-from 
-"https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
 
 
 import {
 
-    getFirestore
+getAuth,
+GoogleAuthProvider,
+signInWithPopup,
+signOut,
+onAuthStateChanged
 
 }
-from 
-"https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+
+
+import {
+
+getFirestore
+
+}
+
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+
 
 
 
 // =====================================
-// Firebase Configuration
+// Firebase Config
+// Replace with your Firebase project config
 // =====================================
 
 
 const firebaseConfig = {
 
 
-    apiKey:
-
-    "YOUR_FIREBASE_API_KEY",
-
-
-    authDomain:
-
-    "YOUR_PROJECT.firebaseapp.com",
+apiKey:
+"YOUR_API_KEY",
 
 
-    projectId:
-
-    "YOUR_PROJECT_ID",
-
-
-    storageBucket:
-
-    "YOUR_PROJECT.appspot.com",
+authDomain:
+"YOUR_PROJECT.firebaseapp.com",
 
 
-    messagingSenderId:
+projectId:
+"YOUR_PROJECT_ID",
 
-    "YOUR_SENDER_ID",
+
+storageBucket:
+"YOUR_PROJECT.appspot.com",
 
 
-    appId:
+messagingSenderId:
+"YOUR_SENDER_ID",
 
-    "YOUR_APP_ID"
+
+appId:
+"YOUR_APP_ID"
 
 
 };
+
+
+
 
 
 
@@ -89,90 +89,96 @@ const firebaseConfig = {
 
 const app =
 initializeApp(
-    firebaseConfig
+firebaseConfig
 );
 
 
 
+
+
+// Authentication
+
 export const auth =
-getAuth(app);
+getAuth(
+app
+);
 
 
 
-export const db =
-getFirestore(app);
+
+
+// Database
+
+export const firestore =
+getFirestore(
+app
+);
 
 
 
-const provider =
+
+
+// Google Login Provider
+
+const googleProvider =
 new GoogleAuthProvider();
 
 
 
 
+
+
 // =====================================
-// Google Login
+// Google Sign In
 // =====================================
 
 
-export async function loginGoogle(){
+export async function loginWithGoogle(){
 
 
-    try{
+try{
 
 
-        const result =
-        await signInWithPopup(
-            auth,
-            provider
-        );
+const result =
 
+await signInWithPopup(
 
-        const user =
-        result.user;
+auth,
 
+googleProvider
 
-
-        localStorage.setItem(
-
-            "fashionAI_user",
-
-            JSON.stringify({
-
-                uid:user.uid,
-
-                name:user.displayName,
-
-                email:user.email,
-
-                photo:user.photoURL
-
-            })
-
-        );
+);
 
 
 
-        return user;
+return result.user;
 
-
-    }
-    catch(error){
-
-
-        console.error(
-            "Login Error:",
-            error
-        );
-
-
-        throw error;
-
-
-    }
 
 
 }
+
+catch(error){
+
+
+console.error(
+
+"Login Error",
+
+error
+
+);
+
+
+
+throw error;
+
+
+}
+
+
+}
+
+
 
 
 
@@ -185,277 +191,47 @@ export async function loginGoogle(){
 export async function logoutUser(){
 
 
-    await signOut(auth);
-
-
-    localStorage.removeItem(
-        "fashionAI_user"
-    );
+await signOut(
+auth
+);
 
 
 }
 
 
 
+
+
+
 // =====================================
-// Authentication Observer
+// Auth Listener
 // =====================================
 
 
-export function watchUser(callback){
+export function watchUser(
+
+callback
+
+){
 
 
-    onAuthStateChanged(
 
-        auth,
+onAuthStateChanged(
 
-        user=>{
+auth,
 
-
-            callback(user);
+user=>{
 
 
-        }
-
-    );
+callback(
+user
+);
 
 
 }
 
+);
 
-
-// =====================================
-// Current User
-// =====================================
-
-
-export function getCurrentUser(){
-
-
-    return auth.currentUser;
-
-
-}
-
-// =====================================
-// FashionAI Ultimate
-// firebase.js - Part 2
-// User Management
-// =====================================
-
-
-// =====================================
-// Create User Profile
-// =====================================
-
-import {
-
-    doc,
-    setDoc,
-    getDoc,
-    deleteDoc
-
-}
-from 
-"https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
-
-
-
-import {
-
-    db
-
-}
-from "./firebase.js";
-
-
-
-// =====================================
-// Save User Profile
-// =====================================
-
-export async function createUserProfile(user){
-
-
-    if(!user) return;
-
-
-
-    const userRef =
-    doc(
-        db,
-        "users",
-        user.uid
-    );
-
-
-
-    const existing =
-    await getDoc(
-        userRef
-    );
-
-
-
-    if(!existing.exists()){
-
-
-        await setDoc(
-
-            userRef,
-
-            {
-
-                uid:user.uid,
-
-                name:
-                user.displayName || "FashionAI User",
-
-                email:
-                user.email || "",
-
-                photo:
-                user.photoURL || "",
-
-
-                createdAt:
-                Date.now(),
-
-
-                preferences:{
-
-                    style:"",
-
-                    favoriteColors:[],
-
-                    occasions:[],
-
-                    sizes:{}
-
-                }
-
-
-            }
-
-        );
-
-
-    }
-
-
-
-    return true;
-
-
-}
-
-
-
-
-// =====================================
-// Get User Profile
-// =====================================
-
-export async function getUserProfile(uid){
-
-
-    if(!uid) return null;
-
-
-
-    const ref =
-    doc(
-        db,
-        "users",
-        uid
-    );
-
-
-
-    const snapshot =
-    await getDoc(
-        ref
-    );
-
-
-
-    if(snapshot.exists()){
-
-
-        return snapshot.data();
-
-
-    }
-
-
-
-    return null;
-
-
-}
-
-
-
-
-// =====================================
-// Delete Account Data
-// =====================================
-
-export async function deleteAccountData(uid){
-
-
-    if(!uid) return;
-
-
-
-    await deleteDoc(
-
-        doc(
-            db,
-            "users",
-            uid
-        )
-
-    );
-
-
-
-    localStorage.clear();
-
-
-}
-
-
-
-// =====================================
-// Authentication Guard
-// =====================================
-
-export function requireLogin(){
-
-
-    const user =
-    localStorage.getItem(
-        "fashionAI_user"
-    );
-
-
-
-    if(!user){
-
-
-        window.location.href =
-        "login.html";
-
-
-        return false;
-
-
-    }
-
-
-
-    return true;
 
 
 }
