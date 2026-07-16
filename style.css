@@ -1,0 +1,1090 @@
+/* =====================================
+FashionAI Ultimate
+style.css - Part 1
+Premium Design System
+===================================== */
+
+
+/* =====================================
+Root Theme
+===================================== */
+
+:root{
+
+--beige:#F7F0E6;
+
+--blue:#123A73;
+
+--orange:#F28C28;
+
+--gold:#D4AF37;
+
+--white:#ffffff;
+
+--text:#1d1d1d;
+
+--shadow:
+0 8px 25px rgba(0,0,0,0.08);
+
+--radius:22px;
+
+}
+
+
+
+
+/* =====================================
+Global
+===================================== */
+
+
+*{
+
+box-sizing:border-box;
+
+}
+
+
+body{
+
+margin:0;
+
+padding:0;
+
+font-family:'Poppins',sans-serif;
+
+background:var(--beige);
+
+color:var(--text);
+
+min-height:100vh;
+
+}
+
+
+
+
+
+a{
+
+text-decoration:none;
+
+color:inherit;
+
+}
+
+
+
+
+button{
+
+border:none;
+
+cursor:pointer;
+
+font-family:inherit;
+
+}
+
+
+
+
+
+
+/* =====================================
+Headers
+===================================== */
+
+
+.topHeader,
+.pageHeader{
+
+padding:25px 20px;
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+}
+
+
+
+.topHeader h2,
+.pageHeader h2{
+
+margin:0;
+
+color:var(--blue);
+
+font-size:24px;
+
+}
+
+
+
+.topHeader p,
+.pageHeader p{
+
+margin-top:5px;
+
+opacity:.7;
+
+}
+
+
+
+
+
+.profile img{
+
+width:50px;
+
+height:50px;
+
+border-radius:50%;
+
+object-fit:cover;
+
+border:3px solid var(--gold);
+
+}
+
+
+
+
+
+/* =====================================
+Cards
+===================================== */
+
+
+.card{
+
+background:var(--white);
+
+margin:15px;
+
+padding:20px;
+
+border-radius:var(--radius);
+
+box-shadow:var(--shadow);
+
+}
+
+
+
+.card h3{
+
+margin-top:0;
+
+color:var(--blue);
+
+}
+
+
+
+
+
+/* =====================================
+Dashboard Stats
+===================================== */
+
+
+.statsGrid{
+
+display:grid;
+
+grid-template-columns:repeat(3,1fr);
+
+gap:12px;
+
+padding:0 15px;
+
+}
+
+
+
+.statCard{
+
+margin:0;
+
+text-align:center;
+
+padding:18px 10px;
+
+}
+
+
+
+.statCard h3{
+
+font-size:28px;
+
+color:var(--orange);
+
+margin-bottom:5px;
+
+}
+
+
+
+
+
+/* =====================================
+Buttons
+===================================== */
+
+
+button{
+
+background:var(--orange);
+
+color:white;
+
+padding:14px 20px;
+
+border-radius:15px;
+
+font-weight:600;
+
+transition:.3s;
+
+}
+
+
+
+button:hover{
+
+transform:translateY(-2px);
+
+opacity:.9;
+
+}
+
+
+
+
+/* =====================================
+Bottom Navigation
+===================================== */
+
+
+.bottomNav{
+
+position:fixed;
+
+bottom:0;
+
+left:0;
+
+right:0;
+
+height:70px;
+
+background:var(--blue);
+
+display:flex;
+
+justify-content:space-around;
+
+align-items:center;
+
+border-radius:25px 25px 0 0;
+
+}
+
+
+
+.bottomNav a{
+
+color:white;
+
+font-size:13px;
+
+text-align:center;
+
+}
+
+
+
+.bottomNav a:hover{
+
+color:var(--gold);
+
+}
+
+/* =====================================
+FashionAI Ultimate
+style.css - Part 2
+Components & Animations
+===================================== */
+
+
+/* =====================================
+Wardrobe Grid
+===================================== */
+
+
+.wardrobeGrid{
+
+display:grid;
+
+grid-template-columns:repeat(2,1fr);
+
+gap:15px;
+
+padding:15px;
+
+}
+
+
+
+.clothingCard{
+
+background:white;
+
+border-radius:20px;
+
+overflow:hidden;
+
+box-shadow:var(--shadow);
+
+position:relative;
+
+}
+
+
+
+.clothingCard img{
+
+width:100%;
+
+height:180px;
+
+object-fit:cover;
+
+}
+
+
+
+.clothingInfo{
+
+padding:15px;
+
+}
+
+
+
+.clothingInfo h4{
+
+margin:0;
+
+color:var(--blue);
+
+}
+
+
+
+.clothingInfo p{
+
+margin:5px 0;
+
+font-size:14px;
+
+opacity:.75;
+
+}
+
+
+
+.favoriteIcon{
+
+position:absolute;
+
+top:10px;
+
+right:10px;
+
+background:white;
+
+padding:8px;
+
+border-radius:50%;
+
+}
+
+
+
+
+
+.deleteBtn{
+
+background:#c0392b;
+
+padding:8px 12px;
+
+font-size:12px;
+
+}
+
+
+
+
+
+
+/* =====================================
+Upload Page
+===================================== */
+
+
+.uploadArea{
+
+text-align:center;
+
+}
+
+
+
+.uploadArea input{
+
+width:100%;
+
+padding:15px;
+
+margin:10px 0;
+
+background:#fafafa;
+
+border-radius:15px;
+
+}
+
+
+
+.imagePreviewBox{
+
+height:250px;
+
+border:2px dashed var(--gold);
+
+border-radius:20px;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+margin:15px 0;
+
+overflow:hidden;
+
+}
+
+
+
+.imagePreviewBox img{
+
+max-width:100%;
+
+max-height:100%;
+
+}
+
+
+
+
+
+/* =====================================
+Outfit Generator
+===================================== */
+
+
+select{
+
+width:100%;
+
+padding:15px;
+
+border-radius:15px;
+
+border:1px solid #ddd;
+
+margin-bottom:15px;
+
+font-family:inherit;
+
+}
+
+
+
+.generatedItems{
+
+display:grid;
+
+grid-template-columns:repeat(3,1fr);
+
+gap:10px;
+
+}
+
+
+
+.miniClothing{
+
+text-align:center;
+
+}
+
+
+
+.miniClothing img{
+
+width:80px;
+
+height:80px;
+
+object-fit:cover;
+
+border-radius:15px;
+
+}
+
+
+
+.outfitScore{
+
+font-size:32px;
+
+font-weight:700;
+
+color:var(--orange);
+
+text-align:center;
+
+}
+
+
+
+
+
+/* =====================================
+AI Assistant
+===================================== */
+
+
+.assistantCard{
+
+background:
+
+linear-gradient(
+
+135deg,
+
+var(--blue),
+
+#1c5599
+
+);
+
+
+color:white;
+
+}
+
+
+
+.assistantCard h3{
+
+color:white;
+
+}
+
+
+
+.assistantCard button{
+
+background:var(--gold);
+
+color:#111;
+
+}
+
+
+
+
+#voiceStatus{
+
+margin-top:10px;
+
+font-size:14px;
+
+}
+
+
+
+
+
+
+
+/* =====================================
+Search
+===================================== */
+
+
+.searchBox input{
+
+width:100%;
+
+padding:15px;
+
+border-radius:15px;
+
+border:none;
+
+background:#f4f4f4;
+
+font-size:16px;
+
+}
+
+
+
+
+
+
+/* =====================================
+Animations
+===================================== */
+
+
+.card,
+.clothingCard{
+
+animation:
+
+fadeIn .5s ease;
+
+}
+
+
+
+
+@keyframes fadeIn{
+
+from{
+
+opacity:0;
+
+transform:translateY(20px);
+
+}
+
+
+to{
+
+opacity:1;
+
+transform:translateY(0);
+
+}
+
+
+}
+
+
+
+
+
+button{
+
+transition:
+
+transform .25s ease;
+
+}
+
+
+
+
+
+button:active{
+
+transform:scale(.95);
+
+}
+
+
+
+
+
+
+/* =====================================
+Toast
+===================================== */
+
+
+.toast{
+
+position:fixed;
+
+bottom:90px;
+
+left:50%;
+
+transform:translateX(-50%);
+
+background:var(--blue);
+
+color:white;
+
+padding:15px 25px;
+
+border-radius:30px;
+
+z-index:999;
+
+animation:
+
+fadeIn .3s ease;
+
+}
+
+
+
+
+
+
+/* =====================================
+Loader
+===================================== */
+
+
+#loader{
+
+position:fixed;
+
+inset:0;
+
+background:rgba(247,240,230,.9);
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+z-index:1000;
+
+}
+
+
+
+.loaderBox{
+
+text-align:center;
+
+}
+
+
+
+.spinner{
+
+width:45px;
+
+height:45px;
+
+border-radius:50%;
+
+border:5px solid var(--gold);
+
+border-top-color:transparent;
+
+animation:spin 1s linear infinite;
+
+}
+
+
+
+
+@keyframes spin{
+
+to{
+
+transform:rotate(360deg);
+
+}
+
+}
+
+/* =====================================
+FashionAI Ultimate
+style.css - Part 3
+Final Polish & Responsive Design
+===================================== */
+
+
+
+/* =====================================
+Empty States
+===================================== */
+
+
+.emptyState{
+
+text-align:center;
+
+padding:40px 20px;
+
+color:#777;
+
+}
+
+
+
+.emptyState h3{
+
+color:var(--blue);
+
+}
+
+
+
+
+
+
+/* =====================================
+Premium Glass Effect
+===================================== */
+
+
+.assistantCard,
+.weatherCard{
+
+backdrop-filter:blur(10px);
+
+}
+
+
+
+
+
+
+/* =====================================
+Weather Card
+===================================== */
+
+
+#weatherCard{
+
+background:
+
+linear-gradient(
+
+135deg,
+
+#ffffff,
+
+#f8e8c8
+
+);
+
+}
+
+
+
+.weatherIcon{
+
+font-size:45px;
+
+}
+
+
+
+
+
+/* =====================================
+Trend Section
+===================================== */
+
+
+#trendSummary{
+
+line-height:1.6;
+
+color:#555;
+
+}
+
+
+
+
+
+/* =====================================
+Mobile Improvements
+===================================== */
+
+
+@media(max-width:600px){
+
+
+
+.topHeader h2{
+
+font-size:20px;
+
+}
+
+
+
+.statsGrid{
+
+grid-template-columns:repeat(3,1fr);
+
+}
+
+
+
+.card{
+
+margin:10px;
+
+padding:18px;
+
+}
+
+
+
+.wardrobeGrid{
+
+grid-template-columns:repeat(2,1fr);
+
+gap:10px;
+
+}
+
+
+
+.clothingCard img{
+
+height:150px;
+
+}
+
+
+
+.generatedItems{
+
+grid-template-columns:repeat(3,1fr);
+
+}
+
+
+
+.bottomNav{
+
+height:65px;
+
+}
+
+
+
+}
+
+
+
+
+/* =====================================
+Tablet
+===================================== */
+
+
+@media(min-width:768px){
+
+
+
+body{
+
+max-width:900px;
+
+margin:auto;
+
+}
+
+
+
+.wardrobeGrid{
+
+grid-template-columns:repeat(4,1fr);
+
+}
+
+
+
+}
+
+
+
+
+
+
+/* =====================================
+Premium Highlight
+===================================== */
+
+
+.goldText{
+
+color:var(--gold);
+
+}
+
+
+
+.blueText{
+
+color:var(--blue);
+
+}
+
+
+
+.orangeText{
+
+color:var(--orange);
+
+}
+
+
+
+
+
+
+/* =====================================
+Smooth Scrolling
+===================================== */
+
+
+html{
+
+scroll-behavior:smooth;
+
+}
+
+
+
+
+
+/* =====================================
+Safe Bottom Space
+===================================== */
+
+
+main{
+
+padding-bottom:90px;
+
+}
