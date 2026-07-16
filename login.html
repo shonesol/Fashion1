@@ -7,7 +7,6 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-
 <title>
 FashionAI Login
 </title>
@@ -27,9 +26,7 @@ FashionAI Login
 
 
 
-
 <main class="loginPage">
-
 
 
 <section class="card loginCard">
@@ -41,32 +38,30 @@ FashionAI ✨
 
 
 <p>
-
 Your personal AI fashion stylist
-
 </p>
-
 
 
 
 <img
 
-src="assets/logo.png"
+src="./assets/logo.png"
 
 class="logo"
 
-alt="FashionAI">
+alt="FashionAI Logo">
 
 
 
 
 
-<button id="googleLogin">
+<button 
+id="googleLogin"
+class="google-btn">
 
 🔵 Continue with Google
 
 </button>
-
 
 
 
@@ -80,8 +75,13 @@ alt="FashionAI">
 </section>
 
 
-
 </main>
+
+
+
+
+
+<!-- Protect page -->
 
 <script type="module">
 
@@ -94,6 +94,7 @@ protectPage
 from "./js/auth-guard.js";
 
 
+
 protectPage();
 
 
@@ -103,8 +104,9 @@ protectPage();
 
 
 
-<script type="module">
+<!-- Login -->
 
+<script type="module">
 
 import {
 
@@ -116,15 +118,28 @@ from "./js/auth-manager.js";
 
 
 
+const loginButton =
+document.getElementById(
+"googleLogin"
+);
+
+
+
+if(loginButton){
+
+
 setupLoginButton();
 
+
+
+}
 
 
 </script>
 
 
 
-</body>
 
+</body>
 
 </html>
