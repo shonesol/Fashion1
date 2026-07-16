@@ -106,40 +106,16 @@ protectPage();
 
 <!-- Login -->
 
+<!-- Login -->
 <script type="module">
+import { setupLoginButton } from "./js/auth-manager.js";
 
-import {
+const loginButton = document.getElementById("googleLogin");
 
-setupLoginButton
-
+if (loginButton) {
+    setupLoginButton();
 }
-
-from "./js/auth-manager.js";
-
-
-
-const loginButton =
-document.getElementById(
-"googleLogin"
-);
-
-
-
-if(loginButton){
-
-
-setupLoginButton();
-
-
-
-}
-
-
 </script>
 
-
-
-
 </body>
-
 </html>
