@@ -1,17 +1,18 @@
 // =====================================
 // FashionAI Ultimate
-// upload.js - Part 1
+// upload.js
 // Clothing Upload System
 // =====================================
 
 
 import {
 
-addClothing
+saveClothing
 
 }
 
 from "./database.js";
+
 
 
 import {
@@ -20,7 +21,7 @@ analyzeClothing
 
 }
 
-from "./clothing-ai.js";
+from "./hybrid-ai.js";
 
 
 
@@ -37,24 +38,38 @@ from "./app.js";
 
 
 
+
 // =====================================
 // Elements
 // =====================================
 
 
 const imageInput =
+
 document.getElementById(
 "clothingImage"
 );
 
 
+
+const cameraInput =
+
+document.getElementById(
+"cameraInput"
+);
+
+
+
 const preview =
+
 document.getElementById(
 "imagePreview"
 );
 
 
-const uploadButton =
+
+const saveButton =
+
 document.getElementById(
 "saveClothing"
 );
@@ -62,8 +77,9 @@ document.getElementById(
 
 
 
-let selectedImage =
-null;
+
+let selectedImage = null;
+
 
 
 
@@ -73,27 +89,27 @@ null;
 // =====================================
 
 
-if(imageInput){
-
-
-imageInput.addEventListener(
-
-"change",
-
-(event)=>{
+function handleImage(event){
 
 
 const file =
+
 event.target.files[0];
 
 
 
 if(!file)
+
 return;
 
 
 
+selectedImage = file;
+
+
+
 const reader =
+
 new FileReader();
 
 
@@ -101,37 +117,56 @@ new FileReader();
 reader.onload = e=>{
 
 
-selectedImage =
-e.target.result;
-
-
-
-if(preview){
-
 preview.src =
-selectedImage;
+
+e.target.result;
 
 
 preview.style.display =
 "block";
 
-}
 
 
 };
 
 
 
-reader.readAsDataURL(
-file
+reader.readAsDataURL(file);
+
+
+
+}
+
+
+
+
+
+if(imageInput)
+
+imageInput.addEventListener(
+
+"change",
+
+handleImage
+
 );
 
 
 
-});
 
 
-}
+if(cameraInput)
+
+cameraInput.addEventListener(
+
+"change",
+
+handleImage
+
+);
+
+
+
 
 
 
@@ -141,24 +176,15 @@ file
 // =====================================
 
 
-if(uploadButton){
+if(saveButton){
 
 
-uploadButton.addEventListener(
+
+saveButton.addEventListener(
 
 "click",
 
-saveClothingItem
-
-);
-
-
-}
-
-
-
-
-async function saveClothingItem(){
+async()=>{
 
 
 
@@ -166,7 +192,7 @@ if(!selectedImage){
 
 
 showToast(
-"Please select an image first"
+"Choose an image first"
 );
 
 
@@ -186,60 +212,67 @@ showLoading(
 
 
 
+
+
+const imageData =
+
+preview.src;
+
+
+
+
+
 const analysis =
+
 await analyzeClothing(
-selectedImage
+imageData
 );
 
 
 
-const clothing = {
 
 
-image:
-selectedImage,
+
+await saveClothing({
+
+
+image:imageData,
 
 
 name:
-analysis.name ||
-"New Clothing",
+
+analysis.name || "Clothing Item",
+
 
 
 category:
-analysis.category ||
-"Other",
+
+analysis.category || "Unknown",
+
 
 
 color:
-analysis.color ||
-"",
+
+analysis.color || "Unknown",
+
 
 
 style:
-analysis.style ||
-"",
+
+analysis.style || "Casual",
+
 
 
 material:
-analysis.material ||
-"",
 
-
-favorite:false,
-
-
-laundryStatus:
-"Clean"
-
-
-};
+analysis.material || "Unknown"
 
 
 
+});
 
-await addClothing(
-clothing
-);
+
+
 
 
 
@@ -248,12 +281,10 @@ hideLoading();
 
 
 showToast(
-"Clothing saved successfully!"
+
+"Added to wardrobe ✨"
+
 );
-
-
-
-resetUpload();
 
 
 
@@ -262,12 +293,12 @@ resetUpload();
 catch(error){
 
 
-
-console.error(error);
-
-
-
 hideLoading();
+
+
+console.error(
+error
+);
 
 
 
@@ -276,424 +307,14 @@ showToast(
 );
 
 
-
-}
-
-
-
 }
 
 
 
 
-// =====================================
-// Reset Upload
-// =====================================
-
-
-function resetUpload(){
-
-
-selectedImage=null;
-
-
-
-if(imageInput)
-
-imageInput.value="";
-
-
-
-if(preview){
-
-preview.src="";
-
-preview.style.display=
-"none";
-
 }
 
-
-}
-
-// =====================================
-// FashionAI Ultimate
-// upload.js - Part 2
-// Advanced Upload Features
-// =====================================
-
-
-
-// =====================================
-// Camera Support
-// =====================================
-
-
-const cameraInput =
-document.getElementById(
-"cameraInput"
 );
-
-
-
-if(cameraInput){
-
-
-cameraInput.addEventListener(
-
-"change",
-
-event=>{
-
-
-const file =
-event.target.files[0];
-
-
-if(!file)
-return;
-
-
-
-loadImageFile(file);
-
-
-
-});
-
-
-}
-
-
-
-
-// =====================================
-// Shared Image Loader
-// =====================================
-
-
-function loadImageFile(file){
-
-
-
-if(!file.type.startsWith("image/")){
-
-
-showToast(
-"Only image files allowed"
-);
-
-
-return;
-
-
-}
-
-
-
-const reader =
-new FileReader();
-
-
-
-reader.onload = e=>{
-
-
-selectedImage =
-e.target.result;
-
-
-
-if(preview){
-
-
-preview.src =
-selectedImage;
-
-
-preview.style.display =
-"block";
-
-
-}
-
-
-
-};
-
-
-
-reader.readAsDataURL(file);
-
-
-
-}
-
-
-
-
-
-// =====================================
-// Image Compression
-// =====================================
-
-
-export function compressImage(
-
-image,
-
-maxWidth=900
-
-){
-
-
-return new Promise(resolve=>{
-
-
-const img =
-new Image();
-
-
-
-img.onload=()=>{
-
-
-const canvas =
-document.createElement(
-"canvas"
-);
-
-
-
-const scale =
-maxWidth / img.width;
-
-
-
-canvas.width =
-maxWidth;
-
-
-
-canvas.height =
-img.height * scale;
-
-
-
-const ctx =
-canvas.getContext(
-"2d"
-);
-
-
-
-ctx.drawImage(
-
-img,
-
-0,
-
-0,
-
-canvas.width,
-
-canvas.height
-
-);
-
-
-
-resolve(
-
-canvas.toDataURL(
-"image/jpeg",
-0.8
-)
-
-);
-
-
-
-};
-
-
-
-img.src=image;
-
-
-
-});
-
-}
-
-
-
-
-
-// =====================================
-// Duplicate Detection
-// =====================================
-
-
-export async function checkDuplicate(
-
-image
-
-){
-
-
-const {getAllClothes}
-=
-await import(
-"./database.js"
-);
-
-
-
-const clothes =
-await getAllClothes();
-
-
-
-return clothes.some(
-
-item=>
-
-item.image === image
-
-);
-
-
-
-}
-
-
-
-
-
-// =====================================
-// Multiple Upload Support
-// =====================================
-
-
-export async function uploadMultiple(
-
-files
-
-){
-
-
-
-for(
-const file of files
-){
-
-
-const reader =
-new FileReader();
-
-
-
-reader.onload=
-async event=>{
-
-
-await saveClothingItem(
-event.target.result
-);
-
-
-};
-
-
-
-reader.readAsDataURL(
-file
-);
-
-
-}
-
-
-
-}
-
-
-
-
-// =====================================
-// Drag And Drop
-// =====================================
-
-
-const dropArea =
-document.querySelector(
-".uploadArea"
-);
-
-
-
-if(dropArea){
-
-
-dropArea.addEventListener(
-
-"dragover",
-
-event=>{
-
-
-event.preventDefault();
-
-
-dropArea.classList.add(
-"active"
-);
-
-
-});
-
-
-dropArea.addEventListener(
-
-"dragleave",
-
-()=>{
-
-
-dropArea.classList.remove(
-"active"
-);
-
-
-});
-
-
-dropArea.addEventListener(
-
-"drop",
-
-event=>{
-
-
-event.preventDefault();
-
-
-
-const file =
-event.dataTransfer.files[0];
-
-
-
-if(file){
-
-loadImageFile(file);
-
-}
-
-
-
-});
 
 
 }
