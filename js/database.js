@@ -549,59 +549,45 @@ item
 
 
 
-// =====================================
+/// =====================================
 // Save Outfit
 // =====================================
 
-
 export function saveOutfit(outfit){
 
+return new Promise((resolve,reject)=>{
 
-return new Promise(
-
-(resolve,reject)=>{
-
-
-db.transaction(
-
+const request = db
+.transaction(
 OUTFIT_STORE,
-
 "readwrite"
-
 )
-
 .objectStore(
 OUTFIT_STORE
 )
-
 .add({
 
 ...outfit,
 
-timestamp:
+timestamp:Date.now()
 
-Date.now()
+});
 
-})
+request.onsuccess = ()=>{
 
-.onsuccess=()=>resolve(true);
+resolve(true);
 
+};
 
+request.onerror = (event)=>{
 
-reject;
+reject(event.target.error);
 
+};
+
+});
 
 }
-
-);
-
-
-}
-
-
-
-
-
 
 // =====================================
 // Get Outfits
@@ -698,5 +684,14 @@ outfits.length
 };
 
 
+
+}
+// =====================================
+// Database Ready
+// =====================================
+
+export function isDatabaseReady(){
+
+return db !== undefined && db !== null;
 
 }
