@@ -1,16 +1,34 @@
 // =====================================
 // FashionAI Ultimate
-// database.js - Part 1
-// IndexedDB Storage Engine
+// database.js
+// IndexedDB Local Storage Engine
 // =====================================
 
 
+
 const DATABASE_NAME =
-"FashionAI_Database";
+
+"FashionAI_DB";
+
 
 
 const DATABASE_VERSION =
+
 1;
+
+
+
+const CLOTHING_STORE =
+
+"wardrobe";
+
+
+
+const OUTFIT_STORE =
+
+"outfits";
+
+
 
 
 
@@ -18,40 +36,11 @@ let db;
 
 
 
-// =====================================
-// Object Stores
-// =====================================
-
-
-const STORES = {
-
-
-    WARDROBE:
-    "wardrobe",
-
-
-    HISTORY:
-    "history",
-
-
-    FAVORITES:
-    "favorites",
-
-
-    OUTFITS:
-    "outfits",
-
-
-    SETTINGS:
-    "settings"
-
-
-};
 
 
 
 // =====================================
-// Open Database
+// Initialize Database
 // =====================================
 
 
@@ -64,6 +53,7 @@ return new Promise(
 
 
 const request =
+
 indexedDB.open(
 
 DATABASE_NAME,
@@ -74,215 +64,61 @@ DATABASE_VERSION
 
 
 
-request.onupgradeneeded =
-(event)=>{
 
 
-    db =
-    event.target.result;
-
-
-
-// Wardrobe Store
-
-if(!db.objectStoreNames.contains(
-    STORES.WARDROBE
-)){
-
-
-const wardrobe =
-db.createObjectStore(
-
-    STORES.WARDROBE,
-
-    {
-        keyPath:"id",
-        autoIncrement:true
-    }
-
-);
-
-
-
-wardrobe.createIndex(
-    "category",
-    "category",
-    {
-        unique:false
-    }
-);
-
-
-wardrobe.createIndex(
-    "color",
-    "color",
-    {
-        unique:false
-    }
-);
-
-
-wardrobe.createIndex(
-    "favorite",
-    "favorite",
-    {
-        unique:false
-    }
-);
-
-
-wardrobe.createIndex(
-    "style",
-    "style",
-    {
-        unique:false
-    }
-);
-
-
-}
-
-
-
-
-
-// History Store
-
-if(!db.objectStoreNames.contains(
-    STORES.HISTORY
-)){
-
-
-db.createObjectStore(
-
-    STORES.HISTORY,
-
-    {
-        keyPath:"id",
-        autoIncrement:true
-    }
-
-);
-
-
-}
-
-
-
-
-// Outfit Store
-
-if(!db.objectStoreNames.contains(
-    STORES.OUTFITS
-)){
-
-
-db.createObjectStore(
-
-    STORES.OUTFITS,
-
-    {
-        keyPath:"id",
-        autoIncrement:true
-    }
-
-);
-
-
-}
-
-
-
-
-// Favorites Store
-
-if(!db.objectStoreNames.contains(
-    STORES.FAVORITES
-)){
-
-
-db.createObjectStore(
-
-    STORES.FAVORITES,
-
-    {
-        keyPath:"id"
-    }
-
-);
-
-
-}
-
-
-
-
-
-// Settings Store
-
-if(!db.objectStoreNames.contains(
-    STORES.SETTINGS
-)){
-
-
-db.createObjectStore(
-
-    STORES.SETTINGS,
-
-    {
-        keyPath:"key"
-    }
-
-);
-
-
-}
-
-
-};
-
-
-
-request.onsuccess =
-(event)=>{
+request.onupgradeneeded = event=>{
 
 
 db =
 event.target.result;
 
 
-console.log(
-"✅ FashionAI Database Ready"
+
+if(
+!db.objectStoreNames.contains(
+CLOTHING_STORE
+)
+
+){
+
+
+const store =
+
+db.createObjectStore(
+
+CLOTHING_STORE,
+
+{
+
+keyPath:"id",
+
+autoIncrement:true
+
+}
+
 );
 
 
-resolve(db);
 
-
-};
-
-
-
-request.onerror =
-(event)=>{
-
-
-console.error(
-"Database Error",
-event
+store.createIndex(
+"category",
+"category"
 );
 
 
-reject(
-event
+
+store.createIndex(
+"color",
+"color"
 );
 
 
-};
 
+store.createIndex(
+"favorite",
+"favorite"
+);
 
-
-});
 
 
 }
@@ -292,31 +128,83 @@ event
 
 
 
-// =====================================
-// Get Database
-// =====================================
+if(
+!db.objectStoreNames.contains(
+OUTFIT_STORE
+)
+
+){
 
 
-export function getDB(){
+db.createObjectStore(
 
+OUTFIT_STORE,
 
-return db;
+{
+
+keyPath:"id",
+
+autoIncrement:true
+
+}
+
+);
 
 
 }
 
-// =====================================
-// FashionAI Ultimate
-// database.js - Part 2
-// Wardrobe CRUD Operations
-// =====================================
+
+
+};
+
+
+
+
+
+request.onsuccess = event=>{
+
+
+db =
+event.target.result;
+
+
+resolve();
+
+
+};
+
+
+
+
+
+request.onerror = error=>{
+
+
+reject(error);
+
+
+};
+
+
+
+}
+
+
+);
+
+}
+
+
+
+
 
 
 // =====================================
-// Add Clothing Item
+// Add Clothing
 // =====================================
 
-export function addClothing(item){
+
+export function saveClothing(item){
 
 
 return new Promise(
@@ -325,94 +213,55 @@ return new Promise(
 
 
 const transaction =
+
 db.transaction(
 
-    STORES.WARDROBE,
+CLOTHING_STORE,
 
-    "readwrite"
+"readwrite"
 
 );
 
 
 
-const store =
-transaction.objectStore(
-    STORES.WARDROBE
-);
+transaction
+.objectStore(
+CLOTHING_STORE
+)
+.add({
+
+...item,
+
+createdAt:
+
+Date.now(),
+
+timesWorn:0,
+
+favorite:false,
+
+laundryStatus:"Clean"
+
+
+})
+
+.onsuccess=()=>resolve(true);
 
 
 
-const request =
-store.add({
+transaction.onerror=
+reject;
 
-    name:
-    item.name || "Unknown Item",
-
-
-    image:
-    item.image,
-
-
-    category:
-    item.category || "Other",
-
-
-    color:
-    item.color || "",
-
-
-    style:
-    item.style || "",
-
-
-    material:
-    item.material || "",
-
-
-    favorite:
-    item.favorite || false,
-
-
-    laundryStatus:
-    item.laundryStatus || "Clean",
-
-
-    timesWorn:
-    0,
-
-
-    createdAt:
-    Date.now()
-
-
-});
-
-
-
-request.onsuccess=()=>{
-
-resolve(
-request.result
-);
-
-};
-
-
-
-request.onerror=()=>{
-
-reject(
-request.error
-);
-
-};
-
-
-
-});
 
 
 }
+
+
+);
+
+}
+
+
 
 
 
@@ -431,9 +280,10 @@ return new Promise(
 
 
 const transaction =
+
 db.transaction(
 
-STORES.WARDROBE,
+CLOTHING_STORE,
 
 "readonly"
 
@@ -441,15 +291,13 @@ STORES.WARDROBE,
 
 
 
-const store =
-transaction.objectStore(
-STORES.WARDROBE
-);
-
-
-
 const request =
-store.getAll();
+
+transaction
+.objectStore(
+CLOTHING_STORE
+)
+.getAll();
 
 
 
@@ -461,89 +309,79 @@ request.result
 );
 
 
+
 };
 
 
 
-request.onerror=()=>{
+request.onerror=
+reject;
 
 
-reject(
-request.error
+
+}
+
+
 );
-
-
-};
-
-
-
-});
-
 
 }
 
 
 
 
+
+
 // =====================================
-// Get Single Clothing Item
+// Get Single Item
 // =====================================
+
 
 export function getClothingById(id){
 
 
 return new Promise(
 
-(resolve,reject)=>{
-
-
-const transaction =
-db.transaction(
-
-STORES.WARDROBE,
-
-"readonly"
-
-);
-
-
-
-const store =
-transaction.objectStore(
-STORES.WARDROBE
-);
-
+(resolve)=>{
 
 
 const request =
-store.get(id);
+
+db.transaction(
+
+CLOTHING_STORE,
+
+"readonly"
+
+)
+
+.objectStore(
+CLOTHING_STORE
+)
+
+.get(id);
 
 
 
 request.onsuccess=()=>{
 
+
 resolve(
 request.result
 );
 
-};
-
-
-
-request.onerror=()=>{
-
-reject(
-request.error
-);
 
 };
 
-
-
-});
 
 
 }
+
+
+);
+
+}
+
+
 
 
 
@@ -551,6 +389,7 @@ request.error
 // =====================================
 // Update Clothing
 // =====================================
+
 
 export function updateClothing(item){
 
@@ -560,51 +399,40 @@ return new Promise(
 (resolve,reject)=>{
 
 
-const transaction =
+const request =
+
 db.transaction(
 
-STORES.WARDROBE,
+CLOTHING_STORE,
 
 "readwrite"
 
-);
+)
+
+.objectStore(
+CLOTHING_STORE
+)
+
+.put(item);
 
 
 
-const store =
-transaction.objectStore(
-STORES.WARDROBE
-);
+request.onsuccess=()=>resolve(true);
 
 
 
-const request =
-store.put(item);
-
-
-
-request.onsuccess=()=>{
-
-resolve(true);
-
-};
-
-
-
-request.onerror=()=>{
-
-reject(
-request.error
-);
-
-};
-
-
-
-});
+request.onerror=
+reject;
 
 
 }
+
+);
+
+
+}
+
+
 
 
 
@@ -613,417 +441,41 @@ request.error
 // Delete Clothing
 // =====================================
 
+
 export function deleteClothing(id){
 
 
 return new Promise(
 
-(resolve,reject)=>{
+(resolve)=>{
 
 
-const transaction =
 db.transaction(
 
-STORES.WARDROBE,
+CLOTHING_STORE,
 
 "readwrite"
 
-);
+)
+
+.objectStore(
+CLOTHING_STORE
+)
+
+.delete(id);
 
 
-
-const store =
-transaction.objectStore(
-STORES.WARDROBE
-);
-
-
-
-const request =
-store.delete(id);
-
-
-
-request.onsuccess=()=>{
 
 resolve(true);
 
-};
 
+}
 
-
-request.onerror=()=>{
-
-reject(
-request.error
 );
-
-};
-
-
-
-});
 
 
 }
 
-// =====================================
-// FashionAI Ultimate
-// database.js - Part 3
-// Advanced Database Functions
-// =====================================
-
-
-// =====================================
-// Search Wardrobe
-// =====================================
-
-export async function searchWardrobe(query){
-
-    const clothes =
-    await getAllClothes();
-
-
-    const text =
-    query.toLowerCase();
-
-
-    return clothes.filter(item=>{
-
-
-        return (
-
-            item.name
-            ?.toLowerCase()
-            .includes(text)
-
-            ||
-
-            item.category
-            ?.toLowerCase()
-            .includes(text)
-
-            ||
-
-            item.color
-            ?.toLowerCase()
-            .includes(text)
-
-            ||
-
-            item.style
-            ?.toLowerCase()
-            .includes(text)
-
-        );
-
-
-    });
-
-
-}
-
-
-
-// =====================================
-// Filter Clothes
-// =====================================
-
-export async function filterWardrobe(type,value){
-
-
-const clothes =
-await getAllClothes();
-
-
-return clothes.filter(item=>{
-
-
-return item[type] === value;
-
-
-});
-
-
-}
-
-
-
-
-// =====================================
-// Save Favorite
-// =====================================
-
-export function saveFavorite(item){
-
-
-return new Promise((resolve,reject)=>{
-
-
-const transaction =
-db.transaction(
-
-STORES.FAVORITES,
-
-"readwrite"
-
-);
-
-
-
-const store =
-transaction.objectStore(
-STORES.FAVORITES
-);
-
-
-
-const request =
-store.put(item);
-
-
-
-request.onsuccess=()=>{
-
-resolve(true);
-
-};
-
-
-request.onerror=()=>{
-
-reject(
-request.error
-);
-
-};
-
-
-});
-
-
-}
-
-
-
-
-// =====================================
-// Get Favorites
-// =====================================
-
-export function getFavorites(){
-
-
-return new Promise((resolve,reject)=>{
-
-
-const transaction =
-db.transaction(
-
-STORES.FAVORITES,
-
-"readonly"
-
-);
-
-
-
-const store =
-transaction.objectStore(
-STORES.FAVORITES
-);
-
-
-
-const request =
-store.getAll();
-
-
-
-request.onsuccess=()=>{
-
-resolve(
-request.result
-);
-
-};
-
-
-
-request.onerror=()=>{
-
-reject(
-request.error
-);
-
-};
-
-
-});
-
-
-}
-
-
-
-
-// =====================================
-// Save Outfit History
-// =====================================
-
-export function saveOutfit(outfit){
-
-
-return new Promise((resolve,reject)=>{
-
-
-const transaction =
-db.transaction(
-
-STORES.OUTFITS,
-
-"readwrite"
-
-);
-
-
-
-const store =
-transaction.objectStore(
-STORES.OUTFITS
-);
-
-
-
-const request =
-store.add({
-
-...outfit,
-
-createdAt:
-Date.now()
-
-});
-
-
-
-request.onsuccess=()=>{
-
-resolve(
-request.result
-);
-
-};
-
-
-request.onerror=()=>{
-
-reject(
-request.error
-);
-
-};
-
-
-});
-
-
-}
-
-
-
-
-// =====================================
-// Get Outfit History
-// =====================================
-
-export function getOutfits(){
-
-
-return new Promise((resolve,reject)=>{
-
-
-const transaction =
-db.transaction(
-
-STORES.OUTFITS,
-
-"readonly"
-
-);
-
-
-
-const store =
-transaction.objectStore(
-STORES.OUTFITS
-);
-
-
-
-const request =
-store.getAll();
-
-
-
-request.onsuccess=()=>{
-
-resolve(
-request.result
-);
-
-};
-
-
-
-request.onerror=()=>{
-
-reject(
-request.error
-);
-
-};
-
-
-});
-
-
-}
-
-
-
-
-
-// =====================================
-// Wear Tracking
-// =====================================
-
-export async function increaseWearCount(id){
-
-
-const item =
-await getClothingById(id);
-
-
-
-if(!item)
-return false;
-
-
-
-item.timesWorn =
-(item.timesWorn || 0)+1;
-
-
-
-await updateClothing(item);
-
-
-
-return true;
-
-
-}
 
 
 
@@ -1032,6 +484,7 @@ return true;
 // =====================================
 // Laundry Status
 // =====================================
+
 
 export async function updateLaundryStatus(
 
@@ -1043,12 +496,8 @@ status
 
 
 const item =
+
 await getClothingById(id);
-
-
-
-if(!item)
-return false;
 
 
 
@@ -1057,11 +506,9 @@ status;
 
 
 
-await updateClothing(item);
-
-
-
-return true;
+return updateClothing(
+item
+);
 
 
 }
@@ -1070,9 +517,149 @@ return true;
 
 
 
+
 // =====================================
-// Dashboard Statistics
+// Wear Counter
 // =====================================
+
+
+export async function increaseWearCount(id){
+
+
+const item =
+
+await getClothingById(id);
+
+
+
+item.timesWorn =
+(item.timesWorn || 0)+1;
+
+
+
+return updateClothing(
+item
+);
+
+
+}
+
+
+
+
+
+
+// =====================================
+// Save Outfit
+// =====================================
+
+
+export function saveOutfit(outfit){
+
+
+return new Promise(
+
+(resolve,reject)=>{
+
+
+db.transaction(
+
+OUTFIT_STORE,
+
+"readwrite"
+
+)
+
+.objectStore(
+OUTFIT_STORE
+)
+
+.add({
+
+...outfit,
+
+timestamp:
+
+Date.now()
+
+})
+
+.onsuccess=()=>resolve(true);
+
+
+
+reject;
+
+
+}
+
+);
+
+
+}
+
+
+
+
+
+
+// =====================================
+// Get Outfits
+// =====================================
+
+
+export function getOutfits(){
+
+
+return new Promise(
+
+(resolve)=>{
+
+
+const request =
+
+db.transaction(
+
+OUTFIT_STORE,
+
+"readonly"
+
+)
+
+.objectStore(
+OUTFIT_STORE
+)
+
+.getAll();
+
+
+
+request.onsuccess=()=>{
+
+
+resolve(
+request.result
+);
+
+
+};
+
+
+}
+
+);
+
+}
+
+
+
+
+
+
+// =====================================
+// Statistics
+// =====================================
+
 
 export async function getStatistics(){
 
@@ -1081,16 +668,9 @@ const clothes =
 await getAllClothes();
 
 
+
 const outfits =
 await getOutfits();
-
-
-const favorites =
-clothes.filter(
-
-item=>item.favorite===true
-
-);
 
 
 
@@ -1098,28 +678,25 @@ return {
 
 
 clothes:
+
 clothes.length,
 
 
 favorites:
-favorites.length,
+
+clothes.filter(
+item=>item.favorite
+)
+.length,
 
 
 outfits:
+
 outfits.length
 
 
 };
 
 
+
 }
-
-
-
-
-
-// =====================================
-// Initialize Database Automatically
-// =====================================
-
-initDatabase();
