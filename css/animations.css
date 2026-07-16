@@ -1,0 +1,316 @@
+/* ==========================================
+   FashionAI Ultimate
+   animations.css
+========================================== */
+
+
+/* ==========================================
+   Fade In
+========================================== */
+
+@keyframes fadeIn{
+
+0%{
+
+opacity:0;
+
+transform:translateY(20px);
+
+}
+
+100%{
+
+opacity:1;
+
+transform:translateY(0);
+
+}
+
+}
+
+.fadeIn{
+
+animation:fadeIn .5s ease forwards;
+
+}
+
+
+/* ==========================================
+   Fade Up
+========================================== */
+
+@keyframes fadeUp{
+
+0%{
+
+opacity:0;
+
+transform:translateY(40px);
+
+}
+
+100%{
+
+opacity:1;
+
+transform:translateY(0);
+
+}
+
+}
+
+.fadeUp{
+
+animation:fadeUp .7s ease forwards;
+
+}
+
+
+/* ==========================================
+   Slide Left
+========================================== */
+
+@keyframes slideLeft{
+
+0%{
+
+opacity:0;
+
+transform:translateX(60px);
+
+}
+
+100%{
+
+opacity:1;
+
+transform:translateX(0);
+
+}
+
+}
+
+.slideLeft{
+
+animation:slideLeft .5s ease forwards;
+
+}
+
+
+/* ==========================================
+   Slide Right
+========================================== */
+
+@keyframes slideRight{
+
+0%{
+
+opacity:0;
+
+transform:translateX(-60px);
+
+}
+
+100%{
+
+opacity:1;
+
+transform:translateX(0);
+
+}
+
+}
+
+.slideRight{
+
+animation:slideRight .5s ease forwards;
+
+}
+
+
+/* ==========================================
+   Zoom In
+========================================== */
+
+@keyframes zoomIn{
+
+0%{
+
+opacity:0;
+
+transform:scale(.85);
+
+}
+
+100%{
+
+opacity:1;
+
+transform:scale(1);
+
+}
+
+}
+
+.zoomIn{
+
+animation:zoomIn .4s ease forwards;
+
+}
+
+
+/* ==========================================
+   Floating Animation
+========================================== */
+
+@keyframes floating{
+
+0%{
+
+transform:translateY(0);
+
+}
+
+50%{
+
+transform:translateY(-8px);
+
+}
+
+100%{
+
+transform:translateY(0);
+
+}
+
+}
+
+.floating{
+
+animation:floating 3s ease-in-out infinite;
+
+}
+
+
+/* ==========================================
+   Pulse
+========================================== */
+
+@keyframes pulse{
+
+0%{
+
+transform:scale(1);
+
+}
+
+50%{
+
+transform:scale(1.05);
+
+}
+
+100%{
+
+transform:scale(1);
+
+}
+
+}
+
+.pulse{
+
+animation:pulse 2s infinite;
+
+}
+
+
+/* ==========================================
+   Shake
+========================================== */
+
+@keyframes shake{
+
+10%{transform:translateX(-5px);}
+20%{transform:translateX(5px);}
+30%{transform:translateX(-5px);}
+40%{transform:translateX(5px);}
+50%{transform:translateX(0);}
+
+}
+
+.shake{
+
+animation:shake .5s;
+
+}
+
+
+/* ==========================================
+   Rotate
+========================================== */
+
+@keyframes rotate360{
+
+from{
+
+transform:rotate(0deg);
+
+}
+
+to{
+
+transform:rotate(360deg);
+
+}
+
+}
+
+.rotate{
+
+animation:rotate360 1.2s linear infinite;
+
+}
+
+
+/* ==========================================
+   Card Hover
+========================================== */
+
+.card,
+.statCard,
+.quickCard,
+.clothingCard,
+.favoriteCard,
+.outfitCard{
+
+transition:
+transform .25s ease,
+box-shadow .25s ease;
+
+}
+
+.card:hover,
+.statCard:hover,
+.quickCard:hover,
+.clothingCard:hover,
+.favoriteCard:hover,
+.outfitCard:hover{
+
+transform:translateY(-6px);
+
+box-shadow:
+0 18px 45px rgba(0,0,0,.18);
+
+}
+
+
+/* ==========================================
+   Button Press
+========================================== */
+
+button:active{
+
+transform:scale(.96);
+
+}
