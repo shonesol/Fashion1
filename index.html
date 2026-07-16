@@ -5,714 +5,346 @@
 
 <meta charset="UTF-8">
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0">
 
-<title>FashionAI - Your AI Stylist</title>
+<title>FashionAI Ultimate</title>
 
-<link rel="stylesheet" href="style.css">
+<meta
+name="theme-color"
+content="#123A73">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
+<meta
+name="description"
+content="FashionAI Ultimate - Your AI Fashion Stylist">
 
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+rel="manifest"
+href="manifest.json">
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link
+rel="preconnect"
+href="https://fonts.googleapis.com">
+
+<link
+rel="preconnect"
+href="https://fonts.gstatic.com"
+crossorigin>
+
+<link
+href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+rel="stylesheet">
+
+<link
+rel="stylesheet"
+href="css/style.css">
+
+<link
+rel="stylesheet"
+href="css/dashboard.css">
+
+<link
+rel="stylesheet"
+href="css/animations.css">
+
+<link
+rel="stylesheet"
+href="css/responsive.css">
 
 </head>
 
-
 <body>
 
+<!-- Splash Screen -->
 
-<header class="app-header">
+<div id="splash">
 
-<div class="brand">
+<div class="logoCircle">
 
-<h1>✨ FashionAI</h1>
-
-<p>Your Personal AI Stylist</p>
+<img
+src="icons/logo.png"
+alt="FashionAI">
 
 </div>
 
+<h1>FashionAI</h1>
 
-<div class="profile-area">
+<p>Your Personal AI Stylist</p>
 
-<button id="themeBtn">
-🌙
+<div class="loader"></div>
+
+</div>
+
+<!-- Main App -->
+
+<div id="app">
+
+<header class="topBar">
+
+<div>
+
+<h2 id="greeting">
+Good Morning
+</h2>
+
+<p id="todayDate"></p>
+
+</div>
+
+<div class="profileArea">
+
+<button id="notificationBtn">
+
+🔔
+
+<span id="notificationCount">
+0
+</span>
+
 </button>
 
-<button id="menuBtn">
-☰
-</button>
+<img
+src="images/profile.png"
+id="profilePhoto">
 
 </div>
 
 </header>
 
+<!-- Weather -->
 
+<section class="weatherCard">
 
-<nav id="mainNav">
-
-<button class="nav-btn active" data-page="home">
-🏠 Home
-</button>
-
-
-<button class="nav-btn" data-page="upload">
-👕 Upload
-</button>
-
-
-<button class="nav-btn" data-page="wardrobe">
-👗 Wardrobe
-</button>
-
-
-<button class="nav-btn" data-page="outfits">
-✨ Outfits
-</button>
-
-
-<button class="nav-btn" data-page="history">
-📜 History
-</button>
-
-
-</nav>
-
-
-
-
-<main>
-
-
-
-<section id="home" class="page active">
-
-
-<div class="hero-card">
-
-
-<h2>
-Welcome to FashionAI
-</h2>
-
-
-<p>
-Build your digital wardrobe, analyze your clothes with AI, and discover your perfect outfits.
-</p>
-
-
-<button id="startUploadBtn">
-Start Building Wardrobe
-</button>
-
-
-</div>
-
-
-
-<div class="feature-grid">
-
-
-<div class="feature-card">
+<div>
 
 <h3>
-👕 Smart Wardrobe
+Today's Weather
 </h3>
 
-<p>
-Store and organize your clothes on your phone.
+<p id="weatherText">
+Loading...
 </p>
 
 </div>
 
+<div id="weatherIcon">
 
+☀️
 
-<div class="feature-card">
+</div>
+
+</section>
+
+<!-- Statistics -->
+
+<section class="statsGrid">
+
+<div class="statCard">
+
+<h4>Wardrobe</h4>
+
+<h2 id="clothCount">
+
+0
+
+</h2>
+
+</div>
+
+<div class="statCard">
+
+<h4>Favorites</h4>
+
+<h2 id="favoriteCount">
+
+0
+
+</h2>
+
+</div>
+
+<div class="statCard">
+
+<h4>Outfits</h4>
+
+<h2 id="outfitCount">
+
+0
+
+</h2>
+
+</div>
+
+<div class="statCard">
+
+<h4>AI Tips</h4>
+
+<h2>
+
+∞
+
+</h2>
+
+</div>
+
+</section>
+
+<!-- Today's Outfit -->
+
+<section class="card">
+
+<div class="cardHeader">
 
 <h3>
-🤖 AI Analysis
+Today's Outfit
 </h3>
 
+<button id="refreshOutfit">
+
+Generate
+
+</button>
+
+</div>
+
+<div id="todayOutfit">
+
 <p>
-Get clothing details, colors, and style suggestions.
+
+Your perfect outfit will appear here.
+
 </p>
 
 </div>
 
+</section>
 
+<!-- AI Assistant -->
 
-<div class="feature-card">
+<section class="assistantCard">
 
-<h3>
-✨ Outfit Ideas
+<div>
+
+<h2>
+
+FashionAI Assistant
+
+</h2>
+
+<p>
+
+Ask anything about fashion.
+
+</p>
+
+</div>
+
+<button
+onclick="openAssistant()">
+
+Talk
+
+</button>
+
+</section>
+
+<!-- Quick Actions -->
+
+<section>
+
+<h3 class="sectionTitle">
+
+Quick Actions
+
 </h3>
 
+<div class="quickGrid">
+
+<a
+href="upload.html"
+class="quickCard">
+
+📷
+
 <p>
-Generate outfits from your own wardrobe.
+
+Upload Clothes
+
 </p>
 
+</a>
+
+<a
+href="wardrobe.html"
+class="quickCard">
+
+👕
+
+<p>
+
+Wardrobe
+
+</p>
+
+</a>
+
+<a
+href="outfit-generator.html"
+class="quickCard">
+
+✨
+
+<p>
+
+Generate Outfit
+
+</p>
+
+</a>
+
+<a
+href="planner.html"
+class="quickCard">
+
+📅
+
+<p>
+
+Planner
+
+</p>
+
+</a>
+
+<a
+href="favorites.html"
+class="quickCard">
+
+❤️
+
+<p>
+
+Favorites
+
+</p>
+
+</a>
+
+<a
+href="analytics.html"
+class="quickCard">
+
+📊
+
+<p>
+
+Analytics
+
+</p>
+
+</a>
+
 </div>
-
-
-</div>
-
 
 </section>
-<section id="upload" class="page">
-
-
-<div class="section-title">
-
-<h2>
-Upload Clothing
-</h2>
-
-<p>
-Add items to your digital wardrobe.
-</p>
-
-</div>
-
-
-
-<div class="upload-container">
-
-
-<div class="image-upload-card">
-
-
-<label for="imageInput" class="upload-label">
-
-📷 Choose Clothing Image
-
-</label>
-
-
-<input 
-type="file"
-id="imageInput"
-accept="image/*"
-hidden>
-
-
-
-<div class="preview-container">
-
-
-<img 
-id="imagePreview"
-alt="Clothing preview">
-
-
-</div>
-
-
-</div>
-
-
-
-
-
-<div class="clothing-form">
-
-
-<input
-type="text"
-id="clothingName"
-placeholder="Clothing name (Example: Black Jacket)">
-
-
-
-<select id="category">
-
-<option value="">
-Select Category
-</option>
-
-<option>
-Shirt
-</option>
-
-<option>
-T-Shirt
-</option>
-
-<option>
-Dress
-</option>
-
-<option>
-Pants
-</option>
-
-<option>
-Skirt
-</option>
-
-<option>
-Shoes
-</option>
-
-<option>
-Jacket
-</option>
-
-<option>
-Accessories
-</option>
-
-</select>
-
-
-
-
-
-<select id="color">
-
-<option value="">
-Primary Color
-</option>
-
-<option>
-Black
-</option>
-
-<option>
-White
-</option>
-
-<option>
-Brown
-</option>
-
-<option>
-Blue
-</option>
-
-<option>
-Red
-</option>
-
-<option>
-Green
-</option>
-
-<option>
-Yellow
-</option>
-
-<option>
-Orange
-</option>
-
-<option>
-Gold
-</option>
-
-</select>
-
-
-
-
-
-<select id="season">
-
-<option value="">
-Season
-</option>
-
-<option>
-All Season
-</option>
-
-<option>
-Summer
-</option>
-
-<option>
-Winter
-</option>
-
-<option>
-Rainy
-</option>
-
-</select>
-
-
-
-
-
-<select id="occasion">
-
-<option value="">
-Occasion
-</option>
-
-<option>
-Casual
-</option>
-
-<option>
-Office
-</option>
-
-<option>
-Party
-</option>
-
-<option>
-Travel
-</option>
-
-<option>
-Wedding
-</option>
-
-</select>
-
-
-
-
-
-<textarea
-id="notes"
-placeholder="Extra notes about this clothing item">
-</textarea>
-
-
-
-
-
-<div class="action-buttons">
-
-
-<button id="saveClothingBtn">
-
-💾 Save Clothing
-
-</button>
-
-
-
-<button id="analyzeClothingBtn">
-
-🤖 Analyze With AI
-
-</button>
-
-
-</div>
-
-
-</div>
-
-
-</div>
-
-
-</section>
-
-
-
-
-
-<section id="wardrobe" class="page">
-
-
-<div class="section-title">
-
-<h2>
-My Wardrobe
-</h2>
-
-<p>
-Your saved clothing collection.
-</p>
-
-</div>
-
-
-
-
-<div class="wardrobe-tools">
-
-
-<input 
-type="search"
-id="wardrobeSearch"
-placeholder="Search clothes...">
-
-
-
-<select id="categoryFilter">
-
-<option value="">
-All Categories
-</option>
-
-<option>
-Shirt
-</option>
-
-<option>
-Dress
-</option>
-
-<option>
-Pants
-</option>
-
-<option>
-Shoes
-</option>
-
-<option>
-Jacket
-</option>
-
-</select>
-
-
-</div>
-
-
-
-
-<div id="wardrobeGrid" class="wardrobe-grid">
-
-
-<!-- Clothing cards appear here -->
-
-
-</div>
-
-
-
-</section>
-<section id="outfits" class="page">
-
-
-<div class="section-title">
-
-<h2>
-AI Outfit Generator
-</h2>
-
-<p>
-Create outfits from your saved wardrobe.
-</p>
-
-</div>
-
-
-
-<div class="outfit-generator-card">
-
-
-<select id="outfitOccasion">
-
-<option value="">
-Choose Occasion
-</option>
-
-<option>
-Casual Day
-</option>
-
-<option>
-Office Look
-</option>
-
-<option>
-Travel
-</option>
-
-<option>
-Party
-</option>
-
-<option>
-Wedding
-</option>
-
-</select>
-
-
-
-<button id="generateOutfitBtn">
-
-✨ Generate Outfit
-
-</button>
-
-
-
-<div id="outfitResult">
-
-Your outfit suggestions will appear here.
-
-</div>
-
-
-</div>
-
-
-</section>
-
-
-
-
-
-<section id="history" class="page">
-
-
-<div class="section-title">
-
-<h2>
-Outfit History
-</h2>
-
-<p>
-Your previous outfit combinations.
-</p>
-
-</div>
-
-
-
-
-<div id="historyContainer">
-
-
-<p>
-No outfit history yet.
-</p>
-
-
-</div>
-
-
-
-</section>
-
-
-
-
-
-
-<section id="settings" class="page">
-
-
-<div class="section-title">
-
-<h2>
-Settings
-</h2>
-
-</div>
-
-
-
-
-<div class="settings-card">
-
-
-<div class="setting-item">
-
-<label>
-Dark Mode
-</label>
-
-
-<button id="darkModeToggle">
-
-Enable
-
-</button>
-
-
-</div>
-
-
-
-
-
-<div class="setting-item">
-
-<label>
-Clear Local Wardrobe
-
-</label>
-
-
-<button id="clearDatabaseBtn">
-
-Delete All
-
-</button>
-
-
-</div>
-
-
-
-</div>
-
-
-
-</section>
-
-
-
-
-
-</main>
-
-
-
-
-
-
-<footer>
-
-
-<h3>
-FashionAI
-</h3>
-
-
-<p>
-Your offline-first AI fashion assistant.
-</p>
-
-
-<p>
-© 2026 FashionAI
-</p>
-
-
-</footer>
-
-
-
-
-
-<!-- Application Scripts -->
-
-
-<script type="module" src="db.js"></script>
-
-<script type="module" src="huggingface-ai.js"></script>
-
-<script type="module" src="upload.js"></script>
-
-<script type="module" src="wardrobe.js"></script>
-
-<script type="module" src="app.js"></script>
-
-</body>
-
-
-</html>
