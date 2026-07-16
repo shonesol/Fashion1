@@ -3,10 +3,15 @@
 // upload.js
 // Clothing Upload System
 // =====================================
-console.log("Upload JS loaded");
+
+
+console.log("✅ Upload JS loaded");
+
+
 
 import {
 
+initDatabase,
 saveClothing
 
 }
@@ -34,6 +39,7 @@ hideLoading
 }
 
 from "./app.js";
+
 
 
 
@@ -78,7 +84,9 @@ document.getElementById(
 
 
 
+
 let selectedImage = null;
+
 
 
 
@@ -98,9 +106,22 @@ event.target.files[0];
 
 
 
-if(!file)
+if(!file){
+
+console.log(
+"No image selected"
+);
 
 return;
+
+}
+
+
+
+console.log(
+"Selected image:",
+file.name
+);
 
 
 
@@ -114,12 +135,13 @@ new FileReader();
 
 
 
-reader.onload = e=>{
+reader.onload = (e)=>{
 
 
 preview.src =
 
 e.target.result;
+
 
 
 preview.style.display =
@@ -134,14 +156,15 @@ preview.style.display =
 reader.readAsDataURL(file);
 
 
-
 }
 
 
 
 
 
-if(imageInput)
+
+if(imageInput){
+
 
 imageInput.addEventListener(
 
@@ -152,10 +175,13 @@ handleImage
 );
 
 
+}
 
 
 
-if(cameraInput)
+
+if(cameraInput){
+
 
 cameraInput.addEventListener(
 
@@ -164,6 +190,9 @@ cameraInput.addEventListener(
 handleImage
 
 );
+
+
+}
 
 
 
@@ -179,12 +208,21 @@ handleImage
 if(saveButton){
 
 
-
 saveButton.addEventListener(
 
 "click",
 
 async()=>{
+
+
+try{
+
+
+// Start database
+
+await initDatabase();
+
+
 
 
 
@@ -203,12 +241,15 @@ return;
 
 
 
-try{
+
 
 
 showLoading(
+
 "Analyzing clothing..."
+
 );
+
 
 
 
@@ -222,10 +263,95 @@ preview.src;
 
 
 
-const analysis =
+
+console.log(
+"Sending image to AI..."
+);
+
+
+
+
+
+
+let analysis;
+
+
+
+try{
+
+
+analysis =
 
 await analyzeClothing(
+
 imageData
+
+);
+
+
+
+}
+
+catch(error){
+
+
+console.log(
+"AI failed, using fallback"
+);
+
+
+
+analysis = {
+
+
+name:
+"Clothing Item",
+
+
+category:
+"Top",
+
+
+color:
+"Unknown",
+
+
+style:
+"Casual",
+
+
+material:
+"Unknown"
+
+
+};
+
+
+}
+
+
+
+
+
+
+
+console.log(
+
+"Analysis result:",
+
+analysis
+
+);
+
+
+
+
+
+
+console.log(
+
+"Saving clothing..."
+
 );
 
 
@@ -236,7 +362,11 @@ imageData
 await saveClothing({
 
 
-image:imageData,
+
+image:
+
+imageData,
+
 
 
 name:
@@ -276,7 +406,10 @@ analysis.material || "Unknown"
 
 
 
+
 hideLoading();
+
+
 
 
 
@@ -288,11 +421,60 @@ showToast(
 
 
 
+
+
+
+// clear upload
+
+selectedImage = null;
+
+imageInput.value = "";
+
+preview.src = "";
+
+
+
+
+
+
+
 }
 
 catch(error){
 
 
+console.error(
+
+"UPLOAD ERROR:",
+
+error
+
+);
+
+
+
+hideLoading();
+
+
+
+showToast(
+
+"Upload failed"
+
+);
+
+
+
+}
+
+
+
+}
+
+);
+
+
+}
 hideLoading();
 
 
