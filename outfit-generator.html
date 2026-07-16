@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<title>
+AI Outfit Generator - FashionAI
+</title>
+
+
+<link rel="stylesheet" href="style.css">
+
+
+<link rel="manifest" href="manifest.json">
+
+
+</head>
+
+
+
+<body>
+
+
+
+<header class="pageHeader">
+
+
+<h2>
+AI Outfit Studio ✨
+</h2>
+
+
+<p>
+Create your perfect look
+</p>
+
+
+</header>
+
+
+
+
+
+
+
+<main>
+
+
+
+<section class="card">
+
+
+<h3>
+Choose Occasion
+</h3>
+
+
+
+<select id="occasionSelect">
+
+
+<option value="casual">
+Casual
+</option>
+
+
+<option value="office">
+Office
+</option>
+
+
+<option value="wedding">
+Wedding
+</option>
+
+
+<option value="party">
+Party
+</option>
+
+
+<option value="travel">
+Travel
+</option>
+
+
+
+</select>
+
+
+
+<button id="generateOutfit">
+
+✨ Generate Outfit
+
+</button>
+
+
+
+</section>
+
+
+
+
+
+
+
+
+<section id="generatedOutfit" class="card">
+
+
+<h3>
+Your AI Look
+</h3>
+
+
+<p>
+No outfit generated yet.
+</p>
+
+
+</section>
+
+
+
+
+
+
+
+
+<section class="card">
+
+
+<h3>
+Style Score
+
+</h3>
+
+
+<div id="outfitScore">
+
+0/100
+
+</div>
+
+
+
+</section>
+
+
+
+
+
+
+
+</main>
+
+
+
+
+
+
+
+<nav class="bottomNav">
+
+
+<a href="index.html">
+
+🏠 Home
+
+</a>
+
+
+
+<a href="wardrobe.html">
+
+👕
+
+Wardrobe
+
+</a>
+
+
+
+
+<a href="upload.html">
+
+➕
+
+Add
+
+</a>
+
+
+
+
+<a href="outfit-generator.html">
+
+✨ Outfits
+
+</a>
+
+
+</nav>
+
+
+
+
+
+
+
+<script type="module" src="js/app.js"></script>
+
+
+<script type="module" src="js/outfit-page.js"></script>
+
+
+
+</body>
+
+
+</html>
