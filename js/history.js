@@ -15,13 +15,7 @@ saveOutfit
 from "./database.js";
 
 
-import {
 
-getOutfits
-
-}
-
-from "./database.js";
 
 // =====================================
 // Save Worn Outfit
