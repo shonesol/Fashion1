@@ -1,458 +1,180 @@
 // =====================================
 // FashionAI Ultimate
 // hybrid-ai.js
-// Hybrid Intelligence Engine
 // =====================================
 
+import { fashionFallback } from "./offline-engine.js";
 
-import {
-
-searchFashionKnowledge
-
-}
-
-from "./offline-engine.js";
-
-
-
-
+const AI_ENDPOINT = "/api/gemini";
 
 // =====================================
-// AI Endpoint
+// Ask Hybrid AI
 // =====================================
 
+export async function askHybridAI(question, image = null) {
 
-const AI_ENDPOINT =
+    // Offline first
+    const offline = fashionFallback(question);
 
-"/api/gemini";
+    if (offline) {
+        return {
+            answer: offline,
+            source: "offline"
+        };
+    }
 
+    // Online AI
+    try {
 
+        const response = await fetch(AI_ENDPOINT, {
 
+            method: "POST",
 
+            headers: {
+                "Content-Type": "application/json"
+            },
 
+            body: JSON.stringify({
+                prompt: question,
+                image
+            })
+
+        });
+
+        if (!response.ok) {
+            throw new Error("Gemini request failed");
+        }
+
+        const data = await response.json();
+
+        return {
+
+            answer:
+                data.text ||
+                data.answer ||
+                "No response.",
+
+            source: "AI"
+
+        };
+
+    } catch (error) {
+
+        console.log("AI unavailable", error);
+
+        return {
+
+            answer:
+                "FashionAI is running in offline mode.",
+
+            source: "fallback"
+
+        };
+
+    }
+
+}
 
 // =====================================
-// Ask FashionAI
+// Analyze Clothing
 // =====================================
 
+export async function analyzeClothing(image) {
 
-export async function askHybridAI(
+    try {
 
-question,
+        const result = await askHybridAI(
 
-image=null
+            "Analyze this clothing image. Return Name, Category, Color, Style and Material.",
 
-){
+            image
 
+        );
 
+        if (result.source === "AI") {
 
-// 1. Offline first
+            return parseResponse(result.answer);
 
-const offline =
+        }
 
-searchFashionKnowledge(
-question
-);
+    } catch (error) {
 
+        console.log(error);
 
+    }
 
-if(offline){
+    // Offline fallback
 
+    return {
 
-return {
+        name: "Clothing Item",
 
+        category: "Top",
 
-answer:
-offline,
+        color: "Unknown",
 
+        style: "Casual",
 
-source:
-"offline"
+        material: "Unknown"
 
-
-};
-
-
-}
-
-
-
-
-
-
-// 2. Advanced AI
-
-try{
-
-
-const response =
-
-await fetch(
-
-AI_ENDPOINT,
-
-{
-
-
-method:"POST",
-
-
-headers:{
-
-
-"Content-Type":
-"application/json"
-
-
-},
-
-
-body:JSON.stringify({
-
-prompt:question,
-
-image
-
-
-})
-
+    };
 
 }
-
-);
-
-
-
-
-
-
-const data =
-
-await response.json();
-
-
-
-
-
-return {
-
-
-answer:
-
-data.text ||
-
-data.answer ||
-
-"FashionAI could not answer.",
-
-
-source:
-"AI"
-
-
-};
-
-
-
-}
-
-catch(error){
-
-
-console.warn(
-
-"AI unavailable"
-
-);
-
-
-
-return {
-
-
-answer:
-
-"I can help with outfit choices, colors, wardrobe planning and fashion advice offline.",
-
-
-source:
-"fallback"
-
-
-};
-
-
-
-}
-
-
-
-}
-
-
-
-
-
-
 
 // =====================================
-// Clothing Analysis
+// Parse Gemini Response
 // =====================================
 
+function parseResponse(text) {
 
-export async function analyzeClothing(
+    return {
 
-image
+        name: getValue(text, "name"),
 
-){
+        category: getValue(text, "category"),
 
+        color: getValue(text, "color"),
 
+        style: getValue(text, "style"),
 
-try{
+        material: getValue(text, "material")
 
-
-const response =
-
-await askHybridAI(
-
-"Analyze this clothing image. Return category, color, style and material.",
-
-image
-
-);
-
-
-
-
-
-if(response.source==="AI"){
-
-
-return parseClothingResponse(
-
-response.answer
-
-);
-
+    };
 
 }
 
+function getValue(text, key) {
 
+    const match = text.match(
+        new RegExp(key + "\\s*[:\\-]\\s*(.+)", "i")
+    );
 
-}
-
-catch(error){
-
-
-
-console.log(
-"AI analysis failed"
-);
-
+    return match ? match[1].trim() : "Unknown";
 
 }
-
-
-
-
-
-// Offline fallback
-
-return {
-
-
-name:
-"Uploaded Clothing",
-
-
-category:
-"Top",
-
-
-color:
-"Unknown",
-
-
-style:
-"Casual",
-
-
-material:
-"Unknown"
-
-
-};
-
-
-}
-
-
-
-
-
-
 
 // =====================================
-// Parse AI Result
+// Daily Tip
 // =====================================
 
+export function getDailyRecommendation() {
 
-function parseClothingResponse(
+    const tips = [
 
-text
+        "Wear neutral colours for versatility.",
 
-){
+        "Layer your outfit for a premium look.",
 
+        "Keep your shoes clean.",
 
-return {
+        "Accessories complete an outfit.",
 
+        "Wear clothes that fit well."
 
-name:
+    ];
 
-extract(
-text,
-"name"
-),
-
-
-
-category:
-
-extract(
-text,
-"category"
-),
-
-
-
-color:
-
-extract(
-text,
-"color"
-),
-
-
-
-style:
-
-extract(
-text,
-"style"
-),
-
-
-
-material:
-
-extract(
-text,
-"material"
-)
-
-
-
-};
-
-
-}
-
-
-
-
-
-
-
-function extract(
-
-text,
-
-keyword
-
-){
-
-
-
-const match =
-
-text.match(
-
-new RegExp(
-
-keyword+
-"[:\\-]\\s*(.*)",
-
-"i"
-
-)
-
-);
-
-
-
-return match
-
-?
-
-match[1]
-
-:
-
-"Unknown";
-
-
-}
-
-
-
-
-
-
-
-// =====================================
-// Daily Fashion Tip
-// =====================================
-
-
-export async function getDailyRecommendation(){
-
-
-
-const tips=[
-
-
-"Try combining neutral colors with one statement piece.",
-
-
-"Rotate your wardrobe to use more of your clothes.",
-
-
-"Good fit is the foundation of great style.",
-
-
-"Accessories can upgrade a simple outfit.",
-
-
-"Build outfits around your favorite pieces."
-
-
-];
-
-
-
-return tips[
-
-Math.floor(
-
-Math.random()
-
-*
-
-tips.length
-
-)
-
-];
-
+    return tips[
+        Math.floor(Math.random() * tips.length)
+    ];
 
 }
