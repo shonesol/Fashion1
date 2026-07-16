@@ -1,0 +1,92 @@
+{
+  "name": "FashionAI Ultimate",
+  "short_name": "FashionAI",
+  "description": "Your personal AI fashion stylist and smart wardrobe assistant.",
+
+  "start_url": "./index.html",
+
+  "display": "standalone",
+
+  "background_color": "#F7F0E6",
+
+  "theme_color": "#123A73",
+
+  "orientation": "portrait",
+
+
+  "icons": [
+
+    {
+      "src": "assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+
+    {
+      "src": "assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+
+  ],
+
+
+  "categories": [
+
+    "lifestyle",
+
+    "fashion",
+
+    "productivity"
+
+  ],
+
+
+  "screenshots": [
+
+    {
+      "src": "assets/screenshots/home.png",
+      "sizes": "540x720",
+      "type": "image/png"
+    }
+
+  ],
+
+
+  "shortcuts": [
+
+    {
+
+      "name": "Upload Clothes",
+
+      "short_name": "Upload",
+
+      "url": "./upload.html"
+
+    },
+
+
+    {
+
+      "name": "My Wardrobe",
+
+      "short_name": "Wardrobe",
+
+      "url": "./wardrobe.html"
+
+    },
+
+
+    {
+
+      "name": "Generate Outfit",
+
+      "short_name": "Outfit",
+
+      "url": "./outfit-generator.html"
+
+    }
+
+  ]
+
+}
