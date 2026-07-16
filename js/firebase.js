@@ -48,7 +48,7 @@ from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 
 const firebaseConfig = {
-    apiKey: "YOUR_FIREBASE_API_KEY",
+    apiKey: "AIzaSyA1wmHCfPLOmw1u3zUM-M2bUlCUWJDv2Bk",
     authDomain: "design-a0e45.firebaseapp.com",
     projectId: "design-a0e45",
     storageBucket: "design-a0e45.appspot.com",
