@@ -1,13 +1,13 @@
 // =====================================
 // FashionAI Ultimate
 // auth-manager.js
-// User Authentication Manager
+// Email & Password Authentication
 // =====================================
 
 
 import {
 
-loginWithGoogle,
+auth,
 logoutUser,
 watchUser
 
@@ -17,15 +17,25 @@ from "./firebase.js";
 
 
 
+import {
+
+createUserWithEmailAndPassword,
+signInWithEmailAndPassword
+
+}
+
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+
+
+
 
 
 // =====================================
 // Initialize Authentication
 // =====================================
 
-
 export function initAuth(){
-
 
 
 watchUser(
@@ -43,15 +53,11 @@ user.email
 
 
 
-updateUserUI(
-user
-);
+updateUserUI(user);
 
 
 
-saveUserSession(
-user
-);
+saveUserSession(user);
 
 
 
@@ -66,9 +72,7 @@ console.log(
 
 
 
-updateUserUI(
-null
-);
+updateUserUI(null);
 
 
 
@@ -80,7 +84,6 @@ null
 );
 
 
-
 }
 
 
@@ -88,27 +91,65 @@ null
 
 
 
+
 // =====================================
-// Login Button
+// Email Login + Signup
 // =====================================
 
 
-export function setupLoginButton(){
+export function setupEmailAuth(){
 
 
 
-const button =
+const email =
 
 document.getElementById(
-"googleLogin"
+"email"
 );
 
 
 
-if(button){
+const password =
+
+document.getElementById(
+"password"
+);
 
 
-button.addEventListener(
+
+const signupButton =
+
+document.getElementById(
+"signupBtn"
+);
+
+
+
+const loginButton =
+
+document.getElementById(
+"loginBtn"
+);
+
+
+
+const status =
+
+document.getElementById(
+"loginStatus"
+);
+
+
+
+
+
+
+// CREATE ACCOUNT
+
+if(signupButton){
+
+
+signupButton.addEventListener(
 
 "click",
 
@@ -118,7 +159,33 @@ async()=>{
 try{
 
 
-await loginWithGoogle();
+const result =
+
+await createUserWithEmailAndPassword(
+
+auth,
+
+email.value,
+
+password.value
+
+);
+
+
+
+status.textContent =
+"Account created successfully ✅";
+
+
+
+saveUserSession(
+result.user
+);
+
+
+
+window.location.href =
+"dashboard.html";
 
 
 
@@ -127,12 +194,81 @@ await loginWithGoogle();
 catch(error){
 
 
-alert(
-"Login failed"
+status.textContent =
+error.message;
+
+
+}
+
+
+
+}
+
+);
+
+
+}
+
+
+
+
+
+
+
+// LOGIN
+
+if(loginButton){
+
+
+loginButton.addEventListener(
+
+"click",
+
+async()=>{
+
+
+try{
+
+
+const result =
+
+await signInWithEmailAndPassword(
+
+auth,
+
+email.value,
+
+password.value
+
 );
 
 
 
+status.textContent =
+"Login successful ✅";
+
+
+
+saveUserSession(
+result.user
+);
+
+
+
+window.location.href =
+"dashboard.html";
+
+
+
+}
+
+catch(error){
+
+
+status.textContent =
+error.message;
+
+
 }
 
 
@@ -145,8 +281,9 @@ alert(
 }
 
 
-
 }
+
+
 
 
 
@@ -155,12 +292,10 @@ alert(
 
 
 // =====================================
-// Logout Button
+// Logout
 // =====================================
-
 
 export function setupLogoutButton(){
-
 
 
 const button =
@@ -174,7 +309,6 @@ document.getElementById(
 if(button){
 
 
-
 button.addEventListener(
 
 "click",
@@ -185,10 +319,19 @@ async()=>{
 await logoutUser();
 
 
+localStorage.removeItem(
+"fashionai_user"
+);
+
+
+
+window.location.href =
+"index.html";
+
+
 }
 
 );
-
 
 
 }
@@ -206,16 +349,12 @@ await logoutUser();
 // Update UI
 // =====================================
 
-
-function updateUserUI(
-
-user
-
-){
+function updateUserUI(user){
 
 
 
 const name =
+
 document.getElementById(
 "userName"
 );
@@ -223,9 +362,11 @@ document.getElementById(
 
 
 const photo =
+
 document.getElementById(
 "userPhoto"
 );
+
 
 
 
@@ -234,15 +375,12 @@ return;
 
 
 
-
 if(user){
 
 
 name.textContent =
 
-user.displayName ||
-
-"Fashion Lover";
+user.email;
 
 
 
@@ -250,8 +388,6 @@ if(photo){
 
 
 photo.src =
-
-user.photoURL ||
 
 "assets/default-user.png";
 
@@ -272,8 +408,6 @@ name.textContent =
 }
 
 
-
-
 }
 
 
@@ -283,15 +417,10 @@ name.textContent =
 
 
 // =====================================
-// Save Session
+// Save User Session
 // =====================================
 
-
-function saveUserSession(
-
-user
-
-){
+function saveUserSession(user){
 
 
 localStorage.setItem(
@@ -302,9 +431,7 @@ JSON.stringify({
 
 uid:user.uid,
 
-email:user.email,
-
-name:user.displayName
+email:user.email
 
 
 })
@@ -321,12 +448,10 @@ name:user.displayName
 
 
 // =====================================
-// Get Current User
+// Get Saved User
 // =====================================
 
-
 export function getSavedUser(){
-
 
 
 const user =
