@@ -1,0 +1,17 @@
+{
+  "name": "fashionai-ultimate",
+  "version": "1.0.0",
+  "description": "FashionAI Ultimate - AI powered personal fashion stylist",
+  "type": "module",
+
+  "engines": {
+    "node": "24.x"
+  },
+
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo FashionAI build complete"
+  },
+
+  "dependencies": {}
+}
