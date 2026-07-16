@@ -1,69 +1,73 @@
 // =====================================
 // FashionAI Ultimate
-// hybrid-ai.js - Part 1
+// hybrid-ai.js
 // Hybrid Intelligence Engine
 // =====================================
 
 
 import {
 
-askFashionAI
+searchFashionKnowledge
 
 }
-from "./gemini-ai.js";
 
-
-
-import {
-
-fashionFallback
-
-}
 from "./offline-engine.js";
 
 
 
 
+
 // =====================================
-// Main AI Router
+// AI Endpoint
+// =====================================
+
+
+const AI_ENDPOINT =
+
+"/api/gemini";
+
+
+
+
+
+
+// =====================================
+// Ask FashionAI
 // =====================================
 
 
 export async function askHybridAI(
 
-question
+question,
+
+image=null
 
 ){
 
 
-const cleanQuestion =
+
+// 1. Offline first
+
+const offline =
+
+searchFashionKnowledge(
 question
-.toLowerCase();
-
-
-
-// Check offline knowledge first
-
-
-const offlineAnswer =
-fashionFallback(
-cleanQuestion
 );
 
 
 
-if(offlineAnswer){
+if(offline){
 
 
 return {
 
 
-source:
-"offline",
-
-
 answer:
-offlineAnswer
+offline,
+
+
+source:
+"offline"
 
 
 };
@@ -75,36 +79,56 @@ offlineAnswer
 
 
 
-// Use Gemini for advanced questions
+
+// 2. Advanced AI
+
+try{
 
 
-const aiAnswer =
-await askFashionAI(
+const response =
 
-question
+await fetch(
+
+AI_ENDPOINT,
+
+{
+
+
+method:"POST",
+
+
+headers:{
+
+
+"Content-Type":
+"application/json"
+
+
+},
+
+
+body:JSON.stringify({
+
+prompt:question,
+
+image
+
+
+})
+
+
+}
 
 );
 
 
 
-if(aiAnswer){
 
 
-return {
 
+const data =
 
-source:
-"gemini",
-
-
-answer:
-aiAnswer
-
-
-};
-
-
-}
+await response.json();
 
 
 
@@ -113,454 +137,322 @@ aiAnswer
 return {
 
 
-source:
-"offline",
-
-
 answer:
-"I recommend choosing an outfit that matches your confidence and occasion."
+
+data.text ||
+
+data.answer ||
+
+"FashionAI could not answer.",
+
+
+source:
+"AI"
 
 
 };
 
 
+
 }
+
+catch(error){
+
+
+console.warn(
+
+"AI unavailable"
+
+);
+
+
+
+return {
+
+
+answer:
+
+"I can help with outfit choices, colors, wardrobe planning and fashion advice offline.",
+
+
+source:
+"fallback"
+
+
+};
+
+
+
+}
+
+
+
+}
+
+
 
 
 
 
 
 // =====================================
-// Daily Recommendation
+// Clothing Analysis
+// =====================================
+
+
+export async function analyzeClothing(
+
+image
+
+){
+
+
+
+try{
+
+
+const response =
+
+await askHybridAI(
+
+"Analyze this clothing image. Return category, color, style and material.",
+
+image
+
+);
+
+
+
+
+
+if(response.source==="AI"){
+
+
+return parseClothingResponse(
+
+response.answer
+
+);
+
+
+}
+
+
+
+}
+
+catch(error){
+
+
+
+console.log(
+"AI analysis failed"
+);
+
+
+}
+
+
+
+
+
+// Offline fallback
+
+return {
+
+
+name:
+"Uploaded Clothing",
+
+
+category:
+"Top",
+
+
+color:
+"Unknown",
+
+
+style:
+"Casual",
+
+
+material:
+"Unknown"
+
+
+};
+
+
+}
+
+
+
+
+
+
+
+// =====================================
+// Parse AI Result
+// =====================================
+
+
+function parseClothingResponse(
+
+text
+
+){
+
+
+return {
+
+
+name:
+
+extract(
+text,
+"name"
+),
+
+
+
+category:
+
+extract(
+text,
+"category"
+),
+
+
+
+color:
+
+extract(
+text,
+"color"
+),
+
+
+
+style:
+
+extract(
+text,
+"style"
+),
+
+
+
+material:
+
+extract(
+text,
+"material"
+)
+
+
+
+};
+
+
+}
+
+
+
+
+
+
+
+function extract(
+
+text,
+
+keyword
+
+){
+
+
+
+const match =
+
+text.match(
+
+new RegExp(
+
+keyword+
+"[:\\-]\\s*(.*)",
+
+"i"
+
+)
+
+);
+
+
+
+return match
+
+?
+
+match[1]
+
+:
+
+"Unknown";
+
+
+}
+
+
+
+
+
+
+
+// =====================================
+// Daily Fashion Tip
 // =====================================
 
 
 export async function getDailyRecommendation(){
 
 
-const hour =
-new Date()
-.getHours();
 
+const tips=[
 
 
-if(hour < 12){
+"Try combining neutral colors with one statement piece.",
 
 
-return
+"Rotate your wardrobe to use more of your clothes.",
 
-"Start your day with a clean, comfortable outfit and a confident style.";
 
-}
+"Good fit is the foundation of great style.",
 
 
+"Accessories can upgrade a simple outfit.",
 
-if(hour < 18){
 
+"Build outfits around your favorite pieces."
 
-return
 
-"Try adding a color accent to your outfit for a fresh daytime look.";
+];
 
-}
 
 
+return tips[
 
-return
+Math.floor(
 
-"Evening style tip: choose elegant layers and comfortable footwear.";
+Math.random()
 
-}
+*
 
+tips.length
 
-
-
-
-// =====================================
-// Outfit Question Handler
-// =====================================
-
-export async function styleQuestion(
-
-occasion,
-
-weather,
-
-clothes
-
-){
-
-
-
-const question =
-
-`
-Create an outfit.
-
-Occasion:
-${occasion}
-
-Weather:
-${weather}
-
-Available clothes:
-${JSON.stringify(clothes)}
-
-`;
-
-
-
-return await askHybridAI(
-question
-);
-
-
-}
-
-// =====================================
-// FashionAI Ultimate
-// hybrid-ai.js - Part 2
-// Advanced Fashion Intelligence
-// =====================================
-
-
-
-// =====================================
-// Color Compatibility Engine
-// =====================================
-
-export function matchColors(
-
-primary,
-
-secondary
-
-){
-
-
-const combinations = {
-
-
-black:[
-
-"white",
-
-"gold",
-
-"beige",
-
-"red"
-
-],
-
-
-white:[
-
-"black",
-
-"blue",
-
-"brown",
-
-"gold"
-
-],
-
-
-blue:[
-
-"white",
-
-"beige",
-
-"grey",
-
-"gold"
-
-],
-
-
-beige:[
-
-"brown",
-
-"white",
-
-"black"
-
-],
-
-
-red:[
-
-"black",
-
-"white",
-
-"gold"
-
-],
-
-
-green:[
-
-"beige",
-
-"brown",
-
-"white"
-
-]
-
-
-};
-
-
-
-return (
-
-combinations[
-primary.toLowerCase()
-]
-
-||
-
-[]
-
-).includes(
-
-secondary.toLowerCase()
-
-);
-
-
-}
-
-
-
-
-
-// =====================================
-// Outfit Score
-// =====================================
-
-export function calculateOutfitScore(
-
-outfit
-
-){
-
-
-let score = 50;
-
-
-
-if(outfit.colorsMatched){
-
-score += 20;
-
-}
-
-
-if(outfit.occasionMatched){
-
-score += 20;
-
-}
-
-
-if(outfit.weatherMatched){
-
-score += 10;
-
-}
-
-
-
-return Math.min(
-score,
-100
-);
-
-
-}
-
-
-
-
-
-// =====================================
-// Rank Outfits
-// =====================================
-
-export function rankOutfits(
-
-outfits
-
-){
-
-
-return outfits.sort(
-
-(a,b)=>
-
-calculateOutfitScore(b)
-
--
-
-calculateOutfitScore(a)
-
-);
-
-
-}
-
-
-
-
-
-// =====================================
-// User Preference Learning
-// =====================================
-
-export function learnPreference(
-
-history
-
-){
-
-
-const preferences = {
-
-
-colors:{},
-
-
-styles:{},
-
-
-categories:{}
-
-
-};
-
-
-
-history.forEach(item=>{
-
-
-if(item.color){
-
-
-preferences.colors[item.color] =
-
-(preferences.colors[item.color] || 0)+1;
-
-
-}
-
-
-
-if(item.style){
-
-
-preferences.styles[item.style] =
-
-(preferences.styles[item.style] || 0)+1;
-
-
-}
-
-
-
-if(item.category){
-
-
-preferences.categories[item.category] =
-
-(preferences.categories[item.category] || 0)+1;
-
-
-}
-
-
-
-});
-
-
-
-return preferences;
-
-
-}
-
-
-
-
-
-// =====================================
-// Personal Style Summary
-// =====================================
-
-export function generateStyleProfile(
-
-preferences
-
-){
-
-
-const favoriteColor =
-
-Object.keys(
-preferences.colors
 )
-.sort(
 
-(a,b)=>
-
-preferences.colors[b]
--
-
-preferences.colors[a]
-
-)[0];
-
-
-
-const favoriteStyle =
-
-Object.keys(
-preferences.styles
-)
-.sort(
-
-(a,b)=>
-
-preferences.styles[b]
--
-
-preferences.styles[a]
-
-)[0];
-
-
-
-return {
-
-
-favoriteColor:
-favoriteColor || "Not discovered",
-
-
-favoriteStyle:
-favoriteStyle || "Exploring",
-
-
-message:
-
-`Your style is becoming ${favoriteStyle || "unique"}.`
-
-};
+];
 
 
 }
