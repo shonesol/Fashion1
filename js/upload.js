@@ -64,7 +64,7 @@ if (cameraInput) {
     cameraInput.addEventListener("change", previewImage);
 }
 
-// =====================================
+/// =====================================
 // Save Clothing
 // =====================================
 
@@ -74,74 +74,88 @@ if (saveButton) {
 
         try {
 
-            if (!selectedImage) {
-
-                showToast("Choose an image first");
+            if (!selectedImage || !preview.src) {
+                showToast("Please choose an image first.");
                 return;
-
             }
-
-            showLoading("Analyzing clothing...");
 
             await initDatabase();
 
+            showLoading("Analyzing clothing...");
+
             const imageData = preview.src;
 
-            let analysis;
+            let analysis = {};
 
             try {
 
-                analysis = await analyzeClothing(imageData);
+                const result = await analyzeClothing(imageData);
 
-            } catch (error) {
+                if (result && typeof result === "object") {
+                    analysis = result;
+                }
 
-                console.log("AI unavailable. Using fallback.");
+            } catch (err) {
 
-                analysis = {
-                    name: "Clothing Item",
-                    category: "Top",
-                    color: "Unknown",
-                    style: "Casual",
-                    material: "Unknown"
-                };
+                console.warn("AI failed. Using offline defaults.", err);
 
             }
 
-            await saveClothing({
+            const clothing = {
+
+                id: crypto.randomUUID(),
 
                 image: imageData,
-                name: analysis.name || "Clothing Item",
-                category: analysis.category || "Top",
-                color: analysis.color || "Unknown",
-                style: analysis.style || "Casual",
-                material: analysis.material || "Unknown"
 
-            });
+                name: analysis.name || "Clothing Item",
+
+                category: analysis.category || "Top",
+
+                color: analysis.color || "Unknown",
+
+                style: analysis.style || "Casual",
+
+                material: analysis.material || "Unknown",
+
+                season: analysis.season || "All",
+
+                favorite: false,
+
+                timesWorn: 0,
+
+                laundryStatus: "Clean",
+
+                dateAdded: Date.now()
+
+            };
+
+            await saveClothing(clothing);
 
             hideLoading();
 
-            showToast("✅ Clothing added successfully!");
+            showToast("✅ Clothing saved!");
 
             selectedImage = null;
 
             if (imageInput) imageInput.value = "";
             if (cameraInput) cameraInput.value = "";
 
-            preview.src = "";
+            preview.removeAttribute("src");
             preview.style.display = "none";
+
+            // Go to wardrobe automatically
+            window.location.href = "wardrobe.html";
 
         } catch (error) {
 
-            console.error("UPLOAD ERROR:", error);
+            console.error(error);
 
             hideLoading();
 
-            showToast("❌ Upload failed");
+            showToast("❌ Failed to save clothing.");
 
         }
 
     });
 
 }
-
-console.log("✅ upload.js loaded successfully");
