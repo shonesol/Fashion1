@@ -1,697 +1,400 @@
 // =====================================
-// FashionAI Ultimate
+// FashionAI Database Manager
 // database.js
-// IndexedDB Local Storage Engine
 // =====================================
 
+const DB_NAME = "FashionAI_DB";
+const DB_VERSION = 2;
 
+const CLOTHING_STORE = "wardrobe";
+const OUTFIT_STORE = "outfits";
+const HISTORY_STORE = "history";
 
-const DATABASE_NAME =
-
-"FashionAI_DB";
-
-
-
-const DATABASE_VERSION =
-
-1;
-
-
-
-const CLOTHING_STORE =
-
-"wardrobe";
-
-
-
-const OUTFIT_STORE =
-
-"outfits";
-
-
-
-
-
-let db;
-
-
-
-
-
+let db = null;
 
 // =====================================
 // Initialize Database
 // =====================================
 
+export function initDatabase() {
 
-export function initDatabase(){
+    return new Promise((resolve, reject) => {
 
+        if (db) {
+            resolve(db);
+            return;
+        }
 
-return new Promise(
+        const request = indexedDB.open(DB_NAME, DB_VERSION);
 
-(resolve,reject)=>{
+        request.onerror = () => {
+            reject(request.error);
+        };
 
+        request.onsuccess = () => {
 
-const request =
+            db = request.result;
 
-indexedDB.open(
+            db.onversionchange = () => {
+                db.close();
+                alert("Database updated. Please reload the app.");
+            };
 
-DATABASE_NAME,
+            resolve(db);
+        };
 
-DATABASE_VERSION
+        request.onupgradeneeded = (event) => {
 
-);
+            db = event.target.result;
 
+            // Wardrobe Store
+            if (!db.objectStoreNames.contains(CLOTHING_STORE)) {
 
+                const clothing = db.createObjectStore(
+                    CLOTHING_STORE,
+                    {
+                        keyPath: "id"
+                    }
+                );
 
+                clothing.createIndex(
+                    "category",
+                    "category",
+                    { unique: false }
+                );
 
+                clothing.createIndex(
+                    "color",
+                    "color",
+                    { unique: false }
+                );
 
-request.onupgradeneeded = event=>{
+                clothing.createIndex(
+                    "season",
+                    "season",
+                    { unique: false }
+                );
 
+                clothing.createIndex(
+                    "favorite",
+                    "favorite",
+                    { unique: false }
+                );
+            }
 
-db =
-event.target.result;
+            // Outfit Store
+            if (!db.objectStoreNames.contains(OUTFIT_STORE)) {
 
+                db.createObjectStore(
+                    OUTFIT_STORE,
+                    {
+                        keyPath: "id"
+                    }
+                );
+            }
 
+            // History Store
+            if (!db.objectStoreNames.contains(HISTORY_STORE)) {
 
-if(
-!db.objectStoreNames.contains(
-CLOTHING_STORE
-)
+                db.createObjectStore(
+                    HISTORY_STORE,
+                    {
+                        keyPath: "id"
+                    }
+                );
+            }
 
-){
+        };
 
-
-const store =
-
-db.createObjectStore(
-
-CLOTHING_STORE,
-
-{
-
-keyPath:"id",
-
-autoIncrement:true
-
-}
-
-);
-
-
-
-store.createIndex(
-"category",
-"category"
-);
-
-
-
-store.createIndex(
-"color",
-"color"
-);
-
-
-
-store.createIndex(
-"favorite",
-"favorite"
-);
-
-
-
-}
-
-
-
-
-
-
-if(
-!db.objectStoreNames.contains(
-OUTFIT_STORE
-)
-
-){
-
-
-db.createObjectStore(
-
-OUTFIT_STORE,
-
-{
-
-keyPath:"id",
-
-autoIncrement:true
+    });
 
 }
-
-);
-
-
-}
-
-
-
-};
-
-
-
-
-
-request.onsuccess = event=>{
-
-
-db =
-event.target.result;
-
-
-resolve();
-
-
-};
-
-
-
-
-
-request.onerror = error=>{
-
-
-reject(error);
-
-
-};
-
-
-
-}
-
-
-);
-
-}
-
-
-
-
-
 
 // =====================================
-// Add Clothing
+// Save Clothing
 // =====================================
 
+export async function saveClothing(item) {
 
-export function saveClothing(item){
+    await initDatabase();
 
+    return new Promise((resolve, reject) => {
 
-return new Promise(
+        const transaction = db.transaction(
+            CLOTHING_STORE,
+            "readwrite"
+        );
 
-(resolve,reject)=>{
+        const store =
+            transaction.objectStore(
+                CLOTHING_STORE
+            );
 
+        if (!item.id) {
+            item.id = crypto.randomUUID();
+        }
 
-const transaction =
+        item.dateAdded = Date.now();
 
-db.transaction(
+        const request = store.put(item);
 
-CLOTHING_STORE,
+        request.onsuccess = () => resolve(item);
 
-"readwrite"
+        request.onerror = () => reject(request.error);
 
-);
-
-
-
-transaction
-.objectStore(
-CLOTHING_STORE
-)
-.add({
-
-...item,
-
-createdAt:
-
-Date.now(),
-
-timesWorn:0,
-
-favorite:false,
-
-laundryStatus:"Clean"
-
-
-})
-
-.onsuccess=()=>resolve(true);
-
-
-
-transaction.onerror=
-reject;
-
-
+    });
 
 }
-
-
-);
-
-}
-
-
-
-
-
 
 // =====================================
 // Get All Clothes
 // =====================================
 
+export async function getAllClothes() {
 
-export function getAllClothes(){
+    await initDatabase();
 
+    return new Promise((resolve, reject) => {
 
-return new Promise(
+        const transaction =
+            db.transaction(
+                CLOTHING_STORE,
+                "readonly"
+            );
 
-(resolve,reject)=>{
+        const store =
+            transaction.objectStore(
+                CLOTHING_STORE
+            );
 
+        const request = store.getAll();
 
-const transaction =
+        request.onsuccess = () => {
 
-db.transaction(
+            resolve(request.result);
 
-CLOTHING_STORE,
+        };
 
-"readonly"
+        request.onerror = () => {
 
-);
+            reject(request.error);
 
+        };
 
-
-const request =
-
-transaction
-.objectStore(
-CLOTHING_STORE
-)
-.getAll();
-
-
-
-request.onsuccess=()=>{
-
-
-resolve(
-request.result
-);
-
-
-
-};
-
-
-
-request.onerror=
-reject;
-
-
+    });
 
 }
-
-
-);
-
-}
-
-
-
-
-
 
 // =====================================
-// Get Single Item
+// Get One Clothing
 // =====================================
 
+export async function getClothing(id) {
 
-export function getClothingById(id){
+    await initDatabase();
 
+    return new Promise((resolve, reject) => {
 
-return new Promise(
+        const transaction =
+            db.transaction(
+                CLOTHING_STORE,
+                "readonly"
+            );
 
-(resolve)=>{
+        const store =
+            transaction.objectStore(
+                CLOTHING_STORE
+            );
 
+        const request = store.get(id);
 
-const request =
+        request.onsuccess = () => {
 
-db.transaction(
+            resolve(request.result);
 
-CLOTHING_STORE,
+        };
 
-"readonly"
+        request.onerror = () => {
 
-)
+            reject(request.error);
 
-.objectStore(
-CLOTHING_STORE
-)
+        };
 
-.get(id);
-
-
-
-request.onsuccess=()=>{
-
-
-resolve(
-request.result
-);
-
-
-};
-
-
+    });
 
 }
-
-
-);
-
-}
-
-
-
-
-
 
 // =====================================
 // Update Clothing
 // =====================================
 
+export async function updateClothing(item) {
 
-export function updateClothing(item){
-
-
-return new Promise(
-
-(resolve,reject)=>{
-
-
-const request =
-
-db.transaction(
-
-CLOTHING_STORE,
-
-"readwrite"
-
-)
-
-.objectStore(
-CLOTHING_STORE
-)
-
-.put(item);
-
-
-
-request.onsuccess=()=>resolve(true);
-
-
-
-request.onerror=
-reject;
-
+    return saveClothing(item);
 
 }
-
-);
-
-
-}
-
-
-
-
-
 
 // =====================================
 // Delete Clothing
 // =====================================
 
+export async function deleteClothing(id) {
 
-export function deleteClothing(id){
+    await initDatabase();
 
+    return new Promise((resolve, reject) => {
 
-return new Promise(
+        const transaction =
+            db.transaction(
+                CLOTHING_STORE,
+                "readwrite"
+            );
 
-(resolve)=>{
+        const store =
+            transaction.objectStore(
+                CLOTHING_STORE
+            );
 
+        const request = store.delete(id);
 
-db.transaction(
+        request.onsuccess = () => resolve(true);
 
-CLOTHING_STORE,
+        request.onerror = () => reject(request.error);
 
-"readwrite"
-
-)
-
-.objectStore(
-CLOTHING_STORE
-)
-
-.delete(id);
-
-
-
-resolve(true);
-
+    });
 
 }
 
-);
-
-
-}
-
-
-
-
-
-
 // =====================================
-// Laundry Status
-// =====================================
-
-
-export async function updateLaundryStatus(
-
-id,
-
-status
-
-){
-
-
-const item =
-
-await getClothingById(id);
-
-
-
-item.laundryStatus =
-status;
-
-
-
-return updateClothing(
-item
-);
-
-
-}
-
-
-
-
-
-
-// =====================================
-// Wear Counter
-// =====================================
-
-
-export async function increaseWearCount(id){
-
-
-const item =
-
-await getClothingById(id);
-
-
-
-item.timesWorn =
-(item.timesWorn || 0)+1;
-
-
-
-return updateClothing(
-item
-);
-
-
-}
-
-
-
-
-
-
-/// =====================================
 // Save Outfit
 // =====================================
 
-export function saveOutfit(outfit){
+export async function saveOutfit(outfit) {
 
-return new Promise((resolve,reject)=>{
+    await initDatabase();
 
-const request = db
-.transaction(
-OUTFIT_STORE,
-"readwrite"
-)
-.objectStore(
-OUTFIT_STORE
-)
-.add({
+    return new Promise((resolve, reject) => {
 
-...outfit,
+        const transaction =
+            db.transaction(
+                OUTFIT_STORE,
+                "readwrite"
+            );
 
-timestamp:Date.now()
+        const store =
+            transaction.objectStore(
+                OUTFIT_STORE
+            );
 
-});
+        if (!outfit.id) {
+            outfit.id = crypto.randomUUID();
+        }
 
-request.onsuccess = ()=>{
+        const request = store.put(outfit);
 
-resolve(true);
+        request.onsuccess = () => resolve(outfit);
 
-};
+        request.onerror = () => reject(request.error);
 
-request.onerror = (event)=>{
-
-reject(event.target.error);
-
-};
-
-});
+    });
 
 }
 
 // =====================================
-// Get Outfits
+// Get Saved Outfits
 // =====================================
 
+export async function getSavedOutfits() {
 
-export function getOutfits(){
+    await initDatabase();
 
+    return new Promise((resolve, reject) => {
 
-return new Promise(
+        const transaction =
+            db.transaction(
+                OUTFIT_STORE,
+                "readonly"
+            );
 
-(resolve)=>{
+        const store =
+            transaction.objectStore(
+                OUTFIT_STORE
+            );
 
+        const request = store.getAll();
 
-const request =
+        request.onsuccess = () => resolve(request.result);
 
-db.transaction(
+        request.onerror = () => reject(request.error);
 
-OUTFIT_STORE,
-
-"readonly"
-
-)
-
-.objectStore(
-OUTFIT_STORE
-)
-
-.getAll();
-
-
-
-request.onsuccess=()=>{
-
-
-resolve(
-request.result
-);
-
-
-};
-
+    });
 
 }
 
-);
+// =====================================
+// Wear History
+// =====================================
+
+export async function saveHistory(history) {
+
+    await initDatabase();
+
+    return new Promise((resolve, reject) => {
+
+        const transaction =
+            db.transaction(
+                HISTORY_STORE,
+                "readwrite"
+            );
+
+        const store =
+            transaction.objectStore(
+                HISTORY_STORE
+            );
+
+        if (!history.id) {
+            history.id = crypto.randomUUID();
+        }
+
+        history.date = Date.now();
+
+        const request = store.put(history);
+
+        request.onsuccess = () => resolve(history);
+
+        request.onerror = () => reject(request.error);
+
+    });
 
 }
 
-
-
-
-
-
 // =====================================
-// Statistics
+// Get History
 // =====================================
 
+export async function getHistory() {
 
-export async function getStatistics(){
+    await initDatabase();
 
+    return new Promise((resolve, reject) => {
 
-const clothes =
-await getAllClothes();
+        const transaction =
+            db.transaction(
+                HISTORY_STORE,
+                "readonly"
+            );
 
+        const store =
+            transaction.objectStore(
+                HISTORY_STORE
+            );
 
+        const request = store.getAll();
 
-const outfits =
-await getOutfits();
+        request.onsuccess = () => resolve(request.result);
 
+        request.onerror = () => reject(request.error);
 
-
-return {
-
-
-clothes:
-
-clothes.length,
-
-
-favorites:
-
-clothes.filter(
-item=>item.favorite
-)
-.length,
-
-
-outfits:
-
-outfits.length
-
-
-};
-
-
-
-}
-// =====================================
-// Database Ready
-// =====================================
-
-export function isDatabaseReady(){
-
-return db !== undefined && db !== null;
+    });
 
 }
